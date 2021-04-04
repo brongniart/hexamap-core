@@ -61,13 +61,13 @@ public class StorageTest {
     
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
-        regionSmall=new Hexagon(512,IndexedCoordinate.class);
-        regionMedium=new Hexagon(2,IndexedCoordinate.class);
+        regionSmall=new Hexagon(16,IndexedCoordinate.class);
+        regionMedium=new Hexagon(1024,IndexedCoordinate.class);
         regionLarge=new Hexagon(2048,IndexedCoordinate.class);
         return Arrays.asList(new Object[][]{
             {new HashMapStorage<AxialExt>(regionMedium),regionMedium},
             {new ArrayStorage<AxialExt>(regionMedium, new NeighboorsIndexator(regionMedium),AxialExt.class),regionMedium},
-            {new FileStorage<AxialExt>(regionMedium, new NeighboorsIndexator(regionMedium),AxialExt.class),regionMedium},
+            {new FileStorage<AxialExt>(regionSmall, new NeighboorsIndexator(regionSmall),AxialExt.class),regionSmall},
         });
     }
     private Storage<Cube> storage;
@@ -98,9 +98,7 @@ public class StorageTest {
         System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif_No_Cache()");
         assert storage.isEmpty();
         for (Coordinate c : new Axial().getAllNeigbours(region.getRange())) {
-            assert storage.get(c) == null;
             storage.put(c, new AxialExt(c));
-            System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif() "+c);
             assert storage.get(c)!=null;
             assert storage.get(c).equals(new AxialExt(c));
         }
@@ -119,7 +117,6 @@ public class StorageTest {
             
             storage.put(c, new AxialExt(c));
             assert storage.get(c)!=null;
-            System.out.println("val: "+storage.get(c)+" c:"+c+" compare "+storage.get(c).equals(new AxialExt(c)));
             assert storage.get(c).equals(new AxialExt(c));
         }
         assert storage.size() <= NB_ITER;
@@ -143,7 +140,7 @@ public class StorageTest {
         System.out.println("hexamap.regions.storages.StorageTest.testIterator_Random_No_Cache() - End ("+String.format("%,d", NB_ITER)+" access)");
     }
 
-    public static class AxialExt extends Cube implements Externalizable {
+    public static class AxialExt extends Cube implements Externalizable  {
 
         public AxialExt() {
             super();
@@ -155,8 +152,9 @@ public class StorageTest {
 
         @Override
         public void writeExternal(ObjectOutput out) throws IOException {
-            out.write(getX());
-            out.write(getY());
+            out.writeInt(getX());
+            out.writeInt(getY());
+            out.flush();
         }
 
         @Override
@@ -164,6 +162,5 @@ public class StorageTest {
             setX(in.readInt());
             setY(in.readInt());
         }
-
     }
 }

@@ -35,10 +35,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.File;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -48,13 +50,12 @@ import java.util.Iterator;
  *
  * @param <Data> some stuff
  */
-public class FileStorage<Data extends Externalizable> extends AbstractIndexatorStorage<Data> {
+public class FileStorage<Data extends Externalizable > extends AbstractIndexatorStorage<Data> {
 
-    private FileChannel channel;
+    private final FileChannel channel;
     private final int objSize;
     private final Data zero;
-    private int size = 0;
-    private Class<Data> dataClass;
+    private final Class<Data> dataClass;
 
     public FileStorage(Region region, Indexator indexator, Class<Data> dataClass) throws Exception {
         super(region, indexator);
@@ -65,12 +66,9 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
 
         zero = dataClass.getConstructor().newInstance();
         objSize = toByteArray(zero).length;
-
-        for (int i = 0; i < region.size(); i++) {
-            indexPut(i, zero);
-        }
-        channel.close();
-        channel = new RandomAccessFile(f, "rw").getChannel();
+        System.out.println("hexamap.regions.storages.FileStorage.<init>() " + objSize);
+        initZero();
+        System.out.println("hexamap.regions.storages.FileStorage.<init>() - End");
     }
 
     @Override
@@ -78,8 +76,10 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
         try {
             ByteBuffer buffer = ByteBuffer.allocate(objSize);
 
-            int nbRead;
-            while ((nbRead = channel.read(buffer, (long) (index * objSize))) > 0);
+            int nbRead = 0;
+            while (buffer.hasRemaining()) {
+                nbRead += channel.read(buffer, (long) (index * objSize));
+            }
             return fromByteArray(buffer.array());
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -92,8 +92,10 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
         Data old = null; //indexGet(index);
         try {
             ByteBuffer buffer = ByteBuffer.wrap(toByteArray(data));
-            while (channel.write(buffer, (long) (index * objSize)) > 0);
-
+            int nbWrite = 0;
+            while (buffer.hasRemaining()) {
+                nbWrite += channel.write(buffer, (long) (index * objSize));
+            }
             channel.force(true);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -103,6 +105,9 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
 
     @Override
     public void indexClear() {
+        try {
+            initZero();
+        } catch (Exception e) {}
     }
 
     @Override
@@ -114,10 +119,8 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
         byte[] result;
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-            data.writeExternal(oos);
+            oos.writeObject(data);
             oos.flush();
-            oos.close();
-            bos.close();
             result = bos.toByteArray();
             assert objSize == 0 || result.length == objSize;
         }
@@ -126,12 +129,34 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
 
     private Data fromByteArray(byte[] bytes) throws Exception {
         //assert bytes.length == objSize;
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes)) {
-            try (ObjectInputStream iis = new ObjectInputStream(bis)) {
-                Data result = zero;
-                result.readExternal(iis);
-                return result;
-            }
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+                ObjectInputStream iis = new ObjectInputStream(bis)) {
+            Data result = (Data) iis.readObject();
+            return result;
         }
+    }
+
+    private void initZero() throws Exception {
+        channel.position(0);
+        
+        ByteBuffer buffer = ByteBuffer.allocate(objSize*1024);
+        byte[] buf = toByteArray(zero);
+        for (int i=0;i<1024;i++) {
+            buffer.put(buf);
+        }
+        buffer.rewind();
+        int loop=size()/1024;
+        for (int i=0;i<loop;i++) {
+            channel.write(buffer);
+        }
+        
+        buffer = ByteBuffer.allocate(objSize);
+        buffer.put(toByteArray(zero));
+        buffer.rewind();
+        loop=size()%1024;
+        for (int i=0;i<loop;i++) {
+            channel.write(buffer);
+        }
+                
     }
 }

@@ -31,44 +31,62 @@ package hexamap.regions.storages;
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
 import hexamap.regions.indexators.Indexator;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  *
- * @param <Data> some stuff
+ * @param <Data>
  */
-public class ArrayStorage<Data> extends AbstractIndexatorStorage<Data> {
+public abstract class AbstractIndexatorStorage<Data> extends AbstractStorage<Data> {
 
-    private final Data[] array;
-
-    public ArrayStorage(Region region, Indexator indexator, Class<Data> dataClass) {
-        super(region, indexator);
-        this.array = (Data[]) Array.newInstance(dataClass, region.size());
+    protected final Indexator indexator;
+    private int size=0;
+    public AbstractIndexatorStorage(Region region,Indexator indexator) {
+        super(region);
+        assert indexator.getRegion().equals(region);
+        this.indexator=indexator;
     }
 
     @Override
-    protected Data indexGet(int index) {
-        assert index <= array.length;
-        return array[index];
+    public int size() {
+        return size;
     }
 
     @Override
-    protected Data indexPut(int index, Data data) {
-        assert index <= array.length;
-        Data old = array[index];
-        array[index] = data;
+    public boolean isEmpty() {
+        return size == 0;
+    }
+    
+    private int getIndex(Coordinate coordinate) {
+        int index = indexator.index(coordinate);
+        assert index >= 0 && index <= region.size();
+        return index;
+    }
+
+    @Override
+    public void clear() {
+        size = 0;
+        indexClear();
+    }
+    protected abstract void indexClear();
+
+    @Override
+    public Data safeGet(Coordinate coordinate) {
+        return indexGet(getIndex(coordinate));
+    }
+    protected abstract Data indexGet(int index);
+    
+    @Override
+    public Data safePut(Coordinate coordinate, Data data) {
+        Data old = indexPut(getIndex(coordinate),data);
+        if (data == null && old != null) {
+            size--;
+        } else if (old == null) {
+            size++;
+        }
         return old;
     }
+    protected abstract Data indexPut(int index, Data data);
+    
+    //public abstract Data[] getBulk(Coordinate c, int numbers);
 
-    @Override
-    public void indexClear() {
-        Arrays.fill(array, null);
-    }
-
-    @Override
-    public Iterator<Entry<Coordinate, Data>> iterator() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

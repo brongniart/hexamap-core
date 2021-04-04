@@ -32,6 +32,7 @@ import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
 import hexamap.regions.indexators.Indexator;
 import java.io.ByteArrayOutputStream;
+import java.io.Externalizable;
 import java.io.File;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
@@ -44,32 +45,26 @@ import java.util.Iterator;
  *
  * @param <Data> some stuff
  */
-public class FileStorage<Data> extends AbstractStorage<Data> {
+public class FileStorage<Data extends Externalizable> extends AbstractIndexatorStorage<Data> {
 
     private final FileChannel channel;
-    private final Indexator indexator;
-    private final int objSize;
-    private int size;
+    private final int objSize ;
+    private final Data zero;
+    private int size = 0;
 
     public FileStorage(Region region, Indexator indexator, Class<Data> dataClass) throws Exception {
-        super(region);
-        assert indexator.getRegion().equals(region);
+        super(region,indexator);
 
         File f = Files.createTempFile("test-", ".data").toFile();
         this.channel = new RandomAccessFile(f, "rw").getChannel();
-
-        this.indexator = indexator;
-        this.size = 0;
-
-        objSize = toByteArray(dataClass.getConstructor().newInstance()).length;
+        
+        zero=dataClass.getConstructor().newInstance();
+        objSize = toByteArray(zero).length;
     }
 
     @Override
-    protected Data safeGet(Coordinate coordinate) {
+    protected Data indexGet(int index) {
         try {
-            int index = indexator.index(coordinate);
-            assert index >= 0 && index < region.size();
-
             ByteBuffer bb = ByteBuffer.allocate(objSize);
 /*
             while (channel.read(bb, (long) index) > 0) {
@@ -84,26 +79,13 @@ public class FileStorage<Data> extends AbstractStorage<Data> {
     }
 
     @Override
-    protected Data safePut(Coordinate coordinate, Data data) {
-        int index = indexator.index(coordinate);
-        assert index >= 0 && index < region.size();
-        Data tmp = null;
-        return tmp;
+    protected Data indexPut(int index, Data data) {
+        Data old = null;
+        return old;
     }
 
     @Override
-    public int size() {
-        return size;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    @Override
-    public void clear() {
-        size = 0;
+    public void indexClear() {
     }
 
     @Override
@@ -114,8 +96,10 @@ public class FileStorage<Data> extends AbstractStorage<Data> {
     private byte[] toByteArray(Data data) throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(data);
+        data.writeExternal(oos);
         oos.flush();
-        return bos.toByteArray();
+        byte[] result = bos.toByteArray();
+        assert objSize==0 || result.length==objSize;
+        return result;
     }
 }

@@ -50,13 +50,13 @@ public class ArrayStorage<Data> extends AbstractIndexatorStorage<Data> {
 
     @Override
     protected Data indexGet(int index) {
-        assert index <= array.length;
+        assert index < array.length;
         return array[index];
     }
 
     @Override
     protected Data indexPut(int index, Data data) {
-        assert index <= array.length;
+        assert index < array.length;
         Data old = array[index];
         array[index] = data;
         return old;

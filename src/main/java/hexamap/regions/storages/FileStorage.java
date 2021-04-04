@@ -31,11 +31,14 @@ package hexamap.regions.storages;
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
 import hexamap.regions.indexators.Indexator;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.File;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -47,31 +50,37 @@ import java.util.Iterator;
  */
 public class FileStorage<Data extends Externalizable> extends AbstractIndexatorStorage<Data> {
 
-    private final FileChannel channel;
-    private final int objSize ;
+    private FileChannel channel;
+    private final int objSize;
     private final Data zero;
     private int size = 0;
+    private Class<Data> dataClass;
 
     public FileStorage(Region region, Indexator indexator, Class<Data> dataClass) throws Exception {
-        super(region,indexator);
+        super(region, indexator);
+        this.dataClass = dataClass;
 
-        File f = Files.createTempFile("test-", ".data").toFile();
+        File f = Files.createTempFile("test-", ".hexamap").toFile();
         this.channel = new RandomAccessFile(f, "rw").getChannel();
-        
-        zero=dataClass.getConstructor().newInstance();
+
+        zero = dataClass.getConstructor().newInstance();
         objSize = toByteArray(zero).length;
+
+        for (int i = 0; i < region.size(); i++) {
+            indexPut(i, zero);
+        }
+        channel.close();
+        channel = new RandomAccessFile(f, "rw").getChannel();
     }
 
     @Override
     protected Data indexGet(int index) {
         try {
-            ByteBuffer bb = ByteBuffer.allocate(objSize);
-/*
-            while (channel.read(bb, (long) index) > 0) {
-                out.write(buff.array(), 0, buff.position());
-                buff.clear();
-            }
-*/
+            ByteBuffer buffer = ByteBuffer.allocate(objSize);
+
+            int nbRead;
+            while ((nbRead = channel.read(buffer, (long) (index * objSize))) > 0);
+            return fromByteArray(buffer.array());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -80,7 +89,15 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
 
     @Override
     protected Data indexPut(int index, Data data) {
-        Data old = null;
+        Data old = null; //indexGet(index);
+        try {
+            ByteBuffer buffer = ByteBuffer.wrap(toByteArray(data));
+            while (channel.write(buffer, (long) (index * objSize)) > 0);
+
+            channel.force(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return old;
     }
 
@@ -94,12 +111,27 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
     }
 
     private byte[] toByteArray(Data data) throws Exception {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        data.writeExternal(oos);
-        oos.flush();
-        byte[] result = bos.toByteArray();
-        assert objSize==0 || result.length==objSize;
+        byte[] result;
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+            data.writeExternal(oos);
+            oos.flush();
+            oos.close();
+            bos.close();
+            result = bos.toByteArray();
+            assert objSize == 0 || result.length == objSize;
+        }
         return result;
+    }
+
+    private Data fromByteArray(byte[] bytes) throws Exception {
+        //assert bytes.length == objSize;
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes)) {
+            try (ObjectInputStream iis = new ObjectInputStream(bis)) {
+                Data result = zero;
+                result.readExternal(iis);
+                return result;
+            }
+        }
     }
 }

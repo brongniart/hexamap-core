@@ -28,12 +28,18 @@
  */
 package hexamap.regions.storages;
 
+import com.sun.source.doctree.SerialDataTree;
 import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Cube;
 import hexamap.regions.Hexagon;
 import hexamap.regions.indexators.IndexedCoordinate;
 import hexamap.regions.indexators.NeighboorsIndexator;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.After;
@@ -56,17 +62,12 @@ public class StorageTest {
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
         regionSmall=new Hexagon(512,IndexedCoordinate.class);
-        regionMedium=new Hexagon(1024,IndexedCoordinate.class);
+        regionMedium=new Hexagon(2,IndexedCoordinate.class);
         regionLarge=new Hexagon(2048,IndexedCoordinate.class);
         return Arrays.asList(new Object[][]{
-            //{new ArrayStorage<Cube>(regionSmall, new NeighboorsIndexator(regionSmall),Cube.class),regionSmall},
-            //{new HashMapStorage<Cube>(regionSmall),regionSmall},
-            {new HashMapStorage<Cube>(regionMedium),regionMedium},
-            {new ArrayStorage<Cube>(regionMedium, new NeighboorsIndexator(regionMedium),Cube.class),regionMedium},
-            {new ArrayStorage<Cube>(regionMedium, new NeighboorsIndexator(regionMedium),Cube.class),regionMedium},
-            {new HashMapStorage<Cube>(regionMedium),regionMedium}
-            //{new HashMapStorage<Cube>(regionLarge),regionLarge},
-            //{new ArrayStorage<Cube>(regionLarge, new NeighboorsIndexator(regionLarge),Cube.class),regionLarge}
+            {new HashMapStorage<AxialExt>(regionMedium),regionMedium},
+            {new ArrayStorage<AxialExt>(regionMedium, new NeighboorsIndexator(regionMedium),AxialExt.class),regionMedium},
+            {new FileStorage<AxialExt>(regionMedium, new NeighboorsIndexator(regionMedium),AxialExt.class),regionMedium},
         });
     }
     private Storage<Cube> storage;
@@ -83,7 +84,7 @@ public class StorageTest {
         storage=null;
     }
     
-    @Test
+    //@Test
     public void testtruc() throws Exception {
         Hexagon<Axial> region = new Hexagon<Axial>(2,Axial.class);
         NeighboorsIndexator indexator = new NeighboorsIndexator(region);
@@ -98,8 +99,10 @@ public class StorageTest {
         assert storage.isEmpty();
         for (Coordinate c : new Axial().getAllNeigbours(region.getRange())) {
             assert storage.get(c) == null;
-            storage.put(c, new Cube(c));
-            assert storage.get(c).equals(new Cube(c));
+            storage.put(c, new AxialExt(c));
+            System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif() "+c);
+            assert storage.get(c)!=null;
+            assert storage.get(c).equals(new AxialExt(c));
         }
         assert storage.size() == region.size() - 1;
         System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif_No_Cache() - End ("+String.format("%,d", storage.size())+" access)");
@@ -114,8 +117,10 @@ public class StorageTest {
         for (int i=0;i<NB_ITER;i++) {
             IndexedCoordinate c = region.getRandom();
             
-            storage.put(c, new Cube(c));
-            assert storage.get(c).equals(new Cube(c));
+            storage.put(c, new AxialExt(c));
+            assert storage.get(c)!=null;
+            System.out.println("val: "+storage.get(c)+" c:"+c+" compare "+storage.get(c).equals(new AxialExt(c)));
+            assert storage.get(c).equals(new AxialExt(c));
         }
         assert storage.size() <= NB_ITER;
         System.out.println("hexamap.regions.storages.StorageTest.testIterator_Random_Cache() - End ("+String.format("%,d", NB_ITER)+" access)");
@@ -130,10 +135,35 @@ public class StorageTest {
         for (int i=0;i<NB_ITER;i++) {
             Axial c = new Axial(region.getRandom());
             
-            storage.put(c, new Cube(c));
-            assert storage.get(c).equals(new Cube(c));
+            storage.put(c, new AxialExt(c));
+            assert storage.get(c)!=null; 
+            assert storage.get(c).equals(new AxialExt(c));
         }
         assert storage.size() <= NB_ITER;
         System.out.println("hexamap.regions.storages.StorageTest.testIterator_Random_No_Cache() - End ("+String.format("%,d", NB_ITER)+" access)");
+    }
+
+    public static class AxialExt extends Cube implements Externalizable {
+
+        public AxialExt() {
+            super();
+        }
+
+        public AxialExt(Coordinate c) {
+            super(c);
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.write(getX());
+            out.write(getY());
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            setX(in.readInt());
+            setY(in.readInt());
+        }
+
     }
 }

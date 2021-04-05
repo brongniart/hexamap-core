@@ -35,12 +35,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.File;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
-import java.io.Serializable;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -50,37 +47,46 @@ import java.util.Iterator;
  *
  * @param <Data> some stuff
  */
-public class FileStorage<Data extends Externalizable > extends AbstractIndexatorStorage<Data> {
+public class FileStorage<Data extends Externalizable> extends AbstractIndexatorStorage<Data> {
 
     private final FileChannel channel;
-    private final int objSize;
+    private final int datatBytesSize;
     private final Data zero;
-    private final Class<Data> dataClass;
+
+    private final ByteBuffer cache;
+    private int cacheIndex;
+    private final int PAGE_SIZE = 1024;
 
     public FileStorage(Region region, Indexator indexator, Class<Data> dataClass) throws Exception {
         super(region, indexator);
-        this.dataClass = dataClass;
 
         File f = Files.createTempFile("test-", ".hexamap").toFile();
         this.channel = new RandomAccessFile(f, "rw").getChannel();
 
         zero = dataClass.getConstructor().newInstance();
-        objSize = toByteArray(zero).length;
-        System.out.println("hexamap.regions.storages.FileStorage.<init>() " + objSize);
+        datatBytesSize = toByteArray(zero).length;
+        
+        cache = ByteBuffer.wrap(new byte[PAGE_SIZE * datatBytesSize]);
+        cacheIndex = -1;
+        
         initZero();
-        System.out.println("hexamap.regions.storages.FileStorage.<init>() - End");
     }
 
     @Override
     protected Data indexGet(int index) {
-        try {
-            ByteBuffer buffer = ByteBuffer.allocate(objSize);
-
-            int nbRead = 0;
-            while (buffer.hasRemaining()) {
-                nbRead += channel.read(buffer, (long) (index * objSize));
+        if (cacheIndex == index) {
+            try {
+                return readFromCache(index);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-            return fromByteArray(buffer.array());
+        }
+        try {
+            cache.clear();
+            while (cache.hasRemaining()) {
+                assert channel.read(cache, (long) ((index / PAGE_SIZE) * datatBytesSize)) != -1;
+            }
+            return readFromCache(index);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -89,14 +95,13 @@ public class FileStorage<Data extends Externalizable > extends AbstractIndexator
 
     @Override
     protected Data indexPut(int index, Data data) {
-        Data old = null; //indexGet(index);
+        Data old = indexGet(index);
         try {
-            ByteBuffer buffer = ByteBuffer.wrap(toByteArray(data));
-            int nbWrite = 0;
-            while (buffer.hasRemaining()) {
-                nbWrite += channel.write(buffer, (long) (index * objSize));
+            writeToCache(index,data);
+            cache.position(0);
+            while (cache.hasRemaining()) {
+                channel.write(cache, (long) ((index / PAGE_SIZE) * datatBytesSize));
             }
-            channel.force(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -107,12 +112,27 @@ public class FileStorage<Data extends Externalizable > extends AbstractIndexator
     public void indexClear() {
         try {
             initZero();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
+        cacheIndex = -1;
     }
 
     @Override
     public Iterator<Entry<Coordinate, Data>> iterator() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private void writeToCache(int index,Data data) throws Exception {
+        byte[] buff = toByteArray(data);
+        cache.position((index % PAGE_SIZE)*datatBytesSize);
+        cache.put(buff, 0, datatBytesSize);
+    }
+    
+    private Data readFromCache(int index) throws Exception {
+        byte[] buff = new byte[datatBytesSize];
+        cache.position((index % PAGE_SIZE)*datatBytesSize);
+        cache.get(buff, 0, datatBytesSize);
+        return fromByteArray(buff);
     }
 
     private byte[] toByteArray(Data data) throws Exception {
@@ -122,13 +142,13 @@ public class FileStorage<Data extends Externalizable > extends AbstractIndexator
             oos.writeObject(data);
             oos.flush();
             result = bos.toByteArray();
-            assert objSize == 0 || result.length == objSize;
+            assert datatBytesSize == 0 || result.length == datatBytesSize;
         }
         return result;
     }
 
     private Data fromByteArray(byte[] bytes) throws Exception {
-        //assert bytes.length == objSize;
+        assert bytes.length == datatBytesSize;
         try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
                 ObjectInputStream iis = new ObjectInputStream(bis)) {
             Data result = (Data) iis.readObject();
@@ -137,26 +157,20 @@ public class FileStorage<Data extends Externalizable > extends AbstractIndexator
     }
 
     private void initZero() throws Exception {
+        byte[] zeroBytes = toByteArray(zero);
+        for (int i=0;i<PAGE_SIZE;i++) {
+            cache.put(zeroBytes);
+        }
+        int loop = region.size() / PAGE_SIZE;
+        if (region.size() % PAGE_SIZE > 0) {
+            loop++;
+        }
+        assert loop > 0;
         channel.position(0);
-        
-        ByteBuffer buffer = ByteBuffer.allocate(objSize*1024);
-        byte[] buf = toByteArray(zero);
-        for (int i=0;i<1024;i++) {
-            buffer.put(buf);
+        for (int i = 0; i < loop; i++) {
+            cache.position(0);
+            channel.write(cache);
         }
-        buffer.rewind();
-        int loop=size()/1024;
-        for (int i=0;i<loop;i++) {
-            channel.write(buffer);
-        }
-        
-        buffer = ByteBuffer.allocate(objSize);
-        buffer.put(toByteArray(zero));
-        buffer.rewind();
-        loop=size()%1024;
-        for (int i=0;i<loop;i++) {
-            channel.write(buffer);
-        }
-                
+        channel.force(true);
     }
 }

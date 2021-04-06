@@ -43,7 +43,7 @@ public class AxialTest {
      * Test of getNeigbours method, of class Axial.
      */
     @Test
-    public void test_classType() {
+    public void testClassType() {
         assert new Axial().add(Direction.NORD, 1).getClass()==Axial.class;
         assert new Axial().createCoordinate(0, 1).getClass()==Axial.class;
         Iterator<Coordinate> result = new Axial().getNeigbours().iterator();

@@ -40,7 +40,7 @@ public class CubeTest {
     public CubeTest() {
     }
     @Test
-    public void test_classType() {
+    public void testClassType() {
         assert new Cube().add(Direction.NORD, 1).getClass()==Cube.class;
         assert new Cube().createCoordinate(0, 1).getClass()==Cube.class;
         Iterator<Coordinate> result = new Cube().getNeigbours().iterator();

@@ -53,27 +53,27 @@ import org.junit.runners.Parameterized.Parameters;
  * 
  */
 @RunWith(Parameterized.class)
-public class StorageSingleAccessTests {
+public class StorageTests {
 
-    private static Hexagon<IndexedCoordinate> regionSmall;
+    private static Hexagon<IndexedCoordinate> regionXXSmall;
     private static Hexagon<IndexedCoordinate> regionMedium;
     private static Hexagon<IndexedCoordinate> regionLarge;
     
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
-        regionSmall=new Hexagon(256,IndexedCoordinate.class);
+        regionXXSmall=new Hexagon(128,IndexedCoordinate.class);
         regionMedium=new Hexagon(1024,IndexedCoordinate.class);
         regionLarge=new Hexagon(2048,IndexedCoordinate.class);
         return Arrays.asList(new Object[][]{
             {new HashMapStorage<AxialExt>(regionMedium),regionMedium},
             {new ArrayStorage<AxialExt>(regionMedium, new NeighboorsIndexator(regionMedium),AxialExt.class),regionMedium},
-            {new FileStorage<AxialExt>(regionSmall, new NeighboorsIndexator(regionSmall),AxialExt.class),regionSmall},
+            {new FileStorage<AxialExt>(regionXXSmall, new NeighboorsIndexator(regionXXSmall),AxialExt.class),regionXXSmall},
         });
     }
     private Storage<Cube> storage;
     private final Hexagon<IndexedCoordinate> region;
 
-    public StorageSingleAccessTests(Storage<Cube> storage,Hexagon<IndexedCoordinate> region) throws Exception {
+    public StorageTests(Storage<Cube> storage,Hexagon<IndexedCoordinate> region) throws Exception {
         this.storage=storage;
         this.region=region;
     }
@@ -81,7 +81,6 @@ public class StorageSingleAccessTests {
     @After
     public void cleaup() {
         storage.clear();
-        storage=null;
     }
     
     //@Test

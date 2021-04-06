@@ -28,87 +28,99 @@
  */
 package hexamap.coordinates;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  *
- * 
+ *
  */
-public class CoordinateTest {
-    
-    Coordinate center = new Axial();
+@RunWith(Parameterized.class)
+public class CoordinateTests {
+
+    @Parameters
+    public static Collection<Object[]> getParameters() throws Exception {
+        return Arrays.asList(new Object[][]{
+            {new Axial()},
+            {new Cube()},
+            {new hexamap.regions.indexators.IndexedCoordinate()},});
+    }
+    private Coordinate center;
+
+    public CoordinateTests(Coordinate coordinate) {
+        center = coordinate;
+    }
+
+    @After
+    public void cleaup() {
+        center = center.createCoordinate(0, 0);
+    }
     Coordinate tmp;
-    
-    public CoordinateTest() {
-    }
-    
+
     @Test
-    public void testBaseLogic() {
+    public void testBasic() {
         tmp = center.getNext(Direction.NORD);
-        assert tmp.equals(center.add(Direction.NORD,1));
-        assert tmp.getNext(Direction.NORD).equals(center.add(Direction.NORD,2));
+        assert tmp.equals(center.add(Direction.NORD, 1));
+        assert tmp.getNext(Direction.NORD).equals(center.add(Direction.NORD, 2));
+
+        center = center.createCoordinate(0, 0);
     }
-    
-    /**
-     * Test of getNeigbours method, of class Coordinate.
-     */
+
     @Test
     public void testGetNeigbours() {
         int count;
-        
-        count=0;
+
+        count = 0;
+        Direction d = Direction.NORD;
         for (Coordinate c : center.getNeigbours()) {
             count++;
-            //System.out.println(c + " distance: "+center.distance(c));
+            assert center.add(d, 1).equals(c);
+            d = d.next();
         }
-        assert count==6;
-        count=0;
-        for (Coordinate c : center.getNeigbours(2)) {
+        assert count == 6;
+
+        count = 0;
+        int distance = 128;
+        for (Coordinate c : center.getNeigbours(distance)) {
             count++;
-            //System.out.println(c + " distance: "+center.distance(c));
+            assert center.distance(c) == distance;
         }
-        assert count==6*2;
-        
-        count=0;
-        for (Coordinate c : center.getNeigbours(3)) {
-            count++;
-            //System.out.println(c + " distance: "+center.distance(c));
-        }
-        assert count==6*3;
+        assert count == 6 * distance;
     }
 
-    /**
-     * Test of getAllNeigbours method, of class Coordinate.
-     */
-    //@Test
+    @Test
     public void testGetAllNeigbours() {
         int count;
-        
-        count=0;
+
+        count = 0;
+        Iterator<Coordinate> iter = center.getNeigbours().iterator();
         for (Coordinate c : center.getAllNeigbours(1)) {
             count++;
-            System.out.println(c + " distance: "+center.distance(c));
+            assert c.equals(iter.next());
         }
-        assert count==6;
+        assert !iter.hasNext();
         
-        count=0;
+        count = 0;
+        int d=2;
         for (Coordinate c : center.getAllNeigbours(2)) {
             count++;
-            //System.out.println(c + " distance: "+center.distance(c));
+            if (count==13) {
+                d--;
+            }
+            assert center.distance(c)==d;
         }
-        assert count==6+6*2;
+        assert count == 6 + 6 * 2;
         
-        count=0;
-        for (Coordinate c : center.getAllNeigbours(3)) {
-            count++;
-            //System.out.println(c + " distance: "+center.distance(c));
-        }
-        assert count==6+6*2+6*3;
-        
-        count=0;
-        for (Coordinate c : center.getAllNeigbours(1024*1)) {
+        count = 0;
+        for (Coordinate c : center.getAllNeigbours(1024)) {
             count++;
         }
-        System.out.println("hexamap.coordinates.CoordinateTest.testGetNeigbours() - end: "+count);
+        assert count==3148800;
     }
 }

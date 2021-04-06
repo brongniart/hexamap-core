@@ -29,26 +29,76 @@
 package hexamap.regions;
 
 import hexamap.coordinates.Axial;
+import hexamap.coordinates.Coordinate;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Random;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  *
  * 
  */
-public class HexagonTest {
+@RunWith(Parameterized.class)
+public class RegionsTests {
     
-    Hexagon<Axial> region;
-    public HexagonTest() throws Exception {
-        this.region = new Hexagon<>(1024,Axial.class);
+    @Parameters
+    public static Collection<Object[]> getParameters() throws Exception {
+        return Arrays.asList(new Object[][]{
+            {new Hexagon<>(1024,Axial.class)},
+            //{new Rhombus<Axial>(1024)},
+        });
+    }
+    private final Region<Coordinate> region;
+    public RegionsTests(Region region) throws Exception {
+        this.region = region;
     }
 
     @Test
     public void testContains() {
         int count=0;
-        for (Object c: region) {
+        for (Coordinate c: region) {
             assert region.contains(c);
             count++;
         }
         assert count==region.size();
+    }
+
+    @Test
+    public void testGetRandom() {
+        for (Coordinate c: region) {
+            assert region.contains(region.getRandom());
+        }
+    }
+
+    @Test
+    public void testUnsupported() {
+        boolean exceptionCatched=false;
+        try {
+            region.add(new Axial());
+        } catch (UnsupportedOperationException e) {
+            exceptionCatched=true;
+        }
+        assert exceptionCatched;
+        
+        exceptionCatched=false;
+        try {
+            region.remove(new Axial());
+        } catch (UnsupportedOperationException e) {
+            exceptionCatched=true;
+        }
+        assert exceptionCatched;
+        
+        exceptionCatched=false;
+        try {
+            region.clear();
+        } catch (UnsupportedOperationException e) {
+            exceptionCatched=true;
+        }
+        assert exceptionCatched;
+        
     }
 }

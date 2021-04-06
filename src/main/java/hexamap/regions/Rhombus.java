@@ -34,7 +34,7 @@ import java.util.Iterator;
 public class Rhombus<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
 
     private final int length;
-    
+
     public Rhombus(int length) {
         super();
         this.length = length;
@@ -52,13 +52,14 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
             return false;
         }
     }
-/*
+
+    /*
     @Override
     public boolean contains(Region region) {
         assert region != null;
         return true;
     }
-*/
+     */
     @Override
     public Iterator<CoordinateImpl> iterator() {
         throw new UnsupportedOperationException("Todo: iterator");
@@ -72,9 +73,10 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
     @Override
     public boolean equals(Region region) {
         assert region != null;
-        return region.getClass() == Rhombus.class &&
-                ((Rhombus) region).length == this.length;
+        return region.getClass() == Rhombus.class
+                && ((Rhombus) region).length == this.length;
     }
+
     @Override
     public CoordinateImpl getRandom() {
         return null;

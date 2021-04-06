@@ -34,8 +34,8 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
- * 
- * @param <CoordinateImpl> 
+ *
+ * @param <CoordinateImpl>
  */
 public class Hexagon<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
 
@@ -70,19 +70,6 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
         }
     }
 
-    /*
-    @Override
-    public boolean contains(Region region) {
-        assert region != null;
-        if (region.getClass()==Hexagon.class) {
-            return true;
-        } else if (region.getClass()==Rhombus.class) {
-            return true;
-        } else {
-            return true;
-        }
-    }
-     */
     @Override
     public Iterator<CoordinateImpl> iterator() {
         return new Iterator<CoordinateImpl>() {
@@ -146,12 +133,12 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
     @Override
     public CoordinateImpl getRandom() {
         Random random = new Random();
-        int x = random.nextInt(range*2+1)-range;
-            
+        int x = random.nextInt(range * 2 + 1) - range;
+
         int bound = range - abs(x);
-        int y = (x>0)?
-        random.nextInt(range+bound) - range:
-        random.nextInt(range+bound) - bound;
+        int y = (x > 0)
+                ? random.nextInt(range + bound) - range
+                : random.nextInt(range + bound) - bound;
         return (CoordinateImpl) zero.createCoordinate(x, y);
     }
 }

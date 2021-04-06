@@ -38,11 +38,12 @@ import hexamap.regions.indexators.Indexator;
 public abstract class IndexBasedStorage<Data> extends AbstractStorage<Data> {
 
     protected final Indexator indexator;
-    public IndexBasedStorage(Region region,Indexator indexator) {
+
+    public IndexBasedStorage(Region region, Indexator indexator) {
         super(region);
         assert indexator.getRegion().equals(region);
-        this.indexator=indexator;
+        this.indexator = indexator;
     }
-    
+
     //public abstract Data[] getBulk(Coordinate c, int numbers);
 }

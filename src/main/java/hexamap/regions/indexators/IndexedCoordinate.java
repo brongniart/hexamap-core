@@ -36,29 +36,35 @@ import hexamap.coordinates.Coordinate;
  * @author jerome
  */
 public class IndexedCoordinate extends Axial {
+
     protected int index = -1;
-    
+
     public IndexedCoordinate() {
         super();
     }
-    public IndexedCoordinate(int x,int y) {
-        super(x,y);
+
+    public IndexedCoordinate(int x, int y) {
+        super(x, y);
     }
+
     public IndexedCoordinate(Coordinate c) {
         super(c);
     }
+
     @Override
     protected void setX(int x) {
-        index=-1;
+        index = -1;
         super.setX(x);
     }
+
     @Override
     protected void setY(int y) {
-        index=-1;
+        index = -1;
         super.setY(y);
     }
+
     @Override
     public Coordinate createCoordinate(int x, int y) {
-        return new IndexedCoordinate(x,y);
+        return new IndexedCoordinate(x, y);
     }
 }

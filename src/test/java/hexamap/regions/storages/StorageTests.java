@@ -28,7 +28,6 @@
  */
 package hexamap.regions.storages;
 
-import com.sun.source.doctree.SerialDataTree;
 import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Cube;
@@ -39,7 +38,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.After;
@@ -90,6 +88,19 @@ public class StorageTests {
         for (Coordinate c : new Axial().getAllNeigbours(region.getRange())) {
             System.out.println(c+" "+indexator.index(c));
         }
+    }
+    
+    @Test
+    public void test_Iteratif_WithCache() {
+        System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif_No_Cache()");
+        assert storage.isEmpty();
+        for (Coordinate c : region) {
+            storage.put(c, new AxialExt(c));
+            assert storage.get(c)!=null;
+            assert storage.get(c).equals(new AxialExt(c));
+        }
+        System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif_No_Cache() - End ("+String.format("%,d", storage.size())+" access)");
+        //assert storage.size() == region.size() - 1;
     }
     
     @Test

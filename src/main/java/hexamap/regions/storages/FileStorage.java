@@ -65,10 +65,10 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
 
         zero = dataClass.getConstructor().newInstance();
         datatBytesSize = toByteArray(zero).length;
-        
+
         cache = ByteBuffer.wrap(new byte[PAGE_SIZE * datatBytesSize]);
         cacheIndex = -1;
-        
+
         initZero();
     }
 
@@ -86,6 +86,7 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
             while (cache.hasRemaining()) {
                 assert channel.read(cache, (long) ((index / PAGE_SIZE) * datatBytesSize)) != -1;
             }
+            cacheIndex = index;
             return readFromCache(index);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -97,7 +98,7 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
     protected Data indexPut(int index, Data data) {
         Data old = indexGet(index);
         try {
-            writeToCache(index,data);
+            writeToCache(index, data);
             cache.position(0);
             while (cache.hasRemaining()) {
                 channel.write(cache, (long) ((index / PAGE_SIZE) * datatBytesSize));
@@ -122,15 +123,15 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private void writeToCache(int index,Data data) throws Exception {
+    private void writeToCache(int index, Data data) throws Exception {
         byte[] buff = toByteArray(data);
-        cache.position((index % PAGE_SIZE)*datatBytesSize);
+        cache.position((index % PAGE_SIZE) * datatBytesSize);
         cache.put(buff, 0, datatBytesSize);
     }
-    
+
     private Data readFromCache(int index) throws Exception {
         byte[] buff = new byte[datatBytesSize];
-        cache.position((index % PAGE_SIZE)*datatBytesSize);
+        cache.position((index % PAGE_SIZE) * datatBytesSize);
         cache.get(buff, 0, datatBytesSize);
         return fromByteArray(buff);
     }
@@ -158,7 +159,7 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
 
     private void initZero() throws Exception {
         byte[] zeroBytes = toByteArray(zero);
-        for (int i=0;i<PAGE_SIZE;i++) {
+        for (int i = 0; i < PAGE_SIZE; i++) {
             cache.put(zeroBytes);
         }
         int loop = region.size() / PAGE_SIZE;

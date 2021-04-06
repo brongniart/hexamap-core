@@ -35,7 +35,10 @@ import hexamap.regions.Region;
  *
  */
 public interface Indexator {
+
     Region getRegion();
+
     public int index(Coordinate coordinate);
+
     public Coordinate deindex(int index);
 }

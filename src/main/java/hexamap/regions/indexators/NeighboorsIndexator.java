@@ -59,7 +59,7 @@ public class NeighboorsIndexator implements Indexator {
         }
 
         int dist = max(abs(coordinate.getX()), max(abs(coordinate.getY()), abs(coordinate.getZ())));
-        
+
         if (dist == 0) {
             return 0;
         } else {
@@ -91,7 +91,7 @@ public class NeighboorsIndexator implements Indexator {
             } else {
                 assert false;
             }
-            assert result>0;
+            assert result > 0;
             if (coordinate.getClass() == IndexedCoordinate.class) {
                 ((IndexedCoordinate) coordinate).index = result;
             }

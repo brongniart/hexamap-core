@@ -39,12 +39,13 @@ import java.util.Iterator;
  */
 public class HashMapStorage<Data> extends AbstractStorage<Data> {
 
-    private final HashMap<Coordinate,Data> map;
+    private final HashMap<Coordinate, Data> map;
+
     public HashMapStorage(Region region) {
         super(region);
         map = new HashMap();
     }
-    
+
     @Override
     protected Data safeGet(Coordinate coordinate) {
         return map.get(coordinate);
@@ -52,7 +53,7 @@ public class HashMapStorage<Data> extends AbstractStorage<Data> {
 
     @Override
     protected Data safePut(Coordinate coordinate, Data data) {
-        return map.put(coordinate,data);
+        return map.put(coordinate, data);
     }
 
     @Override

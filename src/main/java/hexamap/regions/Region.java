@@ -38,13 +38,14 @@ import java.util.Set;
  * @param <CoordinateImpl>
  */
 public abstract class Region<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl> implements Set<CoordinateImpl> {
-    
+
     public abstract boolean equals(Region region);
+
     @Override
     public abstract Iterator<CoordinateImpl> iterator();
-    
+
     public abstract CoordinateImpl getRandom();
-    
+
     //public abstract boolean contains(Region<Data> region);    
     //public abstract AbstractRegion union(Region<Data> r);
     //public abstract AbstractRegion intersection(Region<Data> r);

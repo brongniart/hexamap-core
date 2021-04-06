@@ -39,11 +39,12 @@ import hexamap.regions.indexators.Indexator;
 public abstract class AbstractIndexatorStorage<Data> extends AbstractStorage<Data> {
 
     protected final Indexator indexator;
-    private int size=0;
-    public AbstractIndexatorStorage(Region region,Indexator indexator) {
+    private int size = 0;
+
+    public AbstractIndexatorStorage(Region region, Indexator indexator) {
         super(region);
         assert indexator.getRegion().equals(region);
-        this.indexator=indexator;
+        this.indexator = indexator;
     }
 
     @Override
@@ -55,7 +56,7 @@ public abstract class AbstractIndexatorStorage<Data> extends AbstractStorage<Dat
     public boolean isEmpty() {
         return size == 0;
     }
-    
+
     private int getIndex(Coordinate coordinate) {
         int index = indexator.index(coordinate);
         assert index >= 0 && index <= region.size();
@@ -67,17 +68,19 @@ public abstract class AbstractIndexatorStorage<Data> extends AbstractStorage<Dat
         size = 0;
         indexClear();
     }
+
     protected abstract void indexClear();
 
     @Override
     public Data safeGet(Coordinate coordinate) {
         return indexGet(getIndex(coordinate));
     }
+
     protected abstract Data indexGet(int index);
-    
+
     @Override
     public Data safePut(Coordinate coordinate, Data data) {
-        Data old = indexPut(getIndex(coordinate),data);
+        Data old = indexPut(getIndex(coordinate), data);
         if (data == null && old != null) {
             size--;
         } else if (old == null) {
@@ -85,8 +88,8 @@ public abstract class AbstractIndexatorStorage<Data> extends AbstractStorage<Dat
         }
         return old;
     }
-    protected abstract Data indexPut(int index, Data data);
-    
-    //public abstract Data[] getBulk(Coordinate c, int numbers);
 
+    protected abstract Data indexPut(int index, Data data);
+
+    //public abstract Data[] getBulk(Coordinate c, int numbers);
 }

@@ -38,49 +38,55 @@ import java.util.Set;
  * @param <Data> some stuff
  */
 public abstract class AbstractStorage<Data> implements Storage<Data> {
-    
+
     public static class OutOfRegion extends RuntimeException {
-        public OutOfRegion(Coordinate c,Region region) {super(c+" is out of the region "+region);}
+
+        public OutOfRegion(Coordinate c, Region region) {
+            super(c + " is out of the region " + region);
+        }
     }
-    
+
     protected final Region region;
+
     public AbstractStorage(Region region) {
-        assert region!=null;
+        assert region != null;
         this.region = region;
     }
-    
+
     @Override
     public boolean containsKey(Coordinate coordinate) {
-        assert coordinate!=null;
+        assert coordinate != null;
         return region.contains(coordinate);
     }
 
     private void checkCoordinate(Coordinate coordinate) {
-        assert coordinate!=null;
+        assert coordinate != null;
         if (!containsKey(coordinate)) {
-            throw new OutOfRegion(coordinate,region);
+            throw new OutOfRegion(coordinate, region);
         }
     }
 
     private void checkCoordinates(Set<? extends Coordinate> keySet) {
         keySet.forEach(coordinate -> {
-            assert coordinate!=null;
+            assert coordinate != null;
             checkCoordinate(coordinate);
         });
     }
-    
+
     @Override
     public Data get(Coordinate coordinate) {
         checkCoordinate(coordinate);
         return safeGet(coordinate);
     }
+
     protected abstract Data safeGet(Coordinate coordinate);
-    
+
     @Override
     public Data put(Coordinate coordinate, Data data) {
         checkCoordinate(coordinate);
-        return safePut(coordinate,data);
+        return safePut(coordinate, data);
     }
+
     @Override
     public void putAll(Map<? extends Coordinate, ? extends Data> map) {
         checkCoordinates(map.keySet());
@@ -88,5 +94,6 @@ public abstract class AbstractStorage<Data> implements Storage<Data> {
             safePut(entry.getKey(), entry.getValue());
         });
     }
+
     protected abstract Data safePut(Coordinate coordinate, Data data);
 }

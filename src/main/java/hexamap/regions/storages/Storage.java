@@ -42,13 +42,13 @@ import java.util.Set;
 public interface Storage<Data> extends Map<Coordinate, Data>, Iterable<Entry<Coordinate, Data>> {
 
     public class StorageEntry<Data> implements Map.Entry<Coordinate, Data> {
-        
+
         private Coordinate c;
         private Data data;
 
-        public StorageEntry(Coordinate c,Data data) {
-           this.c=c;
-           this.data=data;
+        public StorageEntry(Coordinate c, Data data) {
+            this.c = c;
+            this.data = data;
         }
 
         @Override

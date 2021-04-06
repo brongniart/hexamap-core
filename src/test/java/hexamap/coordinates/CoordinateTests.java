@@ -49,7 +49,7 @@ public class CoordinateTests {
         return Arrays.asList(new Object[][]{
             {new Axial()},
             {new Cube()},
-            {new hexamap.regions.indexators.IndexedCoordinate()},});
+            {new hexamap.storage.indexators.IndexedCoordinate()},});
     }
     private Coordinate center;
 

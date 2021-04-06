@@ -30,7 +30,7 @@ package hexamap.regions.storages;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
-import hexamap.regions.indexators.Indexator;
+import hexamap.storage.indexators.Indexator;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Iterator;

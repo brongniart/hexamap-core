@@ -29,7 +29,7 @@
 package hexamap.regions.storages;
 
 import hexamap.regions.Region;
-import hexamap.regions.indexators.Indexator;
+import hexamap.storage.indexators.Indexator;
 
 /**
  *

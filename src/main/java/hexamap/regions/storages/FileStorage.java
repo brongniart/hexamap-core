@@ -74,7 +74,7 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
 
     @Override
     protected Data indexGet(int index) {
-        if (cacheIndex == index) {
+        if (cacheIndex == index/PAGE_SIZE) {
             try {
                 return readFromCache(index);
             } catch (Exception ex) {
@@ -86,7 +86,7 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
             while (cache.hasRemaining()) {
                 assert channel.read(cache, (long) ((index / PAGE_SIZE) * datatBytesSize)) != -1;
             }
-            cacheIndex = index;
+            cacheIndex = index/PAGE_SIZE;
             return readFromCache(index);
         } catch (Exception ex) {
             ex.printStackTrace();

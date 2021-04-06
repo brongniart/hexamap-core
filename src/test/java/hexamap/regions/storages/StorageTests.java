@@ -59,8 +59,8 @@ public class StorageTests {
     
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
-        regionXXSmall=new Hexagon(128,IndexedCoordinate.class);
-        regionMedium=new Hexagon(1024,IndexedCoordinate.class);
+        regionXXSmall=new Hexagon(128,IndexedCoordinate.class);  // 49'537 hex
+        regionMedium=new Hexagon(1024,IndexedCoordinate.class);  // 3'148'801 hex
         regionLarge=new Hexagon(2048,IndexedCoordinate.class);
         return Arrays.asList(new Object[][]{
             {new HashMapStorage<AxialExt>(regionMedium),regionMedium},

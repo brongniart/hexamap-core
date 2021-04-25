@@ -26,7 +26,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.regions.storages;
+package hexamap.storage;
 
 import hexamap.coordinates.Coordinate;
 import java.util.Collection;

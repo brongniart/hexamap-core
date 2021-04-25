@@ -26,8 +26,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.regions.storages;
+package hexamap.storages;
 
+import hexamap.storage.Storage;
+import hexamap.storage.ArrayStorage;
+import hexamap.storage.HashMapStorage;
+import hexamap.storage.FileStorage;
 import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Cube;
@@ -107,7 +111,7 @@ public class StorageTests {
     public void test_Iteratif_NoCache() {
         System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif_No_Cache()");
         assert storage.isEmpty();
-        for (Coordinate c : new Axial().getAllNeigbours(region.getRange())) {
+        for (Coordinate c : new Axial(0,0).getAllNeigbours(region.getRange())) {
             storage.put(c, new AxialExt(c));
             assert storage.get(c)!=null;
             assert storage.get(c).equals(new AxialExt(c));
@@ -134,7 +138,7 @@ public class StorageTests {
     }  
     
     @Test
-   public void test_Random_BypassCache() {
+   public void test_Random_NoCache() {
         System.out.println("hexamap.regions.storages.StorageTest.testIterator_Random_No_Cache()");
         assert storage.isEmpty();
 

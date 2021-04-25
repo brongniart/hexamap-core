@@ -26,49 +26,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.regions.storages;
+package hexamap.storage;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
-import hexamap.storage.indexators.Indexator;
-import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
  *
  * @param <Data> some stuff
  */
-public class ArrayStorage<Data> extends AbstractIndexatorStorage<Data> {
+public class HashMapStorage<Data> extends AbstractStorage<Data> {
 
-    private final Data[] array;
+    private final HashMap<Coordinate, Data> map;
 
-    public ArrayStorage(Region region, Indexator indexator, Class<Data> dataClass) {
-        super(region, indexator);
-        this.array = (Data[]) Array.newInstance(dataClass, region.size());
+    public HashMapStorage(Region region) {
+        super(region);
+        map = new HashMap();
     }
 
     @Override
-    protected Data indexGet(int index) {
-        assert index < array.length;
-        return array[index];
+    protected Data safeGet(Coordinate coordinate) {
+        return map.get(coordinate);
     }
 
     @Override
-    protected Data indexPut(int index, Data data) {
-        assert index < array.length;
-        Data old = array[index];
-        array[index] = data;
-        return old;
+    protected Data safePut(Coordinate coordinate, Data data) {
+        return map.put(coordinate, data);
     }
 
     @Override
-    public void indexClear() {
-        Arrays.fill(array, null);
+    public int size() {
+        return map.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    @Override
+    public void clear() {
+        map.clear();
     }
 
     @Override
     public Iterator<Entry<Coordinate, Data>> iterator() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return map.entrySet().iterator();
     }
 }

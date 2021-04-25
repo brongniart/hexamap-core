@@ -82,15 +82,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
 
             @Override
             public boolean hasNext() {
-                if (internal.hasNext()) {
-                    return true;
-                } else {
-                    if (!last) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
+                return !last;
             }
 
             @Override

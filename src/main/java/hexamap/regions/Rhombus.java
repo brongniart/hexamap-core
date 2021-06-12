@@ -28,15 +28,18 @@
  */
 package hexamap.regions;
 
-import hexamap.coordinates.Coordinate;
+import static java.lang.Math.abs;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
+import java.util.Random;
+
+import hexamap.coordinates.Coordinate;
 
 public class Rhombus<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
 
     private final int length;
     private final CoordinateImpl zero;
+	@SuppressWarnings("unused")
 	private Class<CoordinateImpl> coordinateClazz;
 
     public Rhombus(int _length, Class<CoordinateImpl> clazz) throws Exception {
@@ -55,19 +58,14 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
         try {
             @SuppressWarnings("unchecked")
 			CoordinateImpl coordinate = (CoordinateImpl) obj;
-            return coordinate.distance(coordinate.createCoordinate(0, 0)) <= 0;
+            return coordinate.getX() <= length &&
+            		coordinate.getX() >= lowerBound() &&
+            		coordinate.getY() <= length &&
+            		coordinate.getY() >= lowerBound();
         } catch (ClassCastException e) {
             return false;
         }
     }
-
-    /*
-    @Override
-    public boolean contains(Region region) {
-        assert region != null;
-        return true;
-    }
-     */
     
     @SuppressWarnings("unchecked")
 	@Override
@@ -130,6 +128,9 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
 
     @Override
     public CoordinateImpl getRandom() {
-        return null;
+        Random random = new Random();
+        int x = random.nextInt(lowerBound()+length) - lowerBound();
+        int y = random.nextInt(lowerBound()+length) - lowerBound();
+        return (CoordinateImpl) zero.createCoordinate(x, y);
     }
 }

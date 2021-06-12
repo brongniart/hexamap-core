@@ -58,9 +58,9 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
         try {
             @SuppressWarnings("unchecked")
 			CoordinateImpl coordinate = (CoordinateImpl) obj;
-            return coordinate.getX() <= length &&
+            return coordinate.getX() <= upperBound() &&
             		coordinate.getX() >= lowerBound() &&
-            		coordinate.getY() <= length &&
+            		coordinate.getY() <= upperBound() &&
             		coordinate.getY() >= lowerBound();
         } catch (ClassCastException e) {
             return false;
@@ -90,10 +90,10 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
             	assert(!finished);
             	CoordinateImpl next = current;
             	
-            	if (current.getX()==length/2 && current.getY()==length/2) {
+            	if (current.getX()==upperBound() && current.getY()==upperBound()) {
             		finished=true;
             	} else {
-            		if (current.getX()==length/2) {
+            		if (current.getX()==upperBound()) {
             			current = (CoordinateImpl) current.createCoordinate(lowerBound(),current.getY()+1);
             		} else {
             			current = (CoordinateImpl) current.createCoordinate(current.getX()+1,current.getY());
@@ -113,6 +113,10 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
     	}
     }
     
+    private int upperBound() {
+    	return length/2;
+    }
+    
 
     @Override
     public int size() {
@@ -129,8 +133,8 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
     @Override
     public CoordinateImpl getRandom() {
         Random random = new Random();
-        int x = random.nextInt(length/2-lowerBound()) + lowerBound();
-        int y = random.nextInt(length/2-lowerBound()) + lowerBound();
+        int x = random.nextInt(upperBound()-lowerBound()) + lowerBound();
+        int y = random.nextInt(upperBound()-lowerBound()) + lowerBound();
         return (CoordinateImpl) zero.createCoordinate(x, y);
     }
 }

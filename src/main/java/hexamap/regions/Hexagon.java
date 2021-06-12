@@ -64,7 +64,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
         }
         try {
             Coordinate coordinate = (Coordinate) obj;
-            return coordinate.distance(coordinate.createCoordinate(0, 0)) <= range;
+            return coordinate.distance(zero) <= range;
         } catch (ClassCastException e) {
             return false;
         }

@@ -26,5 +26,6 @@ hs_err_pid*
 nbproject/
 
 # gradle
+gradlew.bat
 build/
 .gradle/

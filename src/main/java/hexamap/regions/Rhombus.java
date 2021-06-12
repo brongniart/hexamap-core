@@ -29,15 +29,22 @@
 package hexamap.regions;
 
 import hexamap.coordinates.Coordinate;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 public class Rhombus<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
 
     private final int length;
+    private final CoordinateImpl zero;
+	private Class<CoordinateImpl> coordinateClazz;
 
-    public Rhombus(int length) {
+    public Rhombus(int _length, Class<CoordinateImpl> clazz) throws Exception {
         super();
-        this.length = length;
+        
+        length = _length;
+        coordinateClazz = clazz;
+        zero = clazz.getDeclaredConstructor().newInstance();
     }
 
     @Override
@@ -46,7 +53,8 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
             return false;
         }
         try {
-            CoordinateImpl coordinate = (CoordinateImpl) obj;
+            @SuppressWarnings("unchecked")
+			CoordinateImpl coordinate = (CoordinateImpl) obj;
             return coordinate.distance(coordinate.createCoordinate(0, 0)) <= 0;
         } catch (ClassCastException e) {
             return false;
@@ -60,14 +68,63 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
         return true;
     }
      */
-    @Override
+    
+    @SuppressWarnings("unchecked")
+	@Override
     public Iterator<CoordinateImpl> iterator() {
-        throw new UnsupportedOperationException("Todo: iterator");
+    	
+        return new Iterator<CoordinateImpl>() {
+        	CoordinateImpl current;
+            boolean finished;
+
+            {
+                current = (CoordinateImpl) zero.createCoordinate(lowerBound(),lowerBound());
+                finished=false;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return !finished;
+            }
+
+            @Override
+            public CoordinateImpl next() {
+            	assert(!finished);
+            	CoordinateImpl next = current;
+            	
+            	if (current.getX()==length/2 && current.getY()==length/2) {
+            		finished=true;
+            	} else {
+            		if (current.getX()==length/2) {
+            			current = (CoordinateImpl) current.createCoordinate(lowerBound(),current.getY()+1);
+            		} else {
+            			current = (CoordinateImpl) current.createCoordinate(current.getX()+1,current.getY());
+            		}
+            	}
+            	return next;
+            }
+        };
     }
+    
+    private int lowerBound() {
+    	if (length%2==1) {
+    		return -length/2;
+    		
+    	} else {
+    		return -length/2+1;
+    	}
+    }
+    
 
     @Override
     public int size() {
-        return 0;
+
+    	if (length%2==1) {
+    		return (int) Math.pow(length,2);
+    		
+    	} else {
+    		return (int) Math.pow(length,2);
+    	}
     }
 
     @Override

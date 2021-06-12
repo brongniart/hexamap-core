@@ -47,6 +47,6 @@ public abstract class Region<CoordinateImpl extends Coordinate> extends Abstract
     public abstract CoordinateImpl getRandom();
 
     //public abstract boolean contains(Region<Data> region);    
-    //public abstract AbstractRegion union(Region<Data> r);
-    //public abstract AbstractRegion intersection(Region<Data> r);
+    //public abstract Region union(Region<Data> r);
+    //public abstract Region intersection(Region<Data> r);
 }

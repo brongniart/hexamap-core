@@ -30,6 +30,8 @@ package hexamap.regions;
 
 import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
+import hexamap.coordinates.Direction;
+
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Test;
@@ -49,6 +51,7 @@ public class RegionsTests {
         return Arrays.asList(new Object[][]{
             {new Hexagon<>(1024,Axial.class)},
             {new Rhombus<Axial>(1024,Axial.class)},
+            {new Triangle<Axial>(Direction.NORD,1024,Axial.class)},
         });
     }
     private final Region<Coordinate> region;

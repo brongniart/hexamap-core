@@ -28,23 +28,23 @@
  */
 package hexamap.regions;
 
-import static java.lang.Math.abs;
-
-import java.util.Iterator;
-import java.util.Random;
-
 import hexamap.coordinates.Coordinate;
+import hexamap.coordinates.Direction;
 
-public class Rhombus<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
+import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 
+public class Triangle<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
+
+    private final Direction direction;
     private final int length;
     private final CoordinateImpl zero;
-	@SuppressWarnings("unused")
 	private Class<CoordinateImpl> coordinateClazz;
 
-    public Rhombus(int _length, Class<CoordinateImpl> clazz) throws Exception {
+    public Triangle(Direction _direction, int _length, Class<CoordinateImpl> clazz) throws Exception {
         super();
         
+        direction = _direction;
         length = _length;
         coordinateClazz = clazz;
         zero = clazz.getDeclaredConstructor().newInstance();
@@ -58,14 +58,19 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
         try {
             @SuppressWarnings("unchecked")
 			CoordinateImpl coordinate = (CoordinateImpl) obj;
-            return coordinate.getX() <= length &&
-            		coordinate.getX() >= lowerBound() &&
-            		coordinate.getY() <= length &&
-            		coordinate.getY() >= lowerBound();
+            return coordinate.distance(coordinate.createCoordinate(0, 0)) <= 0;
         } catch (ClassCastException e) {
             return false;
         }
     }
+
+    /*
+    @Override
+    public boolean contains(Region region) {
+        assert region != null;
+        return true;
+    }
+     */
     
     @SuppressWarnings("unchecked")
 	@Override
@@ -122,15 +127,12 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
     @Override
     public boolean equals(Region region) {
         assert region != null;
-        return region.getClass() == Rhombus.class
-                && ((Rhombus) region).length == this.length;
+        return region.getClass() == Triangle.class
+                && ((Triangle) region).length == this.length;
     }
 
     @Override
     public CoordinateImpl getRandom() {
-        Random random = new Random();
-        int x = random.nextInt(length/2-lowerBound()) + lowerBound();
-        int y = random.nextInt(length/2-lowerBound()) + lowerBound();
-        return (CoordinateImpl) zero.createCoordinate(x, y);
+        return null;
     }
 }

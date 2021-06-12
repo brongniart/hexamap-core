@@ -118,13 +118,7 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
 
     @Override
     public int size() {
-
-    	if (length%2==1) {
-    		return (int) Math.pow(length,2);
-    		
-    	} else {
-    		return (int) Math.pow(length,2);
-    	}
+    	return (int) Math.pow(length,2);
     }
 
     @Override

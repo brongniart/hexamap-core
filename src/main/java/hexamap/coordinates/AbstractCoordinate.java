@@ -56,7 +56,7 @@ public abstract class AbstractCoordinate implements Coordinate {
 
     @Override
     public Coordinate add(Direction direction, int range) {
-        return createCoordinate(range*(getX()+direction.x),range*(getY()+direction.y));
+        return createCoordinate(getX()+range*direction.x,getY()+range*direction.y);
     }
     
     public class NeigboursIterator implements Iterator<Coordinate> {
@@ -93,6 +93,7 @@ public abstract class AbstractCoordinate implements Coordinate {
 
         @Override
         public Coordinate next() {
+            //System.err.println("Current: "+current+" Center: "+center+" Range: "+range);
             Coordinate returnValue=current;
             
             //compute the next

@@ -44,7 +44,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
     private final CoordinateImpl zero;
     private final Class<CoordinateImpl> coordinateClazz;
 
-    public Hexagon(int range, Class<CoordinateImpl> clazz) throws Exception {
+    public Hexagon(int range, Class<CoordinateImpl> clazz) {
         super();
         this.range = range;
 
@@ -54,7 +54,11 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
         }
         size = tmpSize;
         coordinateClazz = clazz;
-        zero = clazz.getDeclaredConstructor().newInstance();
+        try {
+			zero = clazz.getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
@@ -77,7 +81,9 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
             boolean last = false;
 
             {
-                this.internal = zero.getAllNeigbours(range).iterator();
+            	if (range > 0) {
+                    this.internal = zero.getAllNeigbours(range).iterator();
+            	}
             }
 
             @Override
@@ -87,7 +93,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
 
             @Override
             public CoordinateImpl next() {
-                if (internal.hasNext()) {
+                if (internal!=null && internal.hasNext()) {
                     try {
                         return coordinateClazz.getDeclaredConstructor(Coordinate.class).newInstance(internal.next());
                     } catch (Exception ex) {
@@ -126,8 +132,8 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
     public CoordinateImpl getRandom() {
         Random random = new Random();
         int x = random.nextInt(range * 2 + 1) - range;
-
-        int bound = range - abs(x);
+        
+        int bound = range - abs(x) - 1;
         int y = (x > 0)
                 ? random.nextInt(range + bound) - range
                 : random.nextInt(range + bound) - bound;

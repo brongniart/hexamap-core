@@ -28,12 +28,14 @@
  */
 package hexamap.regions;
 
-import static java.lang.Math.abs;
-
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Random;
 
+import javax.management.RuntimeErrorException;
+
 import hexamap.coordinates.Coordinate;
+import hexamap.coordinates.Direction;
 
 public class Rhombus<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
 
@@ -41,13 +43,31 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
     private final CoordinateImpl zero;
 	@SuppressWarnings("unused")
 	private Class<CoordinateImpl> coordinateClazz;
+	private Direction direction;
 
-    public Rhombus(int _length, Class<CoordinateImpl> clazz) throws Exception {
+    public Rhombus(int _length, Class<CoordinateImpl> clazz) {
+    	this(_length,Direction.NORD,clazz);
+    }
+    
+    public Direction getDirection() {
+    	return direction;
+    }
+    
+    public void switchDirection() {
+    	direction = direction==Direction.NORD? Direction.SOUTH : Direction.NORD_WEST;
+    }
+    
+    public Rhombus(int _length,Direction _direction, Class<CoordinateImpl> clazz) {
         super();
-        
+
+        direction = _direction;
         length = _length;
         coordinateClazz = clazz;
-        zero = clazz.getDeclaredConstructor().newInstance();
+        try {
+			zero = clazz.getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
@@ -57,7 +77,8 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
         }
         try {
             @SuppressWarnings("unchecked")
-			CoordinateImpl coordinate = (CoordinateImpl) obj;
+			CoordinateImpl coordinate = rotate((CoordinateImpl) obj);
+            
             return coordinate.getX() <= upperBound() &&
             		coordinate.getX() >= lowerBound() &&
             		coordinate.getY() <= upperBound() &&
@@ -67,7 +88,12 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
         }
     }
     
-    @SuppressWarnings("unchecked")
+    private CoordinateImpl rotate(CoordinateImpl c) {
+		//return (CoordinateImpl) zero.createCoordinate(c.getY(),c.getZ());
+		return (CoordinateImpl) c.rotate(direction);
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
     public Iterator<CoordinateImpl> iterator() {
     	
@@ -77,7 +103,7 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
 
             {
                 current = (CoordinateImpl) zero.createCoordinate(lowerBound(),lowerBound());
-                finished=false;
+            	finished=false;
             }
 
             @Override
@@ -91,15 +117,16 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
             	CoordinateImpl next = current;
             	
             	if (current.getX()==upperBound() && current.getY()==upperBound()) {
-            		finished=true;
+                	finished=true;
             	} else {
             		if (current.getX()==upperBound()) {
-            			current = (CoordinateImpl) current.createCoordinate(lowerBound(),current.getY()+1);
+        				current = (CoordinateImpl) current.createCoordinate(lowerBound(),current.getY()+1);
             		} else {
             			current = (CoordinateImpl) current.createCoordinate(current.getX()+1,current.getY());
+            			//current = (CoordinateImpl) current.createCoordinate(current.getX(),current.getY()+1);
             		}
             	}
-            	return next;
+            	return rotate(next);
             }
         };
     }
@@ -127,7 +154,8 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
     public boolean equals(Region region) {
         assert region != null;
         return region.getClass() == Rhombus.class
-                && ((Rhombus) region).length == this.length;
+                && ((Rhombus) region).length == this.length
+                && ((Rhombus) region).direction == this.direction;
     }
 
     @Override

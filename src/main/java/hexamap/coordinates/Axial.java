@@ -96,4 +96,26 @@ public class Axial extends AbstractCoordinate
     public Coordinate createCoordinate(int x, int y) {
         return new Axial(x,y);
     }
+
+	@Override
+	public Coordinate rotate(Direction direction) {
+		if (direction==Direction.NORD_EAST) {
+			x=getY();
+			y=getX();
+		} else if (direction==Direction.SOUTH_EAST) {
+			x=getY();
+			y=getZ();
+		} else if (direction==Direction.SOUTH) {
+			y=getZ();
+		} else if (direction==Direction.SOUTH_WEST) {
+			y=getX();
+			x=getZ();
+		} else if (direction==Direction.NORD_WEST) {
+			x=getZ();
+		} else {
+			// if (direction==Direction.NORD) do nothing
+			assert direction==Direction.NORD;
+		}
+		return this;
+	}
 }

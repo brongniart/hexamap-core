@@ -41,13 +41,17 @@ public class Triangle<CoordinateImpl extends Coordinate> extends Region<Coordina
     private final CoordinateImpl zero;
 	private Class<CoordinateImpl> coordinateClazz;
 
-    public Triangle(Direction _direction, int _length, Class<CoordinateImpl> clazz) throws Exception {
+    public Triangle(Direction _direction, int _length, Class<CoordinateImpl> clazz) {
         super();
         
         direction = _direction;
         length = _length;
         coordinateClazz = clazz;
-        zero = clazz.getDeclaredConstructor().newInstance();
+        try {
+			zero = clazz.getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override

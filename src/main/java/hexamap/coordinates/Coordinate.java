@@ -42,7 +42,7 @@ public interface Coordinate {
     Coordinate getNext(Direction direction);
 
     Coordinate createCoordinate(int x, int y);
-
+    
     Iterable<Coordinate> getNeigbours();
 
     Iterable<Coordinate> getNeigbours(int range);
@@ -58,4 +58,6 @@ public interface Coordinate {
     void move(Coordinate coordinate);
 
     void move(Direction direction, int range);
+
+	Coordinate rotate(Direction direction);
 }

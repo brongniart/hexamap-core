@@ -96,6 +96,14 @@ public class Axial extends AbstractCoordinate
     public Coordinate createCoordinate(int x, int y) {
         return new Axial(x,y);
     }
+	@Override
+	public Coordinate createCoordinateXZ(int x, int z) {
+        return new Axial(x,- x - z);
+	}
+	@Override
+	public Coordinate createCoordinateYZ(int y, int z) {
+        return new Axial(- y - z,z);
+	}
 
 	@Override
 	public Coordinate rotate(Direction direction) {
@@ -118,4 +126,5 @@ public class Axial extends AbstractCoordinate
 		}
 		return this;
 	}
+
 }

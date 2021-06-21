@@ -28,141 +28,191 @@
  */
 package hexamap.regions;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Random;
-
-import javax.management.RuntimeErrorException;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
 
 public class Rhombus<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
 
-    private final int length;
-    private final CoordinateImpl zero;
+	private final int lowerBound;
+	private final int upperBound;
+	private final CoordinateImpl zero;
 	@SuppressWarnings("unused")
 	private Class<CoordinateImpl> coordinateClazz;
 	private Direction direction;
 
-    public Rhombus(int _length, Class<CoordinateImpl> clazz) {
-    	this(_length,Direction.NORD,clazz);
-    }
-    
-    public Direction getDirection() {
-    	return direction;
-    }
-    
-    public void switchDirection() {
-    	direction = direction==Direction.NORD? Direction.SOUTH : Direction.NORD_WEST;
-    }
-    
-    public Rhombus(int _length,Direction _direction, Class<CoordinateImpl> clazz) {
-        super();
+	public Rhombus(int _length, Class<CoordinateImpl> clazz) {
+		this(_length, Direction.NORD, clazz);
+	}
 
-        direction = _direction;
-        length = _length;
-        coordinateClazz = clazz;
-        try {
+	public Rhombus(int _length, Direction _direction, Class<CoordinateImpl> clazz) {
+		this((_length % 2 == 1) ? -_length / 2 : -_length / 2 + 1, _length / 2, _direction, clazz);
+	}
+
+	public Rhombus(int _lowerBound, int _upperBound, Class<CoordinateImpl> clazz) {
+		this(_lowerBound, _upperBound, Direction.NORD_WEST, clazz);
+	}
+
+	public Rhombus(int _lowerBound, int _upperBound, Direction _direction, Class<CoordinateImpl> clazz) {
+		super();
+
+		lowerBound = _lowerBound;
+		upperBound = _upperBound;
+		direction = _direction;
+		coordinateClazz = clazz;
+		try {
 			zero = clazz.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-    }
+	}
 
-    @Override
-    public boolean contains(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        try {
-            @SuppressWarnings("unchecked")
+	public Direction getDirection() {
+		return direction;
+	}
+
+	public void switchDirection() {
+		direction = direction == Direction.NORD ? Direction.SOUTH_EAST : Direction.NORD_WEST;
+	}
+
+	@Override
+	public boolean contains(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		try {
+			@SuppressWarnings("unchecked")
 			CoordinateImpl coordinate = rotate((CoordinateImpl) obj);
-            
-            return coordinate.getX() <= upperBound() &&
-            		coordinate.getX() >= lowerBound() &&
-            		coordinate.getY() <= upperBound() &&
-            		coordinate.getY() >= lowerBound();
-        } catch (ClassCastException e) {
-            return false;
-        }
-    }
-    
-    private CoordinateImpl rotate(CoordinateImpl c) {
-		//return (CoordinateImpl) zero.createCoordinate(c.getY(),c.getZ());
+
+			return getX(coordinate) <= upperBound && getX(coordinate) >= lowerBound
+					&& getY(coordinate) <= upperBound && getY(coordinate) >= lowerBound;
+		} catch (ClassCastException e) {
+			return false;
+		}
+	}
+
+	private int getX(CoordinateImpl coordinate) {
+		switch (direction) {
+		case NORD:
+			return coordinate.getY();
+		case SOUTH:
+			return -coordinate.getY();
+		case NORD_EAST:
+		case SOUTH_EAST:
+			return coordinate.getX();
+		case NORD_WEST:
+		case SOUTH_WEST:
+			return -coordinate.getX();
+		default:
+			throw new RuntimeException("Unknow direction " + direction);
+		}
+	}
+
+	private int getY(CoordinateImpl coordinate) {
+		switch (direction) {
+		case NORD:
+			return -coordinate.getX();
+		case SOUTH:
+			return coordinate.getX();
+		case NORD_EAST:
+		case SOUTH_EAST:
+			return -coordinate.getY();
+		case NORD_WEST:
+		case SOUTH_WEST:
+			return coordinate.getY();
+		default:
+			throw new RuntimeException("Unknow direction " + direction);
+		}
+	}
+
+	private CoordinateImpl rotate(CoordinateImpl c) {
+		// return (CoordinateImpl) zero.createCoordinate(c.getY(),c.getZ());
 		return (CoordinateImpl) c.rotate(direction);
 	}
 
 	@SuppressWarnings("unchecked")
+	private CoordinateImpl createCoordinate(int x,int y) {
+		switch (direction) {
+		case NORD:
+			return (CoordinateImpl) zero.createCoordinateYZ(y, -x);
+		case NORD_EAST:
+			return (CoordinateImpl) zero.createCoordinateXZ(x, -y);
+		case SOUTH_EAST:
+			return (CoordinateImpl) zero.createCoordinate(x, -y);
+		case SOUTH:
+			return (CoordinateImpl) zero.createCoordinateYZ(-y, x);
+		case SOUTH_WEST:
+			return (CoordinateImpl) zero.createCoordinateXZ(-x, y);
+		case NORD_WEST:
+			return (CoordinateImpl) zero.createCoordinateYZ(-x, y);
+		default:
+			throw new RuntimeException("Unknow direction " + direction);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
-    public Iterator<CoordinateImpl> iterator() {
-    	
-        return new Iterator<CoordinateImpl>() {
-        	CoordinateImpl current;
-            boolean finished;
+	public Iterator<CoordinateImpl> iterator() {
 
-            {
-                current = (CoordinateImpl) zero.createCoordinate(lowerBound(),lowerBound());
-            	finished=false;
-            }
+		return new Iterator<CoordinateImpl>() {
+			CoordinateImpl current;
+			boolean finished;
 
-            @Override
-            public boolean hasNext() {
-                return !finished;
-            }
+			{
+				current = createCoordinate(lowerBound, lowerBound);
+				finished = false;
+			}
 
-            @Override
-            public CoordinateImpl next() {
-            	assert(!finished);
-            	CoordinateImpl next = current;
-            	
-            	if (current.getX()==upperBound() && current.getY()==upperBound()) {
-                	finished=true;
-            	} else {
-            		if (current.getX()==upperBound()) {
-        				current = (CoordinateImpl) current.createCoordinate(lowerBound(),current.getY()+1);
-            		} else {
-            			current = (CoordinateImpl) current.createCoordinate(current.getX()+1,current.getY());
-            			//current = (CoordinateImpl) current.createCoordinate(current.getX(),current.getY()+1);
-            		}
-            	}
-            	return rotate(next);
-            }
-        };
-    }
-    
-    private int lowerBound() {
-    	if (length%2==1) {
-    		return -length/2;
-    		
-    	} else {
-    		return -length/2+1;
-    	}
-    }
-    
-    private int upperBound() {
-    	return length/2;
-    }
-    
+			@Override
+			public boolean hasNext() {
+				return !finished;
+			}
 
-    @Override
-    public int size() {
-    	return (int) Math.pow(length,2);
-    }
+			@Override
+			public CoordinateImpl next() {
+				assert (!finished);
 
-    @Override
-    public boolean equals(Region region) {
-        assert region != null;
-        return region.getClass() == Rhombus.class
-                && ((Rhombus) region).length == this.length
-                && ((Rhombus) region).direction == this.direction;
-    }
+				CoordinateImpl next = current;
 
-    @Override
-    public CoordinateImpl getRandom() {
-        Random random = new Random();
-        int x = random.nextInt(upperBound()-lowerBound()) + lowerBound();
-        int y = random.nextInt(upperBound()-lowerBound()) + lowerBound();
-        return (CoordinateImpl) zero.createCoordinate(x, y);
-    }
+				if (getX(current) == upperBound && getY(current) == upperBound) {
+					finished = true;
+				} else {
+					if (getX(current) == upperBound) {
+						current = (CoordinateImpl) current.createCoordinate(lowerBound, getY(current) + 1);
+					} else {
+						current = (CoordinateImpl) current.createCoordinate(getX(current) + 1, getY(current));
+					}
+				}
+				return next;
+			}
+		};
+	}
+
+	private double getLength() {
+		return upperBound - lowerBound;
+	}
+
+	@Override
+	public int size() {
+		return (int) Math.pow(getLength(), 2);
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public boolean equals(Region region) {
+		assert region != null;
+		return region.getClass() == Rhombus.class && ((Rhombus) region).upperBound == this.upperBound
+				&& ((Rhombus) region).lowerBound == this.lowerBound && ((Rhombus) region).direction == this.direction;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public CoordinateImpl getRandom() {
+		Random random = new Random();
+		int x = random.nextInt(upperBound - lowerBound) + lowerBound;
+		int y = random.nextInt(upperBound - lowerBound) + lowerBound;
+		return createCoordinate(x,y);
+	}
 }

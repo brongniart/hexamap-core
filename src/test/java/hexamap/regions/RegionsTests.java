@@ -49,8 +49,8 @@ public class RegionsTests {
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
         return Arrays.asList(new Object[][]{
-            {new Hexagon<>(1024,Axial.class)},
-            {new Rhombus<Axial>(1024,Axial.class)}
+            {new Hexagon<>(1024,Axial.class)}//,
+           // {new Rhombus<Axial>(1024,Axial.class)}
             //,
           //  {new Triangle<Axial>(Direction.NORD,1024,Axial.class)},
         });

@@ -42,6 +42,10 @@ public interface Coordinate {
     Coordinate getNext(Direction direction);
 
     Coordinate createCoordinate(int x, int y);
+
+    Coordinate createCoordinateXZ(int x, int z);
+
+    Coordinate createCoordinateYZ(int y, int x);
     
     Iterable<Coordinate> getNeigbours();
 

@@ -46,6 +46,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
 
     public Hexagon(int range, Class<CoordinateImpl> clazz) {
         super();
+		System.out.println("Range:"+range);
         this.range = range;
 
         int tmpSize = 1;

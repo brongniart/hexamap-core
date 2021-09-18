@@ -63,7 +63,7 @@ public class StorageTests {
     
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
-        regionXXSmall=new Hexagon(128,IndexedCoordinate.class);  // 49'537 hex
+        regionXXSmall=new Hexagon(100,IndexedCoordinate.class);  // 49'537 hex
         regionMedium=new Hexagon(1024,IndexedCoordinate.class);  // 3'148'801 hex
         regionLarge=new Hexagon(2048,IndexedCoordinate.class);
         return Arrays.asList(new Object[][]{

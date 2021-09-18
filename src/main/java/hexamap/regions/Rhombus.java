@@ -85,7 +85,7 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
 		try {
 			@SuppressWarnings("unchecked")
 			CoordinateImpl coordinate = rotate((CoordinateImpl) obj);
-
+			
 			return getX(coordinate) <= upperBound && getX(coordinate) >= lowerBound
 					&& getY(coordinate) <= upperBound && getY(coordinate) >= lowerBound;
 		} catch (ClassCastException e) {

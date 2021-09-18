@@ -68,8 +68,6 @@ public class CoordinateTests {
         tmp = center.getNext(Direction.NORD);
         assert tmp.equals(center.add(Direction.NORD, 1));
         assert tmp.getNext(Direction.NORD).equals(center.add(Direction.NORD, 2));
-
-        center = center.createCoordinate(0, 0);
     }
 
     @Test

@@ -40,21 +40,21 @@ public interface Coordinate {
     int getZ();
     
     Coordinate getNext(Direction direction);
-
+    
     Coordinate createCoordinate(int x, int y);
-
+    
     Coordinate createCoordinateXZ(int x, int z);
-
+    
     Coordinate createCoordinateYZ(int y, int x);
     
     Iterable<Coordinate> getNeigbours();
-
+    
     Iterable<Coordinate> getNeigbours(int range);
-
+    
     Iterable<Coordinate> getAllNeigbours(int range);
-
+    
     int distance(Coordinate other);
-
+    
     Coordinate add(Coordinate coordinate);
 
     Coordinate add(Direction direction, int range);

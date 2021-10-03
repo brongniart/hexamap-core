@@ -26,49 +26,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storage;
+package hexamap.maps.indexators;
 
+import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.Region;
-import hexamap.storage.indexators.Indexator;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  *
- * @param <Data> some stuff
+ * @author jerome
  */
-public class ArrayStorage<Data> extends AbstractIndexatorStorage<Data> {
+public class IndexedCoordinate extends Axial {
 
-    private final Data[] array;
+    protected int index = -1;
 
-    public ArrayStorage(Region region, Indexator indexator, Class<Data> dataClass) {
-        super(region, indexator);
-        this.array = (Data[]) Array.newInstance(dataClass, region.size());
+    public IndexedCoordinate() {
+        super();
+    }
+
+    public IndexedCoordinate(int x, int y) {
+        super(x, y);
+    }
+
+    public IndexedCoordinate(Coordinate c) {
+        super(c);
     }
 
     @Override
-    protected Data indexGet(int index) {
-        assert index < array.length;
-        return array[index];
+    protected void setX(int x) {
+        index = -1;
+        super.setX(x);
     }
 
     @Override
-    protected Data indexPut(int index, Data data) {
-        assert index < array.length;
-        Data old = array[index];
-        array[index] = data;
-        return old;
+    protected void setY(int y) {
+        index = -1;
+        super.setY(y);
     }
 
     @Override
-    public void indexClear() {
-        Arrays.fill(array, null);
-    }
-
-    @Override
-    public Iterator<Entry<Coordinate, Data>> iterator() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public IndexedCoordinate createCoordinate(int x, int y) {
+        return new IndexedCoordinate(x, y);
     }
 }

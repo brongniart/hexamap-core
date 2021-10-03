@@ -26,15 +26,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storage;
+package hexamap.maps;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.maps.indexators.Indexator;
 import hexamap.regions.Region;
-import hexamap.storage.indexators.Indexator;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.Externalizable;
 import java.io.File;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
@@ -42,12 +45,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  *
  * @param <Data> some stuff
  */
-public class FileStorage<Data extends Externalizable> extends AbstractIndexatorStorage<Data> {
+public class FileMap<CoordinateImpl extends Coordinate,Data extends Externalizable> extends AbstractIndexatorMap<CoordinateImpl,Data> implements Closeable {
 
     private final FileChannel channel;
     private final int datatBytesSize;
@@ -57,7 +61,8 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
     private int cacheIndex;
     private final int PAGE_SIZE = 1024;
 
-    public FileStorage(Region region, Indexator indexator, Class<Data> dataClass) throws Exception {
+    @SuppressWarnings("resource")
+	public FileMap(Region<CoordinateImpl> region, Indexator indexator, Class<Data> dataClass) throws Exception {
         super(region, indexator);
 
         File f = Files.createTempFile("test-", ".hexamap").toFile();
@@ -119,7 +124,7 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
     }
 
     @Override
-    public Iterator<Entry<Coordinate, Data>> iterator() {
+    public Iterator<Map.Entry<CoordinateImpl, Data>> iterator() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -152,7 +157,8 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
         assert bytes.length == datatBytesSize;
         try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
                 ObjectInputStream iis = new ObjectInputStream(bis)) {
-            Data result = (Data) iis.readObject();
+            @SuppressWarnings("unchecked")
+			Data result = (Data) iis.readObject();
             return result;
         }
     }
@@ -174,4 +180,9 @@ public class FileStorage<Data extends Externalizable> extends AbstractIndexatorS
         }
         channel.force(true);
     }
+
+	@Override
+	public void close() throws IOException {
+		channel.close();
+	}
 }

@@ -28,16 +28,16 @@
  */
 package hexamap.regions;
 
-import hexamap.coordinates.Axial;
-import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Direction;
-
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import hexamap.coordinates.Axial;
+import hexamap.coordinates.Coordinate;
 
 /**
  *
@@ -49,22 +49,22 @@ public class RegionsTests {
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
         return Arrays.asList(new Object[][]{
-            {new Hexagon<>(1024,Axial.class)},
-            {new Rhombus<Axial>(1024,Axial.class)}
+            {new Hexagon<>(1024,Axial.class)} //,
+            //{new Rhombus<Axial>(1024,Axial.class)}
             //,
           //  {new Triangle<Axial>(Direction.NORD,1024,Axial.class)},
         });
     }
-    private final Region<Coordinate> region;
-    public RegionsTests(Region region) throws Exception {
+    private final Region<Axial> region;
+    public RegionsTests(Region<Axial> region) throws Exception {
         this.region = region;
     }
 
     @Test
     public void testContains() {
         int count=0;
-        for (Coordinate c: region) {
-            assert region.contains(c);
+        for (Axial coordinate: region) {
+            assert region.contains(coordinate);
             count++;
         }
         assert count==region.size();
@@ -72,7 +72,7 @@ public class RegionsTests {
 
     @Test
     public void testGetRandom() {
-        for (Coordinate c: region) {
+        for (@SuppressWarnings("unused") Coordinate c: region) {
             assert region.contains(region.getRandom());
         }
     }

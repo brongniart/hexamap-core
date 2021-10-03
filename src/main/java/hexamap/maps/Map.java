@@ -26,12 +26,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storage;
+package hexamap.maps;
 
 import hexamap.coordinates.Coordinate;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -39,21 +38,21 @@ import java.util.Set;
  *
  * @param <Data> some stuffs
  */
-public interface Storage<Data> extends Map<Coordinate, Data>, Iterable<Entry<Coordinate, Data>> {
+public interface Map<CoordinateImpl extends Coordinate,Data> extends java.util.Map<CoordinateImpl, Data>, Iterable<Entry<CoordinateImpl, Data>> {
 
-    public class StorageEntry<Data> implements Map.Entry<Coordinate, Data> {
+    public class Entry<CoordinateImpl extends Coordinate,Data> implements java.util.Map.Entry<CoordinateImpl, Data> {
 
-        private Coordinate c;
+        private CoordinateImpl coordinate;
         private Data data;
 
-        public StorageEntry(Coordinate c, Data data) {
-            this.c = c;
+        public Entry(CoordinateImpl coordinate, Data data) {
+            this.coordinate = coordinate;
             this.data = data;
         }
 
         @Override
-        public Coordinate getKey() {
-            return c;
+        public CoordinateImpl getKey() {
+            return coordinate;
         }
 
         @Override
@@ -70,43 +69,43 @@ public interface Storage<Data> extends Map<Coordinate, Data>, Iterable<Entry<Coo
     }
 
     @Override
-    public Iterator<Entry<Coordinate, Data>> iterator();
+    public Iterator<java.util.Map.Entry<CoordinateImpl, Data>> iterator();
 
     @Override
     default public boolean containsKey(Object arg0) {
         throw new ClassCastException();
     }
 
-    public abstract boolean containsKey(Coordinate coordinate);
+    public abstract boolean containsKey(CoordinateImpl coordinate);
 
     @Override
     default public Data get(Object arg0) {
         throw new ClassCastException();
     }
 
-    public abstract Data get(Coordinate arg0);
+    public abstract Data get(CoordinateImpl arg0);
 
     @Override
     default public Data remove(Object arg0) {
         throw new ClassCastException();
     }
 
-    default public Data remove(Coordinate arg0) {
+    default public Data remove(CoordinateImpl arg0) {
         return put(arg0, null);
     }
-
+    
     @Override
-    public abstract Data put(Coordinate c, Data data);
+    public abstract Data put(CoordinateImpl c, Data data);
 
-    @Override
-    public abstract void putAll(Map<? extends Coordinate, ? extends Data> map);
-
+	@Override
+	public void putAll(java.util.Map<? extends CoordinateImpl, ? extends Data> m);
+	
     @Override
     public abstract void clear();
 
     // Unsupported methods from Map:
     @Override
-    default public Set<Coordinate> keySet() {
+    default public Set<CoordinateImpl> keySet() {
         throw new UnsupportedOperationException();
     }
 
@@ -116,7 +115,7 @@ public interface Storage<Data> extends Map<Coordinate, Data>, Iterable<Entry<Coo
     }
 
     @Override
-    default public Set<Entry<Coordinate, Data>> entrySet() {
+    default public Set<java.util.Map.Entry<CoordinateImpl, Data>> entrySet() {
         throw new UnsupportedOperationException();
     }
 

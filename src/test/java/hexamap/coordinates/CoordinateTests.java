@@ -49,7 +49,7 @@ public class CoordinateTests {
         return Arrays.asList(new Object[][]{
             {new Axial()},
             {new Cube()},
-            {new hexamap.storage.indexators.IndexedCoordinate()},});
+            {new hexamap.maps.indexators.IndexedCoordinate()},});
     }
     private Coordinate center;
 
@@ -116,7 +116,7 @@ public class CoordinateTests {
         assert count == 6 + 6 * 2;
         
         count = 0;
-        for (Coordinate c : center.getAllNeigbours(1024)) {
+        for (@SuppressWarnings("unused") Coordinate c : center.getAllNeigbours(1024)) {
             count++;
         }
         assert count==3148800;

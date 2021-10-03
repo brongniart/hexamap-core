@@ -26,74 +26,76 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storage;
+package hexamap.maps;
+
+import java.util.Set;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
-import java.util.Map;
-import java.util.Set;
 
 /**
  *
  * @param <Data> some stuff
  */
-public abstract class AbstractStorage<Data> implements Storage<Data> {
+public abstract class AbstractMap<CoordinateImpl extends Coordinate,Data> implements Map<CoordinateImpl,Data> {
 
     public static class OutOfRegion extends RuntimeException {
+		private static final long serialVersionUID = 1L;
 
-        public OutOfRegion(Coordinate c, Region region) {
+		public OutOfRegion(Coordinate c, Region<Coordinate> region) {
             super(c + " is out of the region " + region);
         }
     }
 
-    protected final Region region;
+    protected final Region<CoordinateImpl> region;
 
-    public AbstractStorage(Region region) {
+    public AbstractMap(Region<CoordinateImpl> region) {
         assert region != null;
         this.region = region;
     }
-
-    @Override
-    public boolean containsKey(Coordinate coordinate) {
+    
+	@Override
+    public boolean containsKey(CoordinateImpl coordinate) {
         assert coordinate != null;
         return region.contains(coordinate);
     }
 
-    private void checkCoordinate(Coordinate coordinate) {
+    @SuppressWarnings("unchecked")
+	private void checkCoordinate(CoordinateImpl coordinate) {
         assert coordinate != null;
         if (!containsKey(coordinate)) {
-            throw new OutOfRegion(coordinate, region);
+            throw new OutOfRegion((Coordinate) coordinate, (Region<Coordinate>) region);
         }
     }
 
-    private void checkCoordinates(Set<? extends Coordinate> keySet) {
-        keySet.forEach(coordinate -> {
-            assert coordinate != null;
-            checkCoordinate(coordinate);
-        });
-    }
-
-    @Override
-    public Data get(Coordinate coordinate) {
+	@Override
+    public Data get(CoordinateImpl coordinate) {
         checkCoordinate(coordinate);
         return safeGet(coordinate);
     }
 
-    protected abstract Data safeGet(Coordinate coordinate);
+    protected abstract Data safeGet(CoordinateImpl coordinate);
 
     @Override
-    public Data put(Coordinate coordinate, Data data) {
+    public Data put(CoordinateImpl coordinate, Data data) {
         checkCoordinate(coordinate);
         return safePut(coordinate, data);
     }
 
-    @Override
-    public void putAll(Map<? extends Coordinate, ? extends Data> map) {
+	@Override
+	public void putAll(java.util.Map<? extends CoordinateImpl, ? extends Data> map) {
         checkCoordinates(map.keySet());
         map.entrySet().forEach(entry -> {
             safePut(entry.getKey(), entry.getValue());
         });
     }
 
-    protected abstract Data safePut(Coordinate coordinate, Data data);
+    private void checkCoordinates(Set<? extends CoordinateImpl> keySet) {
+        keySet.forEach(coordinate -> {
+            assert coordinate != null;
+            checkCoordinate(coordinate);
+        });
+    }
+    
+    protected abstract Data safePut(CoordinateImpl coordinate, Data data);
 }

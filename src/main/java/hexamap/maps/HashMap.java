@@ -26,33 +26,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storage;
+package hexamap.maps;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  *
  * @param <Data> some stuff
  */
-public class HashMapStorage<Data> extends AbstractStorage<Data> {
+public class HashMap<CoordinateImpl extends Coordinate,Data> extends AbstractMap<CoordinateImpl,Data> {
 
-    private final HashMap<Coordinate, Data> map;
+    private final java.util.HashMap<CoordinateImpl, Data> map;
 
-    public HashMapStorage(Region region) {
+    public HashMap(Region<CoordinateImpl> region) {
         super(region);
-        map = new HashMap();
+        map = new java.util.HashMap<CoordinateImpl, Data>();
     }
 
     @Override
-    protected Data safeGet(Coordinate coordinate) {
+    protected Data safeGet(CoordinateImpl coordinate) {
         return map.get(coordinate);
     }
 
     @Override
-    protected Data safePut(Coordinate coordinate, Data data) {
+    protected Data safePut(CoordinateImpl coordinate, Data data) {
         return map.put(coordinate, data);
     }
 
@@ -72,7 +72,7 @@ public class HashMapStorage<Data> extends AbstractStorage<Data> {
     }
 
     @Override
-    public Iterator<Entry<Coordinate, Data>> iterator() {
+    public Iterator<java.util.Map.Entry<CoordinateImpl, Data>> iterator() {
         return map.entrySet().iterator();
     }
 }

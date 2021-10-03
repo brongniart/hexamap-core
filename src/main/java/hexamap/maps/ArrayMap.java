@@ -26,70 +26,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storage;
+package hexamap.maps;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.maps.indexators.Indexator;
 import hexamap.regions.Region;
-import hexamap.storage.indexators.Indexator;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  *
- * @param <Data>
+ * @param <Data> some stuff
  */
-public abstract class AbstractIndexatorStorage<Data> extends AbstractStorage<Data> {
+public class ArrayMap<CoordinateImpl extends Coordinate,Data> extends AbstractIndexatorMap<CoordinateImpl,Data> {
 
-    protected final Indexator indexator;
-    private int size = 0;
+    private final Data[] array;
 
-    public AbstractIndexatorStorage(Region region, Indexator indexator) {
-        super(region);
-        assert indexator.getRegion().equals(region);
-        this.indexator = indexator;
+    @SuppressWarnings("unchecked")
+	public ArrayMap(Region<CoordinateImpl> region, Indexator indexator, Class<Data> dataClass) {
+        super(region, indexator);
+        this.array = (Data[]) Array.newInstance(dataClass, region.size());
     }
 
     @Override
-    public int size() {
-        return size;
+    protected Data indexGet(int index) {
+        assert index < array.length;
+        return array[index];
     }
 
     @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    private int getIndex(Coordinate coordinate) {
-        int index = indexator.index(coordinate);
-        assert index >= 0 && index <= region.size();
-        return index;
-    }
-
-    @Override
-    public void clear() {
-        size = 0;
-        indexClear();
-    }
-
-    protected abstract void indexClear();
-
-    @Override
-    public Data safeGet(Coordinate coordinate) {
-        return indexGet(getIndex(coordinate));
-    }
-
-    protected abstract Data indexGet(int index);
-
-    @Override
-    public Data safePut(Coordinate coordinate, Data data) {
-        Data old = indexPut(getIndex(coordinate), data);
-        if (data == null && old != null) {
-            size--;
-        } else if (old == null) {
-            size++;
-        }
+    protected Data indexPut(int index, Data data) {
+        assert index < array.length;
+        Data old = array[index];
+        array[index] = data;
         return old;
     }
 
-    protected abstract Data indexPut(int index, Data data);
+    @Override
+    public void indexClear() {
+        Arrays.fill(array, null);
+    }
 
-    //public abstract Data[] getBulk(Coordinate c, int numbers);
+    @Override
+    public Iterator<Map.Entry<CoordinateImpl, Data>> iterator() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

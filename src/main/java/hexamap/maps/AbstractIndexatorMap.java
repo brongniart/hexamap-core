@@ -26,24 +26,71 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storage;
+package hexamap.maps;
 
+import hexamap.coordinates.Coordinate;
+import hexamap.maps.indexators.Indexator;
 import hexamap.regions.Region;
-import hexamap.storage.indexators.Indexator;
 
 /**
  *
  * @param <Data>
  */
-public abstract class IndexBasedStorage<Data> extends AbstractStorage<Data> {
+public abstract class AbstractIndexatorMap<CoordinateImpl extends Coordinate,Data> extends AbstractMap<CoordinateImpl,Data> {
 
     protected final Indexator indexator;
+    private int size = 0;
 
-    public IndexBasedStorage(Region region, Indexator indexator) {
+    @SuppressWarnings("unchecked")
+	public AbstractIndexatorMap(Region<CoordinateImpl> region, Indexator indexator) {
         super(region);
         assert indexator.getRegion().equals(region);
         this.indexator = indexator;
     }
+    
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    private int getIndex(Coordinate coordinate) {
+        int index = indexator.index(coordinate);
+        assert index >= 0 && index <= region.size();
+        return index;
+    }
+
+    @Override
+    public void clear() {
+        size = 0;
+        indexClear();
+    }
+
+    protected abstract void indexClear();
+
+    @Override
+    public Data safeGet(CoordinateImpl coordinate) {
+        return indexGet(getIndex(coordinate));
+    }
+
+    protected abstract Data indexGet(int index);
+
+    @Override
+    public Data safePut(CoordinateImpl coordinate, Data data) {
+        Data old = indexPut(getIndex(coordinate), data);
+        if (data == null && old != null) {
+            size--;
+        } else if (old == null) {
+            size++;
+        }
+        return old;
+    }
+
+    protected abstract Data indexPut(int index, Data data);
 
     //public abstract Data[] getBulk(Coordinate c, int numbers);
 }

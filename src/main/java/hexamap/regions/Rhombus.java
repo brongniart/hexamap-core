@@ -40,22 +40,22 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
 	private final int upperBound;
 	private final CoordinateImpl zero;
 	@SuppressWarnings("unused")
-	private Class<CoordinateImpl> coordinateClazz;
+	private Class<? extends CoordinateImpl> coordinateClazz;
 	private Direction direction;
 
-	public Rhombus(int _length, Class<CoordinateImpl> clazz) {
+	public Rhombus(int _length, Class<? extends CoordinateImpl> clazz) {
 		this(_length, Direction.NORD, clazz);
 	}
 
-	public Rhombus(int _length, Direction _direction, Class<CoordinateImpl> clazz) {
+	public Rhombus(int _length, Direction _direction, Class<? extends CoordinateImpl> clazz) {
 		this((_length % 2 == 1) ? -_length / 2 : -_length / 2 + 1, _length / 2, _direction, clazz);
 	}
 
-	public Rhombus(int _lowerBound, int _upperBound, Class<CoordinateImpl> clazz) {
+	public Rhombus(int _lowerBound, int _upperBound, Class<? extends CoordinateImpl> clazz) {
 		this(_lowerBound, _upperBound, Direction.NORD_WEST, clazz);
 	}
 
-	public Rhombus(int _lowerBound, int _upperBound, Direction _direction, Class<CoordinateImpl> clazz) {
+	public Rhombus(int _lowerBound, int _upperBound, Direction _direction, Class<? extends CoordinateImpl> clazz) {
 		super();
 
 		lowerBound = _lowerBound;
@@ -127,6 +127,7 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
 		}
 	}
 
+    @SuppressWarnings("unchecked")
 	private CoordinateImpl rotate(CoordinateImpl c) {
 		// return (CoordinateImpl) zero.createCoordinate(c.getY(),c.getZ());
 		return (CoordinateImpl) c.rotate(direction);
@@ -208,7 +209,6 @@ public class Rhombus<CoordinateImpl extends Coordinate> extends Region<Coordinat
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public CoordinateImpl getRandom() {
 		Random random = new Random();
 		int x = random.nextInt(upperBound - lowerBound) + lowerBound;

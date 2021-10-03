@@ -41,12 +41,16 @@ public abstract class AbstractCoordinate implements Coordinate {
         if (obj==null) 
             return false;
         try {
-        Coordinate coordinate = (Coordinate) obj;
-        return (getX()==coordinate.getX()) &&
+        	Coordinate coordinate = (Coordinate) obj;
+        	return (getX()==coordinate.getX()) &&
                 (getY()==coordinate.getY());
         } catch (ClassCastException e) {
             return false;
         }
+    }
+    @Override
+    public int hashCode() {
+        return getX()*getY();
     }
     
     @Override

@@ -26,45 +26,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storage.indexators;
+package hexamap.maps.indexators;
 
-import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
+import hexamap.regions.Region;
 
 /**
  *
- * @author jerome
  */
-public class IndexedCoordinate extends Axial {
+public interface Indexator {
 
-    protected int index = -1;
+    Region getRegion();
 
-    public IndexedCoordinate() {
-        super();
-    }
+    public int index(Coordinate coordinate);
 
-    public IndexedCoordinate(int x, int y) {
-        super(x, y);
-    }
-
-    public IndexedCoordinate(Coordinate c) {
-        super(c);
-    }
-
-    @Override
-    protected void setX(int x) {
-        index = -1;
-        super.setX(x);
-    }
-
-    @Override
-    protected void setY(int y) {
-        index = -1;
-        super.setY(y);
-    }
-
-    @Override
-    public Coordinate createCoordinate(int x, int y) {
-        return new IndexedCoordinate(x, y);
-    }
+    public Coordinate deindex(int index);
 }

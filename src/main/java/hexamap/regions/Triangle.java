@@ -31,22 +31,21 @@ package hexamap.regions;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 public class Triangle<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
 
-    private final Direction direction;
+    //private final Direction direction;
     private final int length;
     private final CoordinateImpl zero;
-	private Class<CoordinateImpl> coordinateClazz;
+	//private Class<CoordinateImpl> coordinateClazz;
 
-    public Triangle(Direction _direction, int _length, Class<CoordinateImpl> clazz) {
+    public Triangle(Direction _direction, int _length, Class<? extends CoordinateImpl> clazz) {
         super();
         
-        direction = _direction;
+        //direction = _direction;
         length = _length;
-        coordinateClazz = clazz;
+        //coordinateClazz = clazz;
         try {
 			zero = clazz.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
@@ -128,8 +127,9 @@ public class Triangle<CoordinateImpl extends Coordinate> extends Region<Coordina
     	return (int) Math.pow(length,2);
     }
 
-    @Override
-    public boolean equals(Region region) {
+	@Override
+    @SuppressWarnings("rawtypes")
+    public boolean equals(Region<CoordinateImpl> region) {
         assert region != null;
         return region.getClass() == Triangle.class
                 && ((Triangle) region).length == this.length;

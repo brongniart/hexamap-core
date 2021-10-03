@@ -26,7 +26,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storage.indexators;
+package hexamap.maps.indexators;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Hexagon;
@@ -40,7 +40,7 @@ import static java.lang.Math.max;
 public class NeighboorsIndexator implements Indexator {
 
     private final Hexagon region;
-
+    
     public NeighboorsIndexator(Hexagon region) throws Exception {
         this.region = region;
     }

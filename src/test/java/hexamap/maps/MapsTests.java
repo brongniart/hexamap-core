@@ -26,56 +26,58 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storages;
+package hexamap.maps;
 
-import hexamap.storage.Storage;
-import hexamap.storage.ArrayStorage;
-import hexamap.storage.HashMapStorage;
-import hexamap.storage.FileStorage;
-import hexamap.coordinates.Axial;
-import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Cube;
-import hexamap.regions.Hexagon;
-import hexamap.storage.indexators.IndexedCoordinate;
-import hexamap.storage.indexators.NeighboorsIndexator;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import hexamap.coordinates.AbstractCoordinate;
+import hexamap.coordinates.Axial;
+import hexamap.coordinates.Coordinate;
+import hexamap.coordinates.Cube;
+import hexamap.maps.indexators.IndexedCoordinate;
+import hexamap.maps.indexators.NeighboorsIndexator;
+import hexamap.regions.Hexagon;
+
 /**
  *
  * 
  */
 @RunWith(Parameterized.class)
-public class StorageTests {
+public class MapsTests {
 
-    private static Hexagon<IndexedCoordinate> regionXXSmall;
-    private static Hexagon<IndexedCoordinate> regionMedium;
-    private static Hexagon<IndexedCoordinate> regionLarge;
+    @SuppressWarnings("unused")
+    private static Hexagon<Axial> regionXXSmall;
+    @SuppressWarnings("unused")
+    private static Hexagon<Axial> regionMedium;
+    @SuppressWarnings("unused")
+	private static Hexagon<Axial> regionLarge;
     
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
-        regionXXSmall=new Hexagon(100,IndexedCoordinate.class);  // 49'537 hex
-        regionMedium=new Hexagon(1024,IndexedCoordinate.class);  // 3'148'801 hex
-        regionLarge=new Hexagon(2048,IndexedCoordinate.class);
+        regionXXSmall=new Hexagon<Axial>(100,Axial.class);  // 49'537 hex
+        regionMedium=new Hexagon<Axial>(1024,Axial.class);  // 3'148'801 hex
+        regionLarge=new Hexagon<Axial>(2048,Axial.class);
         return Arrays.asList(new Object[][]{
-            {new HashMapStorage<AxialExt>(regionMedium),regionMedium},
-            {new ArrayStorage<AxialExt>(regionMedium, new NeighboorsIndexator(regionMedium),AxialExt.class),regionMedium},
-            {new FileStorage<AxialExt>(regionXXSmall, new NeighboorsIndexator(regionXXSmall),AxialExt.class),regionXXSmall},
+            {new HashMap<Axial,AxialExt>(regionMedium),regionMedium},
+            {new ArrayMap<Axial,AxialExt>(regionMedium, new NeighboorsIndexator(regionMedium),AxialExt.class),regionMedium},
+            {new FileMap<Axial,AxialExt>(regionXXSmall, new NeighboorsIndexator(regionXXSmall),AxialExt.class),regionXXSmall},
         });
     }
-    private Storage<Cube> storage;
-    private final Hexagon<IndexedCoordinate> region;
+    private Map<AbstractCoordinate,Cube> storage;
+    private final Hexagon<AbstractCoordinate> region;
 
-    public StorageTests(Storage<Cube> storage,Hexagon<IndexedCoordinate> region) throws Exception {
+    public MapsTests(Map<AbstractCoordinate,Cube> storage,Hexagon<AbstractCoordinate> region) throws Exception {
         this.storage=storage;
         this.region=region;
     }
@@ -85,25 +87,20 @@ public class StorageTests {
         storage.clear();
     }
     
-    //@Test
-    public void testbug() throws Exception {
-        Hexagon<Axial> region = new Hexagon<Axial>(2,Axial.class);
-        NeighboorsIndexator indexator = new NeighboorsIndexator(region);
-        for (Coordinate c : new Axial().getAllNeigbours(region.getRange())) {
-            System.out.println(c+" "+indexator.index(c));
-        }
-    }
-    
     @Test
     public void test_Iteratif_WithCache() {
-        System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif_No_Cache()");
+        System.out.println("hexamap.regions.storages.StorageTest.test_Iteratif_WithCache()");
         assert storage.isEmpty();
-        for (Coordinate c : region) {
-            storage.put(c, new AxialExt(c));
-            assert storage.get(c)!=null;
-            assert storage.get(c).equals(new AxialExt(c));
+        for (AbstractCoordinate c : region) {
+        	IndexedCoordinate coordinate = new IndexedCoordinate(c);
+            storage.put(coordinate, new AxialExt(c));
+            assert new IndexedCoordinate(c).equals(coordinate);
+            storage.get(new IndexedCoordinate(coordinate));
+            assert storage.get(new IndexedCoordinate(coordinate)).equals(storage.get(coordinate));
+            assert storage.get(coordinate)!=null;
+            assert storage.get(coordinate).equals(new AxialExt(c));
         }
-        System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif_No_Cache() - End ("+String.format("%,d", storage.size())+" access)");
+        System.out.println("hexamap.regions.storages.StorageTest.test_Iteratif_WithCache() - End ("+String.format("%,d", storage.size())+" access)");
         //assert storage.size() == region.size() - 1;
     }
     
@@ -112,9 +109,9 @@ public class StorageTests {
         System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif_No_Cache()");
         assert storage.isEmpty();
         for (Coordinate c : new Axial(0,0).getAllNeigbours(region.getRange())) {
-            storage.put(c, new AxialExt(c));
-            assert storage.get(c)!=null;
-            assert storage.get(c).equals(new AxialExt(c));
+            storage.put(new Axial(c), new AxialExt(c));
+            assert storage.get(new Axial(c))!=null;
+            assert storage.get(new Axial(c)).equals(new AxialExt(c));
         }
         System.out.println("hexamap.regions.storages.StorageTest.testIterator_Iteratif_No_Cache() - End ("+String.format("%,d", storage.size())+" access)");
         //assert storage.size() == region.size() - 1;
@@ -127,7 +124,7 @@ public class StorageTests {
         
         int NB_ITER = region.size();
         for (int i=0;i<NB_ITER;i++) {
-            IndexedCoordinate c = region.getRandom();
+        	IndexedCoordinate c = new IndexedCoordinate(region.getRandom());
             
             storage.put(c, new AxialExt(c));
             assert storage.get(c)!=null;
@@ -144,8 +141,8 @@ public class StorageTests {
 
         int NB_ITER = region.size();
         for (int i=0;i<NB_ITER;i++) {
-            Axial c = new Axial(region.getRandom());
-
+        	AbstractCoordinate c = region.getRandom();
+            
             storage.put(c, new AxialExt(c));
             assert storage.get(c)!=null;
             assert storage.get(c).equals(new AxialExt(c));

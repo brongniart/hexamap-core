@@ -58,12 +58,12 @@ public class Cube extends Axial
     }
     
     @Override
-    public Coordinate getNext(Direction where) {
+    public Cube getNext(Direction where) {
         return new Cube(getX()+where.x,getY()+where.y);
     }
 
     @Override
-    public Coordinate createCoordinate(int x, int y) {
+    public Cube createCoordinate(int x, int y) {
         return new Cube(x,y);
     }
 }

@@ -42,9 +42,9 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
     private final int range;
     private final int size;
     private final CoordinateImpl zero;
-    private final Class<CoordinateImpl> coordinateClazz;
-
-    public Hexagon(int range, Class<CoordinateImpl> clazz) {
+    private final Class<? extends CoordinateImpl> coordinateClazz;
+    
+    public Hexagon(int range, Class<? extends CoordinateImpl> clazz) {
         super();
 		System.out.println("Range:"+range);
         this.range = range;
@@ -118,8 +118,9 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
         return size;
     }
 
-    @Override
-    public boolean equals(Region region) {
+	@Override
+    @SuppressWarnings("rawtypes")
+    public boolean equals(Region<CoordinateImpl> region) {
         assert region != null;
         return region.getClass() == Hexagon.class
                 && ((Hexagon) region).range == this.range;
@@ -129,7 +130,8 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
         return range;
     }
 
-    @Override
+	@Override
+    @SuppressWarnings("unchecked")
     public CoordinateImpl getRandom() {
         Random random = new Random();
         int x = random.nextInt(range * 2 + 1) - range;

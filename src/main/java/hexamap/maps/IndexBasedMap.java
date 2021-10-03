@@ -26,19 +26,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.storage.indexators;
+package hexamap.maps;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.maps.indexators.Indexator;
 import hexamap.regions.Region;
 
 /**
  *
+ * @param <Data>
  */
-public interface Indexator {
+public abstract class IndexBasedMap<CoordinateImpl extends Coordinate,Data> extends AbstractMap<CoordinateImpl,Data> {
 
-    Region getRegion();
+    protected final Indexator indexator;
 
-    public int index(Coordinate coordinate);
+    @SuppressWarnings("unchecked")
+	public IndexBasedMap(Region<CoordinateImpl> region, Indexator indexator) {
+        super(region);
+        assert indexator.getRegion().equals(region);
+        this.indexator = indexator;
+    }
 
-    public Coordinate deindex(int index);
+    //public abstract Data[] getBulk(Coordinate c, int numbers);
 }

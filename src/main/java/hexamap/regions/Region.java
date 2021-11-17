@@ -39,7 +39,7 @@ import java.util.Set;
  */
 public abstract class Region<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl> implements Set<CoordinateImpl> {
 
-    public abstract boolean equals(Region<CoordinateImpl> region);
+    public abstract boolean equals(Region region);
 
     @Override
     public abstract Iterator<CoordinateImpl> iterator();

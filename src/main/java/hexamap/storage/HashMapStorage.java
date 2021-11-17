@@ -26,42 +26,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.coordinates;
+package hexamap.storage;
+
+import hexamap.coordinates.Coordinate;
+import hexamap.regions.Region;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  *
+ * @param <Data> some stuff
  */
-public interface Coordinate {
-    
-    int getX();
+public class HashMapStorage<Data> extends AbstractStorage<Data> {
 
-    int getY();
+    private final HashMap<Coordinate, Data> map;
 
-    int getZ();
-    
-    Coordinate getNext(Direction direction);
+    public HashMapStorage(Region region) {
+        super(region);
+        map = new HashMap();
+    }
 
-    Coordinate createCoordinate(int x, int y);
+    @Override
+    protected Data safeGet(Coordinate coordinate) {
+        return map.get(coordinate);
+    }
 
-    Coordinate createCoordinateXZ(int x, int z);
+    @Override
+    protected Data safePut(Coordinate coordinate, Data data) {
+        return map.put(coordinate, data);
+    }
 
-    Coordinate createCoordinateYZ(int y, int x);
-    
-    Iterable<Coordinate> getNeigbours();
+    @Override
+    public int size() {
+        return map.size();
+    }
 
-    Iterable<Coordinate> getNeigbours(int range);
+    @Override
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
 
-    Iterable<Coordinate> getAllNeigbours(int range);
+    @Override
+    public void clear() {
+        map.clear();
+    }
 
-    int distance(Coordinate other);
-
-    Coordinate add(Coordinate coordinate);
-
-    Coordinate add(Direction direction, int range);
-
-    void move(Coordinate coordinate);
-
-    void move(Direction direction, int range);
-
-	Coordinate rotate(Direction direction);
+    @Override
+    public Iterator<Entry<Coordinate, Data>> iterator() {
+        return map.entrySet().iterator();
+    }
 }

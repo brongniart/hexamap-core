@@ -26,42 +26,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.coordinates;
+package hexamap.storage.indexators;
+
+import hexamap.coordinates.Coordinate;
+import hexamap.regions.Region;
 
 /**
  *
  */
-public interface Coordinate {
-    
-    int getX();
+public interface Indexator {
 
-    int getY();
+    Region getRegion();
 
-    int getZ();
-    
-    Coordinate getNext(Direction direction);
+    public int index(Coordinate coordinate);
 
-    Coordinate createCoordinate(int x, int y);
-
-    Coordinate createCoordinateXZ(int x, int z);
-
-    Coordinate createCoordinateYZ(int y, int x);
-    
-    Iterable<Coordinate> getNeigbours();
-
-    Iterable<Coordinate> getNeigbours(int range);
-
-    Iterable<Coordinate> getAllNeigbours(int range);
-
-    int distance(Coordinate other);
-
-    Coordinate add(Coordinate coordinate);
-
-    Coordinate add(Direction direction, int range);
-
-    void move(Coordinate coordinate);
-
-    void move(Direction direction, int range);
-
-	Coordinate rotate(Direction direction);
+    public Coordinate deindex(int index);
 }

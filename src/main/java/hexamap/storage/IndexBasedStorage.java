@@ -26,42 +26,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.coordinates;
+package hexamap.storage;
+
+import hexamap.regions.Region;
+import hexamap.storage.indexators.Indexator;
 
 /**
  *
+ * @param <Data>
  */
-public interface Coordinate {
-    
-    int getX();
+public abstract class IndexBasedStorage<Data> extends AbstractStorage<Data> {
 
-    int getY();
+    protected final Indexator indexator;
 
-    int getZ();
-    
-    Coordinate getNext(Direction direction);
+    public IndexBasedStorage(Region region, Indexator indexator) {
+        super(region);
+        assert indexator.getRegion().equals(region);
+        this.indexator = indexator;
+    }
 
-    Coordinate createCoordinate(int x, int y);
-
-    Coordinate createCoordinateXZ(int x, int z);
-
-    Coordinate createCoordinateYZ(int y, int x);
-    
-    Iterable<Coordinate> getNeigbours();
-
-    Iterable<Coordinate> getNeigbours(int range);
-
-    Iterable<Coordinate> getAllNeigbours(int range);
-
-    int distance(Coordinate other);
-
-    Coordinate add(Coordinate coordinate);
-
-    Coordinate add(Direction direction, int range);
-
-    void move(Coordinate coordinate);
-
-    void move(Direction direction, int range);
-
-	Coordinate rotate(Direction direction);
+    //public abstract Data[] getBulk(Coordinate c, int numbers);
 }

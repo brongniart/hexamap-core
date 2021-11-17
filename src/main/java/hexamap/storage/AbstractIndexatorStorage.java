@@ -26,42 +26,70 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.coordinates;
+package hexamap.storage;
+
+import hexamap.coordinates.Coordinate;
+import hexamap.regions.Region;
+import hexamap.storage.indexators.Indexator;
 
 /**
  *
+ * @param <Data>
  */
-public interface Coordinate {
-    
-    int getX();
+public abstract class AbstractIndexatorStorage<Data> extends AbstractStorage<Data> {
 
-    int getY();
+    protected final Indexator indexator;
+    private int size = 0;
 
-    int getZ();
-    
-    Coordinate getNext(Direction direction);
+    public AbstractIndexatorStorage(Region region, Indexator indexator) {
+        super(region);
+        assert indexator.getRegion().equals(region);
+        this.indexator = indexator;
+    }
 
-    Coordinate createCoordinate(int x, int y);
+    @Override
+    public int size() {
+        return size;
+    }
 
-    Coordinate createCoordinateXZ(int x, int z);
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
-    Coordinate createCoordinateYZ(int y, int x);
-    
-    Iterable<Coordinate> getNeigbours();
+    private int getIndex(Coordinate coordinate) {
+        int index = indexator.index(coordinate);
+        assert index >= 0 && index <= region.size();
+        return index;
+    }
 
-    Iterable<Coordinate> getNeigbours(int range);
+    @Override
+    public void clear() {
+        size = 0;
+        indexClear();
+    }
 
-    Iterable<Coordinate> getAllNeigbours(int range);
+    protected abstract void indexClear();
 
-    int distance(Coordinate other);
+    @Override
+    public Data safeGet(Coordinate coordinate) {
+        return indexGet(getIndex(coordinate));
+    }
 
-    Coordinate add(Coordinate coordinate);
+    protected abstract Data indexGet(int index);
 
-    Coordinate add(Direction direction, int range);
+    @Override
+    public Data safePut(Coordinate coordinate, Data data) {
+        Data old = indexPut(getIndex(coordinate), data);
+        if (data == null && old != null) {
+            size--;
+        } else if (old == null) {
+            size++;
+        }
+        return old;
+    }
 
-    void move(Coordinate coordinate);
+    protected abstract Data indexPut(int index, Data data);
 
-    void move(Direction direction, int range);
-
-	Coordinate rotate(Direction direction);
+    //public abstract Data[] getBulk(Coordinate c, int numbers);
 }

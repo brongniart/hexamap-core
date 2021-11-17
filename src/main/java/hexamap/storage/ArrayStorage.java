@@ -26,42 +26,49 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.coordinates;
+package hexamap.storage;
+
+import hexamap.coordinates.Coordinate;
+import hexamap.regions.Region;
+import hexamap.storage.indexators.Indexator;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  *
+ * @param <Data> some stuff
  */
-public interface Coordinate {
-    
-    int getX();
+public class ArrayStorage<Data> extends AbstractIndexatorStorage<Data> {
 
-    int getY();
+    private final Data[] array;
 
-    int getZ();
-    
-    Coordinate getNext(Direction direction);
+    public ArrayStorage(Region region, Indexator indexator, Class<Data> dataClass) {
+        super(region, indexator);
+        this.array = (Data[]) Array.newInstance(dataClass, region.size());
+    }
 
-    Coordinate createCoordinate(int x, int y);
+    @Override
+    protected Data indexGet(int index) {
+        assert index < array.length;
+        return array[index];
+    }
 
-    Coordinate createCoordinateXZ(int x, int z);
+    @Override
+    protected Data indexPut(int index, Data data) {
+        assert index < array.length;
+        Data old = array[index];
+        array[index] = data;
+        return old;
+    }
 
-    Coordinate createCoordinateYZ(int y, int x);
-    
-    Iterable<Coordinate> getNeigbours();
+    @Override
+    public void indexClear() {
+        Arrays.fill(array, null);
+    }
 
-    Iterable<Coordinate> getNeigbours(int range);
-
-    Iterable<Coordinate> getAllNeigbours(int range);
-
-    int distance(Coordinate other);
-
-    Coordinate add(Coordinate coordinate);
-
-    Coordinate add(Direction direction, int range);
-
-    void move(Coordinate coordinate);
-
-    void move(Direction direction, int range);
-
-	Coordinate rotate(Direction direction);
+    @Override
+    public Iterator<Entry<Coordinate, Data>> iterator() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -88,25 +88,25 @@ public class Axial extends AbstractCoordinate
     }
     
     @Override
-    public Axial getNext(Direction where) {
+    public Coordinate getNext(Direction where) {
          return new Axial(x+where.x,y+where.y);
     }
 
     @Override
-    public Axial createCoordinate(int x, int y) {
+    public Coordinate createCoordinate(int x, int y) {
         return new Axial(x,y);
     }
 	@Override
-	public Axial createCoordinateXZ(int x, int z) {
+	public Coordinate createCoordinateXZ(int x, int z) {
         return new Axial(x,- x - z);
 	}
 	@Override
-	public Axial createCoordinateYZ(int y, int z) {
+	public Coordinate createCoordinateYZ(int y, int z) {
         return new Axial(- y - z,z);
 	}
 
 	@Override
-	public Axial rotate(Direction direction) {
+	public Coordinate rotate(Direction direction) {
 		if (direction==Direction.NORD_EAST) {
 			x=getY();
 			y=getX();

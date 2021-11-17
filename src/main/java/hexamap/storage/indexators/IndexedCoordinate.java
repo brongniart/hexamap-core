@@ -26,42 +26,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.coordinates;
+package hexamap.storage.indexators;
+
+import hexamap.coordinates.Axial;
+import hexamap.coordinates.Coordinate;
 
 /**
  *
+ * @author jerome
  */
-public interface Coordinate {
-    
-    int getX();
+public class IndexedCoordinate extends Axial {
 
-    int getY();
+    protected int index = -1;
 
-    int getZ();
-    
-    Coordinate getNext(Direction direction);
+    public IndexedCoordinate() {
+        super();
+    }
 
-    Coordinate createCoordinate(int x, int y);
+    public IndexedCoordinate(int x, int y) {
+        super(x, y);
+    }
 
-    Coordinate createCoordinateXZ(int x, int z);
+    public IndexedCoordinate(Coordinate c) {
+        super(c);
+    }
 
-    Coordinate createCoordinateYZ(int y, int x);
-    
-    Iterable<Coordinate> getNeigbours();
+    @Override
+    protected void setX(int x) {
+        index = -1;
+        super.setX(x);
+    }
 
-    Iterable<Coordinate> getNeigbours(int range);
+    @Override
+    protected void setY(int y) {
+        index = -1;
+        super.setY(y);
+    }
 
-    Iterable<Coordinate> getAllNeigbours(int range);
-
-    int distance(Coordinate other);
-
-    Coordinate add(Coordinate coordinate);
-
-    Coordinate add(Direction direction, int range);
-
-    void move(Coordinate coordinate);
-
-    void move(Direction direction, int range);
-
-	Coordinate rotate(Direction direction);
+    @Override
+    public Coordinate createCoordinate(int x, int y) {
+        return new IndexedCoordinate(x, y);
+    }
 }

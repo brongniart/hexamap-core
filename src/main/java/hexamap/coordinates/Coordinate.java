@@ -28,40 +28,113 @@
  */
 package hexamap.coordinates;
 
+import static java.lang.Math.abs;
+
+import java.util.Iterator;
+
 /**
  *
  */
-public interface Coordinate {
+public abstract class Coordinate {
+
+    public abstract int getX();
+
+    public abstract int getY();
+
+    public abstract int getZ();    
     
-    int getX();
+    public abstract Coordinate getZero();
 
-    int getY();
+    public abstract Coordinate createCoordinate(int x, int y);
 
-    int getZ();
+    public abstract Coordinate createCoordinateXZ(int x, int z);
+
+    public abstract Coordinate createCoordinateYZ(int y, int x);
     
-    Coordinate getNext(Direction direction);
+    public abstract Coordinate add(Direction direction, int range);
 
-    Coordinate createCoordinate(int x, int y);
+    public abstract void move(Direction direction, int range);
 
-    Coordinate createCoordinateXZ(int x, int z);
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        try {
+            return distance((Coordinate) obj) == 0;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
 
-    Coordinate createCoordinateYZ(int y, int x);
+    public double distance(Coordinate other) {
+        return (abs(getX() - other.getX()) + abs(getY() - other.getY()) + abs(getZ() - other.getZ())) / 2;
+    }
+
+    public class NeigboursIterator implements Iterator<Coordinate> {
+
+        private final boolean all;
+        private final Coordinate center;
+        private int range;
+        private Coordinate current;
+        private Coordinate first;
+        private Direction direction;
+
+        private final Direction INIT_DIRECTION = Direction.NORD;
+
+        public NeigboursIterator(Coordinate center, int range, boolean all) {
+            
+            this.all = all;
+            this.range = Math.abs(range);
+            this.center = center;
+
+            current = center.add(INIT_DIRECTION, range);
+            first = null;
+            direction = INIT_DIRECTION.next();
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (all) {
+                return range > 1 || !current.equals(first);
+            } else {
+                return !current.equals(first);
+            }
+        }
+
+        @Override
+        public Coordinate next() {
+            Coordinate returnValue = current;
+
+            Coordinate next = current.add(direction, 1);
+            if (all && next.equals(first)) {
+                range--;
+                next = center.add(INIT_DIRECTION, range);
+                direction = INIT_DIRECTION.next();
+                first = null;
+            } else {
+                if (first == null) {
+                    first = current;
+                }
+                if (center.distance(next) > range) {
+                    direction = direction.next();
+                    next = current.add(direction, 1);
+                }
+            }
+            current = next;
+
+            return returnValue;
+        }
+    }
     
-    Iterable<Coordinate> getNeigbours();
+    public Iterable<Coordinate> getNeigbours(int range) {
+        return () -> new NeigboursIterator(this, range, false);
+    }
 
-    Iterable<Coordinate> getNeigbours(int range);
+    public Iterable<Coordinate> getNeigbours() {
+        return getNeigbours(1);
+    }
 
-    Iterable<Coordinate> getAllNeigbours(int range);
-
-    int distance(Coordinate other);
-
-    Coordinate add(Coordinate coordinate);
-
-    Coordinate add(Direction direction, int range);
-
-    void move(Coordinate coordinate);
-
-    void move(Direction direction, int range);
-
-	Coordinate rotate(Direction direction);
+    public Iterable<Coordinate> getAllNeigbours(int range) {
+        return () -> new NeigboursIterator(this, range, true);
+    }
 }

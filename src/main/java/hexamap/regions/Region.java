@@ -31,6 +31,7 @@ package hexamap.regions;
 import hexamap.coordinates.Coordinate;
 import java.util.AbstractCollection;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -39,14 +40,23 @@ import java.util.Set;
  */
 public abstract class Region<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl> implements Set<CoordinateImpl> {
 
-    public abstract boolean equals(Region region);
+    protected CoordinateImpl center;
+    protected final Random random = new Random();
+    
+    public Region(CoordinateImpl center) {
+        this.center = center;
+    }
+    
+    public CoordinateImpl getCenter() {
+        return center;
+    }
 
+    public void setCenter(CoordinateImpl center) {
+        this.center = center;
+    }
+    
     @Override
     public abstract Iterator<CoordinateImpl> iterator();
 
     public abstract CoordinateImpl getRandom();
-
-    //public abstract boolean contains(Region<Data> region);    
-    //public abstract Region union(Region<Data> r);
-    //public abstract Region intersection(Region<Data> r);
 }

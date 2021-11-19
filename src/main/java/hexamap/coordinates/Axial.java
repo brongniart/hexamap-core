@@ -31,18 +31,12 @@ package hexamap.coordinates;
 /**
  *
  */
-public class Axial extends AbstractCoordinate
-{
-    private int x = 0;
-    private int y = 0;
+public class Axial extends Coordinate {
     
-    public Axial()
-    {}
-    
-    public Axial(Coordinate c)
-    {
-        x = c.getX();
-        y = c.getY();
+    protected int x = 0;
+    protected int y = 0;
+
+    public Axial() {
     }
     
     public Axial(int x, int y)
@@ -51,80 +45,50 @@ public class Axial extends AbstractCoordinate
         this.y = y;
     }
     
-    @Override
+    public Axial(Axial c) {
+        this.x = c.getX();
+        this.y = c.getY();
+    }
+    
     public int getX() {
         return x;
     }
-    
-    @Override
+
     public int getY() {
         return y;
     }
-    
-    @Override
+
     public int getZ() {
-        return - x - y;
-    }
-    
-    
-    @Override
-    public void move(Coordinate coordinate) {
-        setX(getX()+coordinate.getX());
-        setY(getY()+coordinate.getX());
+        return -x - y;
     }
 
-    @Override
-    public void move(Direction direction, int range) {
-        setX(range*(getX()+direction.x));
-        setY(range*(getY()+direction.y));
+    public Axial getZero() {
+        return new Axial();
     }
     
-    protected void setX(int x) {
-        this.x = x;
-    }
-    
-    protected void setY(int y) {
-        this.y = y;
-    }
-    
-    @Override
-    public Coordinate getNext(Direction where) {
-         return new Axial(x+where.x,y+where.y);
-    }
-
-    @Override
-    public Coordinate createCoordinate(int x, int y) {
+    public Axial createCoordinate(int x, int y) {
         return new Axial(x,y);
     }
-	@Override
-	public Coordinate createCoordinateXZ(int x, int z) {
-        return new Axial(x,- x - z);
-	}
-	@Override
-	public Coordinate createCoordinateYZ(int y, int z) {
-        return new Axial(- y - z,z);
-	}
 
-	@Override
-	public Coordinate rotate(Direction direction) {
-		if (direction==Direction.NORD_EAST) {
-			x=getY();
-			y=getX();
-		} else if (direction==Direction.SOUTH_EAST) {
-			x=getY();
-			y=getZ();
-		} else if (direction==Direction.SOUTH) {
-			y=getZ();
-		} else if (direction==Direction.SOUTH_WEST) {
-			y=getX();
-			x=getZ();
-		} else if (direction==Direction.NORD_WEST) {
-			x=getZ();
-		} else {
-			// if (direction==Direction.NORD) do nothing
-			assert direction==Direction.NORD;
-		}
-		return this;
-	}
+    public Axial createCoordinateXZ(int x, int z) {
+        return new Axial(x,-x-z);
+    }
 
+    public Axial createCoordinateYZ(int y, int z) {
+        return new Axial(-y-z,y);
+    }
+    
+    public void move(Direction direction, int range) {
+        x = range * (x + direction.x);
+        y = range * (y + direction.y);
+    }
+    
+    public Axial add(Direction direction, int range) {
+        return createCoordinate(x + range*direction.x, y + range*direction.y);
+    }
+    
+    @Override
+    public int hashCode() {
+        return x<<Integer.SIZE/2 + y >>Integer.SIZE/2;
+    }
 }

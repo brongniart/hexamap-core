@@ -31,28 +31,30 @@ package hexamap.coordinates;
 /**
  *
  */
-public enum Direction
-{
-    NORD		( 0, 1),
-    NORD_EAST	( 1, 0),
-    SOUTH_EAST	( 1,-1),
-    SOUTH		( 0,-1),
-    SOUTH_WEST	(-1, 0),
-    NORD_WEST	(-1, 1);
-    
+public enum Direction {
+    NORD(0, 1), NORD_EAST(1, 0), SOUTH_EAST(1, -1), SOUTH(0, -1), SOUTH_WEST(-1, 0), NORD_WEST(-1, 1);
+
     public final int x;
     public final int y;
-    
+
     private Direction(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
     public Direction next() {
-        return values()[(this.ordinal()+1) % values().length];
+        return next(1);
+    }
+
+    public Direction next(int i) {
+        return values()[(this.ordinal() + i) % values().length];
     }
 
     public Direction previous() {
-        return values()[(this.ordinal()-1) % values().length];
+        return previous(1);
+    }
+
+    public Direction previous(int i) {
+        return values()[((this.ordinal() - i) % values().length + values().length)%6];
     }
 }

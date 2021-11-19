@@ -31,6 +31,9 @@ package hexamap.coordinates;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,30 +47,64 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class CoordinateTests {
 
+    
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
+        Random rand = new Random();
         return Arrays.asList(new Object[][]{
-            {new Axial()},
-            {new Cube()},
-            {new hexamap.storage.indexators.IndexedCoordinate()},});
+            {new Axial()},{new Cube()},
+            {new Axial(rand.nextInt(),rand.nextInt())},
+            {new Cube(rand.nextInt(),rand.nextInt())}});
     }
-    private Coordinate center;
+    private Coordinate coordinate;
 
     public CoordinateTests(Coordinate coordinate) {
-        center = coordinate;
+        this.coordinate = coordinate;
     }
 
     @After
     public void cleaup() {
-        center = center.createCoordinate(0, 0);
+        coordinate = coordinate.getZero();
     }
-    Coordinate tmp;
 
     @Test
+    @SuppressWarnings("unlikely-arg-type")
     public void testBasic() {
-        tmp = center.getNext(Direction.NORD);
-        assert tmp.equals(center.add(Direction.NORD, 1));
-        assert tmp.getNext(Direction.NORD).equals(center.add(Direction.NORD, 2));
+        
+        //coordinate.hashCode() missing
+        
+        assert !coordinate.equals(Direction.NORD);
+        assert coordinate.add(Direction.NORD.next(3), 2).equals(coordinate.add(Direction.NORD.previous(3), 2));
+        
+        assert coordinate.add(Direction.NORD.previous(), 2).equals(coordinate.add(Direction.NORD_WEST, 2));
+        assert coordinate.add(Direction.NORD_WEST.next(), 2).equals(coordinate.add(Direction.NORD, 2));
+        
+        int dist = new Random().nextInt(100);
+        
+        assert coordinate.add(Direction.SOUTH.previous(), dist).equals(coordinate.add(Direction.SOUTH_EAST, dist));
+        assert coordinate.add(Direction.SOUTH_EAST.previous(), dist).equals(coordinate.add(Direction.NORD_EAST, dist));
+        assert coordinate.add(Direction.NORD_EAST.previous(), dist).equals(coordinate.add(Direction.NORD, dist));
+        assert coordinate.add(Direction.NORD.previous(), dist).equals(coordinate.add(Direction.NORD_WEST, dist));
+        assert coordinate.add(Direction.NORD_WEST.previous(), dist).equals(coordinate.add(Direction.SOUTH_WEST, dist));
+        assert coordinate.add(Direction.SOUTH_WEST.previous(), dist).equals(coordinate.add(Direction.SOUTH, dist));
+
+        
+        assert coordinate.add(Direction.SOUTH.next(), dist).equals(coordinate.add(Direction.SOUTH_WEST, dist));
+        assert coordinate.add(Direction.SOUTH_WEST.next(), dist).equals(coordinate.add(Direction.NORD_WEST, dist));
+        assert coordinate.add(Direction.NORD_WEST.next(), dist).equals(coordinate.add(Direction.NORD, dist));
+        assert coordinate.add(Direction.NORD.next(), dist).equals(coordinate.add(Direction.NORD_EAST, dist));
+        assert coordinate.add(Direction.NORD_EAST.next(), dist).equals(coordinate.add(Direction.SOUTH_EAST, dist));
+        assert coordinate.add(Direction.SOUTH_EAST.next(), dist).equals(coordinate.add(Direction.SOUTH, dist));
+        
+        Coordinate tmp = coordinate.add(Direction.NORD,1);
+        assert tmp.equals(coordinate.add(Direction.NORD, 1));
+        assert tmp.add(Direction.NORD,1).equals(coordinate.add(Direction.NORD, 2));
+        tmp.move(Direction.NORD, 1);
+        assert tmp.equals(coordinate.add(Direction.NORD, 2));
+        
+        assert coordinate.createCoordinate(0, 0).getClass().equals(coordinate.getClass());
+        assert coordinate.createCoordinateXZ(0, 0).getClass().equals(coordinate.getClass());
+        assert coordinate.createCoordinateYZ(0, 0).getClass().equals(coordinate.getClass());
     }
 
     @Test
@@ -76,18 +113,18 @@ public class CoordinateTests {
 
         count = 0;
         Direction d = Direction.NORD;
-        for (Coordinate c : center.getNeigbours()) {
+        for (Coordinate c : coordinate.getNeigbours()) {
             count++;
-            assert center.add(d, 1).equals(c);
+            assert coordinate.add(d, 1).equals(c);
             d = d.next();
         }
         assert count == 6;
 
         count = 0;
         int distance = 128;
-        for (Coordinate c : center.getNeigbours(distance)) {
+        for (Coordinate c : coordinate.getNeigbours(distance)) {
             count++;
-            assert center.distance(c) == distance;
+            assert coordinate.distance(c) == distance;
         }
         assert count == 6 * distance;
     }
@@ -97,8 +134,8 @@ public class CoordinateTests {
         int count;
 
         count = 0;
-        Iterator<Coordinate> iter = center.getNeigbours().iterator();
-        for (Coordinate c : center.getAllNeigbours(1)) {
+        Iterator<Coordinate> iter = coordinate.getNeigbours().iterator();
+        for (Coordinate c : coordinate.getAllNeigbours(1)) {
             count++;
             assert c.equals(iter.next());
         }
@@ -106,17 +143,17 @@ public class CoordinateTests {
         
         count = 0;
         int d=2;
-        for (Coordinate c : center.getAllNeigbours(2)) {
+        for (Coordinate c : coordinate.getAllNeigbours(2)) {
             count++;
             if (count==13) {
                 d--;
             }
-            assert center.distance(c)==d;
+            assert coordinate.distance(c)==d;
         }
         assert count == 6 + 6 * 2;
         
         count = 0;
-        for (Coordinate c : center.getAllNeigbours(1024)) {
+        for (Coordinate c : coordinate.getAllNeigbours(1024)) {
             count++;
         }
         assert count==3148800;

@@ -26,24 +26,64 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.coordinates;
+package hexamap.regions;
 
+import hexamap.coordinates.Coordinate;
 import java.util.Iterator;
-import org.junit.Test;
+import java.util.LinkedHashSet;
 
 /**
  *
- * @author jerome
+ * @param <CoordinateImpl>
  */
-public class CubeTest {
-    
-    public CubeTest() {
+public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
+
+    private LinkedHashSet<CoordinateImpl> set = new LinkedHashSet<CoordinateImpl>();
+
+    public Set(CoordinateImpl center) {
+        super(center);
     }
-    @Test
-    public void testClassType() {
-        assert new Cube().add(Direction.NORD, 1).getClass()==Cube.class;
-        assert new Cube().createCoordinate(0, 1).getClass()==Cube.class;
-        Iterator<Coordinate> result = new Cube().getNeigbours().iterator();
-        assert(result.next().getClass()==Cube.class);
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean contains(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        try {
+            return set.contains((CoordinateImpl) obj);
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Iterator<CoordinateImpl> iterator() {
+        return set.iterator();
+    }
+
+    @Override
+    public int size() {
+        return set.size();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        try {
+            @SuppressWarnings("unchecked")
+            Set<CoordinateImpl> region = (Set<CoordinateImpl>) other;
+            return region instanceof Set && region.set.equals(set);
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public CoordinateImpl getRandom() {
+        return (CoordinateImpl) set.toArray()[random.nextInt(set.size())];
     }
 }

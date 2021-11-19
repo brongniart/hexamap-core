@@ -31,7 +31,6 @@ package hexamap.regions;
 import hexamap.coordinates.Coordinate;
 import static java.lang.Math.abs;
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  *
@@ -39,52 +38,37 @@ import java.util.Random;
  */
 public class Hexagon<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
 
-    private final int range;
-    private final int size;
-    private final CoordinateImpl zero;
-    private final Class<CoordinateImpl> coordinateClazz;
+    private int range;
 
-    public Hexagon(int range, Class<CoordinateImpl> clazz) {
-        super();
-		System.out.println("Range:"+range);
-        this.range = range;
-
-        int tmpSize = 1;
-        for (int i = range; i > 0; i--) {
-            tmpSize += i * 6;
-        }
-        size = tmpSize;
-        coordinateClazz = clazz;
-        try {
-			zero = clazz.getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+    public Hexagon(int range, CoordinateImpl center) {
+        super(center);
+        this.range = Math.abs(range);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean contains(Object obj) {
         if (obj == null) {
             return false;
         }
         try {
-            Coordinate coordinate = (Coordinate) obj;
-            return coordinate.distance(zero) <= range;
+            return center.distance((CoordinateImpl) obj) <= range;
         } catch (ClassCastException e) {
             return false;
         }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Iterator<CoordinateImpl> iterator() {
         return new Iterator<CoordinateImpl>() {
-            Iterator<Coordinate> internal;
+            Iterator<CoordinateImpl> internal;
             boolean last = false;
 
             {
-            	if (range > 0) {
-                    this.internal = zero.getAllNeigbours(range).iterator();
-            	}
+                if (range > 0) {
+                    this.internal = (Iterator<CoordinateImpl>) center.getAllNeigbours(range).iterator();
+                }
             }
 
             @Override
@@ -94,19 +78,18 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
 
             @Override
             public CoordinateImpl next() {
-                if (internal!=null && internal.hasNext()) {
+                if (internal.hasNext()) {
                     try {
-                        return coordinateClazz.getDeclaredConstructor(Coordinate.class).newInstance(internal.next());
+                        return (CoordinateImpl) internal.next();
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
                 } else {
                     if (!last) {
                         last = true;
-                        return zero;
+                        return center;
                     } else {
-                        assert false;
-                        return null;
+                        throw new RuntimeException("calling next() when hasNext() is false");
                     }
                 }
             }
@@ -115,14 +98,21 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
 
     @Override
     public int size() {
-        return size;
+        return 1 + 6 * (range * (range + 1)) / 2;
     }
 
     @Override
-    public boolean equals(Region region) {
-        assert region != null;
-        return region.getClass() == Hexagon.class
-                && ((Hexagon) region).range == this.range;
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        try {
+            @SuppressWarnings("unchecked")
+            Hexagon<CoordinateImpl> region = (Hexagon<CoordinateImpl>) other;
+            return region instanceof Hexagon && region.range == range && region.center.equals(center);
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 
     public int getRange() {
@@ -130,14 +120,12 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CoordinateImpl getRandom() {
-        Random random = new Random();
         int x = random.nextInt(range * 2 + 1) - range;
-        
+
         int bound = range - abs(x) - 1;
-        int y = (x > 0)
-                ? random.nextInt(range + bound) - range
-                : random.nextInt(range + bound) - bound;
-        return (CoordinateImpl) zero.createCoordinate(x, y);
+        int y = (x > 0) ? random.nextInt(range + bound) - range : random.nextInt(range + bound) - bound;
+        return (CoordinateImpl) center.createCoordinate(x, y);
     }
 }

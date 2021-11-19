@@ -38,18 +38,28 @@ public class Cube extends Axial
     public Cube()
     {}
     
-    public Cube(Coordinate c)
+    public Cube(Axial c)
     {
-        setX(c.getX());
-        setY(c.getY());
+        super(c);
         this.z = c.getZ();
     }
-    
+
     public Cube(int x, int y)
-    {
-        setX(x);
-        setY(y);
+    {       
+        super(x,y);
         this.z = super.getZ();
+    }   
+    
+    public Cube createCoordinate(int x, int y) {
+        return new Cube(new Axial(x,y));
+    }
+
+    public Axial createCoordinateXZ(int x, int z) {
+        return new Cube(new Axial(x,-y-z));
+    }
+
+    public Axial createCoordinateYZ(int y, int z) {
+        return new Cube(new Axial(-y-z,z));
     }
     
     @Override
@@ -57,13 +67,7 @@ public class Cube extends Axial
         return z; 
     }
     
-    @Override
-    public Coordinate getNext(Direction where) {
-        return new Cube(getX()+where.x,getY()+where.y);
-    }
-
-    @Override
-    public Coordinate createCoordinate(int x, int y) {
-        return new Cube(x,y);
+    public Cube add(Direction direction, int range) {
+        return new Cube(x + range*direction.x, y + range*direction.y);
     }
 }

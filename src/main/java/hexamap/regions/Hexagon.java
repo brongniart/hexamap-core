@@ -48,12 +48,9 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
     @Override
     @SuppressWarnings("unchecked")
     public boolean contains(Object obj) {
-        if (obj == null) {
-            return false;
-        }
         try {
             return center.distance((CoordinateImpl) obj) <= range;
-        } catch (ClassCastException e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -79,11 +76,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
             @Override
             public CoordinateImpl next() {
                 if (internal.hasNext()) {
-                    try {
-                        return (CoordinateImpl) internal.next();
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    return (CoordinateImpl) internal.next();
                 } else {
                     if (!last) {
                         last = true;
@@ -103,14 +96,11 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
 
     @Override
     public boolean equals(Object other) {
-        if (other == null) {
-            return false;
-        }
         try {
             @SuppressWarnings("unchecked")
             Hexagon<CoordinateImpl> region = (Hexagon<CoordinateImpl>) other;
             return region instanceof Hexagon && region.range == range && region.center.equals(center);
-        } catch (ClassCastException e) {
+        } catch (Exception e) {
             return false;
         }
     }

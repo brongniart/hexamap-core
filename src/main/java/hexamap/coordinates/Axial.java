@@ -87,8 +87,8 @@ public class Axial extends Coordinate {
         return createCoordinate(x + range*direction.x, y + range*direction.y);
     }
     
-    @Override
-    public int hashCode() {
-        return x<<Integer.SIZE/2 + y >>Integer.SIZE/2;
-    }
+//    @Override
+//    public int hashCode() {
+//        return x<<Integer.SIZE/2 + y >>Integer.SIZE/2;
+//    }
 }

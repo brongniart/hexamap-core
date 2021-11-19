@@ -28,71 +28,68 @@
  */
 package hexamap.regions;
 
+import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
+import hexamap.coordinates.Cube;
+import hexamap.coordinates.Direction;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Random;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  *
- * @param <CoordinateImpl>
+ * 
  */
-public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
+@RunWith(Parameterized.class)
+public class RegionTests {
 
-    private LinkedHashSet<CoordinateImpl> set = new LinkedHashSet<CoordinateImpl>();
-
-    public Set(CoordinateImpl center) {
-        super(center);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean contains(Object obj) {
-        try {
-            return set.contains((CoordinateImpl) obj);
-        } catch (Exception e) {
-            return false;
+    @Parameters
+    public static Collection<Object[]> getParameters() throws Exception {
+        Random rand = new Random();
+        
+        Set<Axial> setAxial = new Set<Axial>(new Axial(rand.nextInt(),rand.nextInt()));
+        Hexagon<Axial> hexaAxial = new Hexagon<Axial>(32,new Axial(rand.nextInt(),rand.nextInt()));
+        
+        for (Axial c : hexaAxial) {
+            setAxial.add(c);
         }
-    }
-
-    @Override
-    public Iterator<CoordinateImpl> iterator() {
-        return set.iterator();
-    }
-
-    @Override
-    public int size() {
-        return set.size();
-    }
-
-    @Override
-    public boolean add(CoordinateImpl coordinate) {
-        return set.add(coordinate);
-    }
-
-    @Override
-    public boolean remove(Object coordinate) {
-        return set.remove(coordinate);
-    }
-    
-    @Override
-    public void clear() {
-        set.clear();
-    }
-    
-    @Override
-    public boolean equals(Object other) {
-        try {
-            @SuppressWarnings("unchecked")
-            Set<CoordinateImpl> region = (Set<CoordinateImpl>) other;
-            return region instanceof Set && region.set.equals(set);
-        } catch (Exception e) {
-            return false;
+        
+        Set<Cube> setCube = new Set<Cube>(new Cube(rand.nextInt(),rand.nextInt()));
+        Hexagon<Cube> hexaCube = new Hexagon<Cube>(32,new Cube(rand.nextInt(),rand.nextInt()));
+        
+        for (Cube c : hexaCube) {
+            setAxial.add(c);
         }
+        
+        return Arrays.asList(new Object[][]{{hexaAxial},{setAxial},{hexaCube},{setCube}});
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public CoordinateImpl getRandom() {
-        return (CoordinateImpl) set.toArray()[random.nextInt(set.size())];
+    private final Region<Coordinate> region;
+
+    public RegionTests(Region<Coordinate> region) throws Exception {
+        this.region = region;
+    }
+
+    @Test
+    public void testContains() {
+        int count = 0;
+        for (Coordinate c : region) {
+            assert region.contains(c);
+            count++;
+        }
+        assert count == region.size();
+    }
+
+    @Test
+    public void testGetRandom() {
+        for (Coordinate c : region) {
+            assert region.contains(region.getRandom());
+        }
     }
 }

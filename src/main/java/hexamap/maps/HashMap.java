@@ -26,73 +26,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.regions;
+package hexamap.maps;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.regions.Region;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 
 /**
  *
- * @param <CoordinateImpl>
+ * @param <Data> some stuff
  */
-public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
+public class HashMap<CoordinateImpl extends Coordinate,Data> extends AbstractMap<CoordinateImpl,Data> {
 
-    private LinkedHashSet<CoordinateImpl> set = new LinkedHashSet<CoordinateImpl>();
+    private final java.util.HashMap<CoordinateImpl, Data> map;
 
-    public Set(CoordinateImpl center) {
-        super(center);
+    public HashMap(Region<CoordinateImpl> region) {
+        super(region);
+        map = new java.util.HashMap<CoordinateImpl, Data>();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public boolean contains(Object obj) {
-        try {
-            return set.contains((CoordinateImpl) obj);
-        } catch (Exception e) {
-            return false;
-        }
+    protected Data safeGet(CoordinateImpl coordinate) {
+        return map.get(coordinate);
     }
 
     @Override
-    public Iterator<CoordinateImpl> iterator() {
-        return set.iterator();
+    protected Data safePut(CoordinateImpl coordinate, Data data) {
+        return map.put(coordinate, data);
     }
 
     @Override
     public int size() {
-        return set.size();
+        return map.size();
     }
 
     @Override
-    public boolean add(CoordinateImpl coordinate) {
-        return set.add(coordinate);
+    public boolean isEmpty() {
+        return map.isEmpty();
     }
 
-    @Override
-    public boolean remove(Object coordinate) {
-        return set.remove(coordinate);
-    }
-    
     @Override
     public void clear() {
-        set.clear();
-    }
-    
-    @Override
-    public boolean equals(Object other) {
-        try {
-            @SuppressWarnings("unchecked")
-            Set<CoordinateImpl> region = (Set<CoordinateImpl>) other;
-            return region instanceof Set && region.set.equals(set);
-        } catch (Exception e) {
-            return false;
-        }
+        map.clear();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public CoordinateImpl getRandom() {
-        return (CoordinateImpl) set.toArray()[random.nextInt(set.size())];
+    public Iterator<java.util.Map.Entry<CoordinateImpl, Data>> iterator() {
+        return map.entrySet().iterator();
     }
 }

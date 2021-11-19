@@ -49,7 +49,12 @@ public class Cube extends Axial
         super(x,y);
         this.z = super.getZ();
     }   
-    
+
+    @Override
+    public int getZ() {
+        return z; 
+    }
+        
     public Cube createCoordinate(int x, int y) {
         return new Cube(new Axial(x,y));
     }
@@ -60,11 +65,6 @@ public class Cube extends Axial
 
     public Axial createCoordinateYZ(int y, int z) {
         return new Cube(new Axial(-y-z,z));
-    }
-    
-    @Override
-    public int getZ() {
-        return z; 
     }
     
     public Cube add(Direction direction, int range) {

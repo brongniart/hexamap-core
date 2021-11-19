@@ -85,7 +85,7 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
     }
 
     public abstract Data get(CoordinateImpl arg0);
-
+    
     @Override
     default public Data remove(Object arg0) {
         throw new ClassCastException();

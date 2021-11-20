@@ -28,9 +28,11 @@
  */
 package hexamap.regions;
 
-import hexamap.coordinates.Coordinate;
 import static java.lang.Math.abs;
+
 import java.util.Iterator;
+
+import hexamap.coordinates.Coordinate;
 
 /**
  *
@@ -120,14 +122,33 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     }
 
     @Override
-    public Coordinate get(int index) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public int getIndex(CoordinateImpl coordinate) {
 
-    @Override
-    public int get(CoordinateImpl coordinate) {
-        // TODO Auto-generated method stub
-        return 0;
+        if (center.equals(coordinate)) {
+            return size()-1;
+        }
+        
+        int dist = center.distance(coordinate);
+        @SuppressWarnings("unchecked")
+        CoordinateImpl tmp = (CoordinateImpl) center.normalize(coordinate);
+        int result = new Hexagon<Coordinate>(dist - 1, center).size();
+
+        if (tmp.getZ() == -dist) {
+            result = result + 6 * dist - tmp.getX();
+        } else if (tmp.getX() == dist) {
+            result = result + 5 * dist + tmp.getY();
+        } else if (tmp.getY() == -dist) {
+            result = result + 4 * dist - tmp.getZ();
+        } else if (tmp.getZ() == dist) {
+            result = result + 3 * dist + tmp.getX();
+        } else if (tmp.getX() ==  -dist) {
+            result = result + 2 * dist - tmp.getY();
+        } else if (tmp.getY() == dist) {
+            result = result + 1 * dist + tmp.getZ();
+        } else {
+            throw new RuntimeException();
+        }
+
+        return size() - result;
     }
 }

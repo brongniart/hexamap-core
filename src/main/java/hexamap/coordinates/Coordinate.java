@@ -41,8 +41,8 @@ public abstract class Coordinate {
 
     public abstract int getY();
 
-    public abstract int getZ();    
-    
+    public abstract int getZ();
+
     public abstract Coordinate getZero();
 
     public abstract Coordinate createCoordinate(int x, int y);
@@ -50,21 +50,21 @@ public abstract class Coordinate {
     public abstract Coordinate createCoordinateXZ(int x, int z);
 
     public abstract Coordinate createCoordinateYZ(int y, int x);
-    
+
     public abstract Coordinate add(Direction direction, int range);
 
     public abstract void move(Direction direction, int range);
-    
+
     @Override
     public boolean equals(Object obj) {
         try {
-            return getX() == ((Coordinate) obj).getX() && getY()==((Coordinate) obj).getY();
+            return getX() == ((Coordinate) obj).getX() && getY() == ((Coordinate) obj).getY();
         } catch (Exception e) {
             return false;
         }
     }
 
-    public double distance(Coordinate other) {
+    public int distance(Coordinate other) {
         return (abs(getX() - other.getX()) + abs(getY() - other.getY()) + abs(getZ() - other.getZ())) / 2;
     }
 
@@ -80,7 +80,7 @@ public abstract class Coordinate {
         private final Direction INIT_DIRECTION = Direction.NORD;
 
         public NeigboursIterator(Coordinate center, int range, boolean all) {
-            
+
             this.all = all;
             this.range = Math.abs(range);
             this.center = center;
@@ -123,7 +123,7 @@ public abstract class Coordinate {
             return returnValue;
         }
     }
-    
+
     public Iterable<Coordinate> getNeigbours(int range) {
         return () -> new NeigboursIterator(this, range, false);
     }
@@ -135,9 +135,13 @@ public abstract class Coordinate {
     public Iterable<Coordinate> getAllNeigbours(int range) {
         return () -> new NeigboursIterator(this, range, true);
     }
-    
-  @Override
-  public int hashCode() {
-      return getX()<<Integer.SIZE/2 + getX() >>Integer.SIZE/2;
-  }
+
+    @Override
+    public int hashCode() {
+        return getX() << Integer.SIZE / 2 + getX() >> Integer.SIZE / 2;
+    }
+
+    public Coordinate normalize(Coordinate coordinate) {
+        return createCoordinate(coordinate.getX() - getX(), coordinate.getY() - getY());
+    }
 }

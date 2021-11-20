@@ -28,39 +28,52 @@
  */
 package hexamap.regions;
 
-import java.util.AbstractCollection;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Random;
-import java.util.Set;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
+import hexamap.coordinates.Cube;
+import hexamap.coordinates.Direction;
 
 /**
  *
- * @param <CoordinateImpl>
+ * 
  */
-public abstract class Region<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl> implements Set<CoordinateImpl> {
+@RunWith(Parameterized.class)
+public class IndexedRegionTests {
 
-    protected CoordinateImpl center;
-    protected final Random random = new Random();
-    
-    public Region(CoordinateImpl center) {
-        this.center = center;
-    }
-    
-    public CoordinateImpl getCenter() {
-        return center;
-    }
+    @Parameters
+    public static Collection<Object[]> getParameters() throws Exception {
+        Random rand = new Random();
 
-    public void setCenter(CoordinateImpl center) {
-        this.center = center;
+        Hexagon<Axial> hexaAxial = new Hexagon<Axial>(1024, new Axial());
+        Triangle<Cube> triangleNW = new Triangle<Cube>(Direction.NORD_WEST, 3, new Cube());
+
+        return Arrays.asList(new Object[][] { { hexaAxial }, {triangleNW} });
     }
 
-    @Override
-    public abstract int size();
-    
-    @Override
-    public abstract Iterator<CoordinateImpl> iterator();
+    private final IndexedRegion<Coordinate> region;
 
-    public abstract CoordinateImpl getRandom();
+    public IndexedRegionTests(IndexedRegion<Coordinate> region) throws Exception {
+        this.region = region;
+    }
+
+    @Test
+    public void testIndex() {
+        int count=0;
+        System.out.println(region.size());
+        for (Coordinate c : region) {
+            assert region.getIndex(c)==count;
+            count++;
+        }
+
+        assert count == region.size();
+    }
 }

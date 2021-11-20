@@ -123,7 +123,9 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
     @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         try {
-            return false;
+            return ((Triangle<CoordinateImpl>) object).direction == direction &&
+                    ((Triangle<CoordinateImpl>) object).length == length &&
+                    ((Triangle<CoordinateImpl>) object).center == center;
         } catch (Exception e) {
             return false;
         }
@@ -141,16 +143,28 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
         
         return (CoordinateImpl) center.createCoordinate(center.getX()+direction.x*x, center.getY()+direction.y*y);
     }
-
+    
     @Override
-    public Coordinate get(int index) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public int getIndex(CoordinateImpl coordinate) {
+        int dist = center.distance(coordinate);
+        int result = new Triangle<Coordinate>(direction,dist-1, center).size();
 
-    @Override
-    public int get(CoordinateImpl coordinate) {
-        // TODO Auto-generated method stub
-        return 0;
+        if (coordinate.getZ() == center.getZ()-dist) {
+            result = result + coordinate.getX();
+        } else if (coordinate.getX() == center.getX()+dist) {
+            result = result + dist - coordinate.getY();
+        } else if (coordinate.getY() == center.getY()-dist) {
+            result = result + dist + coordinate.getZ();
+        } else if (coordinate.getZ() == center.getZ()+dist) {
+            result = result + dist - coordinate.getX();
+        } else if (coordinate.getX() == center.getX()-dist) {
+            result = result + dist + coordinate.getY();
+        } else if (coordinate.getY() == center.getY()+dist) {
+            result = result + dist - coordinate.getZ();
+        } else {
+            throw new RuntimeException();
+        }
+        
+        return result;
     }
 }

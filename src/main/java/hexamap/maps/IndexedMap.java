@@ -26,41 +26,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.regions;
-
-import java.util.AbstractCollection;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
+package hexamap.maps;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.regions.IndexedRegion;
 
-/**
- *
- * @param <CoordinateImpl>
- */
-public abstract class Region<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl> implements Set<CoordinateImpl> {
-
-    protected CoordinateImpl center;
-    protected final Random random = new Random();
+public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extends AbstractMap<CoordinateImpl, Data> {
     
-    public Region(CoordinateImpl center) {
-        this.center = center;
+    public IndexedMap(IndexedRegion<CoordinateImpl> region) {
+        super(region);
     }
     
-    public CoordinateImpl getCenter() {
-        return center;
-    }
-
-    public void setCenter(CoordinateImpl center) {
-        this.center = center;
+    public IndexedRegion<CoordinateImpl> getRegion() {
+        return (IndexedRegion<CoordinateImpl>) region;
     }
 
     @Override
-    public abstract int size();
-    
-    @Override
-    public abstract Iterator<CoordinateImpl> iterator();
+    public Data safeGet(CoordinateImpl coordinate) {
+        return indexGet(getRegion().getIndex(coordinate));
+    }
 
-    public abstract CoordinateImpl getRandom();
+    protected abstract Data indexGet(double index);
+
+    @Override
+    public Data safePut(CoordinateImpl coordinate, Data data) {
+        return indexPut(getRegion().getIndex(coordinate), data);
+//        Data old = indexPut(getRegion().getIndex(coordinate), data);
+//        if (data == null && old != null) {
+//            size--;
+//        } else if (old == null) {
+//            size++;
+//        }
+//        return old;
+    }
+    
+    protected abstract Data indexPut(double index, Data data);
 }

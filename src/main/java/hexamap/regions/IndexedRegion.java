@@ -40,6 +40,5 @@ public abstract class IndexedRegion<CoordinateImpl extends Coordinate> extends R
         super(center);
     }
     
-    public abstract Coordinate get(int index);
-    public abstract int get(CoordinateImpl coordinate);
+    public abstract int getIndex(CoordinateImpl coordinate);
 }

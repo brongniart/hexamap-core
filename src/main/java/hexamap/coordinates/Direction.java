@@ -41,13 +41,13 @@ public enum Direction {
         this.x = x;
         this.y = y;
     }
-
+    
     public Direction next() {
         return next(1);
     }
 
     public Direction next(int i) {
-        return values()[(this.ordinal() + i) % values().length];
+        return getIndex(this.ordinal() + i);
     }
 
     public Direction previous() {
@@ -55,6 +55,10 @@ public enum Direction {
     }
 
     public Direction previous(int i) {
-        return values()[((this.ordinal() - i) % values().length + values().length)%6];
+        return getIndex(this.ordinal() - i);
+    }
+
+    public static Direction getIndex(int index) {
+        return values()[(index % values().length + values().length)%values().length];
     }
 }

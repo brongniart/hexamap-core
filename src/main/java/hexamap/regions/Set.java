@@ -42,16 +42,18 @@ public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImp
 
     public Set(CoordinateImpl center) {
         super(center);
+        set.add(center);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    public void setCenter(CoordinateImpl center) {
+        super.setCenter(center);
+        set.add(center);
+    }
+
+    @Override
     public boolean contains(Object obj) {
-        try {
-            return set.contains((CoordinateImpl) obj);
-        } catch (Exception e) {
-            return false;
-        }
+        return set.contains(obj);
     }
 
     @Override
@@ -71,20 +73,23 @@ public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImp
 
     @Override
     public boolean remove(Object coordinate) {
+        if (center.equals(coordinate)) {
+            throw new UnsupportedOperationException("Center cannot be removed");
+        }
         return set.remove(coordinate);
     }
-    
+
     @Override
     public void clear() {
         set.clear();
+        set.add(center);
     }
-    
+
     @Override
-    public boolean equals(Object other) {
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object object) {
         try {
-            @SuppressWarnings("unchecked")
-            Set<CoordinateImpl> region = (Set<CoordinateImpl>) other;
-            return region instanceof Set && region.set.equals(set);
+            return set.equals(((Set<CoordinateImpl>) object).set);
         } catch (Exception e) {
             return false;
         }

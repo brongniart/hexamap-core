@@ -50,19 +50,16 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
     protected final Region<CoordinateImpl> region;
 
     public AbstractMap(Region<CoordinateImpl> region) {
-        assert region != null;
         this.region = region;
     }
     
     @Override
     public boolean containsKey(CoordinateImpl coordinate) {
-        assert coordinate != null;
         return region.contains(coordinate);
     }
 
     @SuppressWarnings("unchecked")
     private void checkCoordinate(CoordinateImpl coordinate) {
-        assert coordinate != null;
         if (!containsKey(coordinate)) {
             throw new OutOfRegion((Coordinate) coordinate, (Region<Coordinate>) region);
         }

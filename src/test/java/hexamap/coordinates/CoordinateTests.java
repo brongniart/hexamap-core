@@ -31,7 +31,6 @@ package hexamap.coordinates;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 
 import org.junit.After;
@@ -54,7 +53,8 @@ public class CoordinateTests {
         return Arrays.asList(new Object[][]{
             {new Axial()},{new Cube()},
             {new Axial(rand.nextInt(),rand.nextInt())},
-            {new Cube(rand.nextInt(),rand.nextInt())}});
+            {new Cube(rand.nextInt(),rand.nextInt())},
+            {new Axial(Integer.MAX_VALUE,Integer.MIN_VALUE)}});
     }
     private Coordinate coordinate;
 
@@ -68,12 +68,8 @@ public class CoordinateTests {
     }
 
     @Test
-    @SuppressWarnings("unlikely-arg-type")
     public void testBasic() {
         
-        //coordinate.hashCode() missing
-        
-        assert !coordinate.equals(Direction.NORD);
         assert coordinate.add(Direction.NORD.next(3), 2).equals(coordinate.add(Direction.NORD.previous(3), 2));
         
         assert coordinate.add(Direction.NORD.previous(), 2).equals(coordinate.add(Direction.NORD_WEST, 2));
@@ -153,7 +149,7 @@ public class CoordinateTests {
         assert count == 6 + 6 * 2;
         
         count = 0;
-        for (Coordinate c : coordinate.getAllNeigbours(1024)) {
+        for (@SuppressWarnings("unused") Coordinate c : coordinate.getAllNeigbours(1024)) {
             count++;
         }
         assert count==3148800;

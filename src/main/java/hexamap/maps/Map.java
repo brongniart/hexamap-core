@@ -73,33 +73,33 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
     public Iterator<java.util.Map.Entry<CoordinateImpl, Data>> iterator();
 
     @Override
-    default public boolean containsKey(Object arg0) {
+    default public boolean containsKey(Object object) {
         throw new ClassCastException();
     }
 
     public abstract boolean containsKey(CoordinateImpl coordinate);
 
     @Override
-    default public Data get(Object arg0) {
+    default public Data get(Object object) {
         throw new ClassCastException();
     }
 
-    public abstract Data get(CoordinateImpl arg0);
+    public abstract Data get(CoordinateImpl coordinate);
     
     @Override
-    default public Data remove(Object arg0) {
+    default public Data remove(Object object) {
         throw new ClassCastException();
     }
 
-    default public Data remove(CoordinateImpl arg0) {
-        return put(arg0, null);
+    default public Data remove(CoordinateImpl coordinate) {
+        return put(coordinate, null);
     }
 
     @Override
-    public abstract Data put(CoordinateImpl c, Data data);
+    public abstract Data put(CoordinateImpl coordinate, Data data);
 
     @Override
-    public void putAll(java.util.Map<? extends CoordinateImpl, ? extends Data> m);
+    public void putAll(java.util.Map<? extends CoordinateImpl, ? extends Data> map);
 
     @Override
     public abstract void clear();
@@ -121,7 +121,7 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
     }
 
     @Override
-    default public boolean containsValue(Object arg0) {
+    default public boolean containsValue(Object object) {
         throw new UnsupportedOperationException();
     }
 }

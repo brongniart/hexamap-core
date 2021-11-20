@@ -67,7 +67,10 @@ public class RegionTests {
             setAxial.add(c);
         }
         
-        return Arrays.asList(new Object[][]{{hexaAxial},{setAxial},{hexaCube},{setCube}});
+        Set<Axial> setMax = new Set<Axial>(new Axial(Integer.MIN_VALUE,Integer.MAX_VALUE));
+        Hexagon<Axial> hexaMax = new Hexagon<Axial>(32,new Axial(Integer.MIN_VALUE,Integer.MAX_VALUE));
+        
+        return Arrays.asList(new Object[][]{{hexaAxial},{setAxial},{hexaCube},{setCube},{hexaMax},{setMax}});
     }
 
     private final Region<Coordinate> region;
@@ -78,17 +81,38 @@ public class RegionTests {
 
     @Test
     public void testContains() {
+        assert region.contains(region.getCenter());
+        
+        Coordinate tmp =region.getCenter();
+        region.setCenter(tmp.add(Direction.NORD, 10));
+        assert region.contains(region.getCenter());
+        
+        try {
+            region.clear();
+        } catch (UnsupportedOperationException e) {}
+        assert region.contains(region.getCenter());
+        
+        try {
+            region.remove(region.getCenter());
+            assert false;
+        } catch (UnsupportedOperationException e) {}
+        assert region.contains(region.getCenter());
+        
+        region.setCenter(tmp);
+        
         int count = 0;
         for (Coordinate c : region) {
             assert region.contains(c);
             count++;
         }
+        
+        
         assert count == region.size();
     }
 
     @Test
     public void testGetRandom() {
-        for (Coordinate c : region) {
+        for (@SuppressWarnings("unused") Coordinate c : region) {
             assert region.contains(region.getRandom());
         }
     }

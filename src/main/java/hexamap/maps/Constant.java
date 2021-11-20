@@ -26,55 +26,85 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.coordinates;
+package hexamap.maps;
+
+import hexamap.coordinates.Coordinate;
+import hexamap.regions.Region;
+import java.util.Iterator;
 
 /**
  *
+ * @param <Data> some stuff
  */
-public class Cube extends Axial {
+public class Constant<CoordinateImpl extends Coordinate,Data> extends AbstractMap<CoordinateImpl,Data> {
+
+    private Data data;
+
+    public Constant(Region<CoordinateImpl> region,Data data) {
+        this(region);
+        this.setData(data);
+    }
+
+    public Constant(Region<CoordinateImpl> region) {
+        super(region);
+    }
+
+    @Override
+    protected Data safeGet(CoordinateImpl coordinate) {
+        return data;
+    }
+
+    @Override
+    protected Data safePut(CoordinateImpl coordinate, Data data) {
+        Data oldData = this.data;
+        this.data = data;
+        return oldData;
+    }
+
+    @Override
+    public int size() {
+        return region.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return data==null;
+    }
+
+    @Override
+    public void clear() {
+        data = null;
+    }
+
+    public class ConstantIterator implements Iterator<java.util.Map.Entry<CoordinateImpl, Data>> {
+
+        private Iterator<CoordinateImpl> iterator;
+
+        public ConstantIterator() {
+            iterator = region.iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return data!=null && iterator.hasNext();
+        }
+
+        @Override
+        public Entry<CoordinateImpl, Data> next() {
+            return new Entry<CoordinateImpl, Data>(iterator.next(),data);
+        }
+    }
     
-    protected int z = 0;
-
-    public Cube() {
-    }
-
-    public Cube(int x, int y) {
-        super(x, y);
-        this.z = super.getZ();
-    }
-
-    public Cube(Coordinate c) {
-        super(c);
-        this.z = c.getZ();
-    }
-
     @Override
-    public int getZ() {
-        return z;
+    public Iterator<java.util.Map.Entry<CoordinateImpl, Data>> iterator() {
+       return new ConstantIterator();
     }
 
-    public Cube createCoordinate(int x, int y) {
-        return new Cube(new Axial(x, y));
+    public Data getData() {
+        return data;
     }
 
-    public Axial createCoordinateXZ(int x, int z) {
-        return new Cube(new Axial(x, -y - z));
-    }
-
-    public Axial createCoordinateYZ(int y, int z) {
-        return new Cube(new Axial(-y - z, z));
-    }
-
-    public Cube add(Direction direction, int range) {
-        return new Cube(x + range * direction.x, y + range * direction.y);
-    }
-
-    public String toString() {
-        return "{" + x + "," + y + "," + z + "}";
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-       return super.equals(obj);
+    public void setData(Data data) {
+        this.data = data;
     }
 }

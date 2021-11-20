@@ -45,11 +45,11 @@ public class Axial extends Coordinate {
         this.y = y;
     }
     
-    public Axial(Axial c) {
+    public Axial(Coordinate c) {
         this.x = c.getX();
         this.y = c.getY();
     }
-    
+
     public int getX() {
         return x;
     }
@@ -86,9 +86,14 @@ public class Axial extends Coordinate {
     public Axial add(Direction direction, int range) {
         return createCoordinate(x + range*direction.x, y + range*direction.y);
     }
-    
-//    @Override
-//    public int hashCode() {
-//        return x<<Integer.SIZE/2 + y >>Integer.SIZE/2;
-//    }
+
+    @Override
+    public String toString() {
+        return "{"+x+","+y+"}";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+       return super.equals(obj);
+    }
 }

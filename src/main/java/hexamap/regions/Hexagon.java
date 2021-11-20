@@ -95,11 +95,11 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
     }
 
     @Override
-    public boolean equals(Object other) {
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object object) {
         try {
-            @SuppressWarnings("unchecked")
-            Hexagon<CoordinateImpl> region = (Hexagon<CoordinateImpl>) other;
-            return region instanceof Hexagon && region.range == range && region.center.equals(center);
+            return ((Hexagon<CoordinateImpl>) object).range == range
+                    && ((Hexagon<CoordinateImpl>) object).center.equals(center);
         } catch (Exception e) {
             return false;
         }
@@ -116,6 +116,6 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends Region<Coordinat
 
         int bound = range - abs(x) - 1;
         int y = (x > 0) ? random.nextInt(range + bound) - range : random.nextInt(range + bound) - bound;
-        return (CoordinateImpl) center.createCoordinate(x, y);
+        return (CoordinateImpl) center.createCoordinate(center.getX() + x, center.getY() + y);
     }
 }

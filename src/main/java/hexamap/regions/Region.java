@@ -54,6 +54,9 @@ public abstract class Region<CoordinateImpl extends Coordinate> extends Abstract
     public void setCenter(CoordinateImpl center) {
         this.center = center;
     }
+
+    @Override
+    public abstract int size();
     
     @Override
     public abstract Iterator<CoordinateImpl> iterator();

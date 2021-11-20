@@ -57,11 +57,9 @@ public abstract class Coordinate {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
         try {
-            return distance((Coordinate) obj) == 0;
-        } catch (ClassCastException e) {
+            return getX() == ((Coordinate) obj).getX() && getY()==((Coordinate) obj).getY();
+        } catch (Exception e) {
             return false;
         }
     }
@@ -137,4 +135,9 @@ public abstract class Coordinate {
     public Iterable<Coordinate> getAllNeigbours(int range) {
         return () -> new NeigboursIterator(this, range, true);
     }
+    
+  @Override
+  public int hashCode() {
+      return getX()<<Integer.SIZE/2 + getX() >>Integer.SIZE/2;
+  }
 }

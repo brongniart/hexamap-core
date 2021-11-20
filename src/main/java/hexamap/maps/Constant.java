@@ -75,13 +75,43 @@ public class Constant<CoordinateImpl extends Coordinate,Data> extends AbstractMa
     public void clear() {
         data = null;
     }
+    
+    public class Entry implements java.util.Map.Entry<CoordinateImpl, Data> {
+        
+        private Constant<CoordinateImpl, Data> map;
+        private CoordinateImpl coordinate;
+        
+        public Entry(Constant<CoordinateImpl, Data> map, CoordinateImpl coordinate, Data data) {
+            this.map = map;
+            this.coordinate = coordinate;
+        }
 
+        @Override
+        public Data setValue(Data data) {
+            Data oldData = map.data;
+            map.data = data;
+            return oldData;
+        }
+
+        @Override
+        public CoordinateImpl getKey() {
+            return coordinate;
+        }
+
+        @Override
+        public Data getValue() {
+            return map.data;
+        }
+    }
+    
     public class ConstantIterator implements Iterator<java.util.Map.Entry<CoordinateImpl, Data>> {
 
         private Iterator<CoordinateImpl> iterator;
+        private Constant<CoordinateImpl, Data> map;
 
-        public ConstantIterator() {
+        public ConstantIterator(Constant<CoordinateImpl, Data> map) {
             iterator = region.iterator();
+            this.map = map;
         }
 
         @Override
@@ -90,14 +120,14 @@ public class Constant<CoordinateImpl extends Coordinate,Data> extends AbstractMa
         }
 
         @Override
-        public Entry<CoordinateImpl, Data> next() {
-            return new Entry<CoordinateImpl, Data>(iterator.next(),data);
+        public Entry next() {
+            return new Entry(map, iterator.next(),data);
         }
     }
     
     @Override
     public Iterator<java.util.Map.Entry<CoordinateImpl, Data>> iterator() {
-       return new ConstantIterator();
+       return new ConstantIterator(this);
     }
 
     public Data getData() {

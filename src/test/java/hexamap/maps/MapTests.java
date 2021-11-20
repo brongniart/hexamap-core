@@ -65,8 +65,9 @@ public class MapTests {
         regionXXSmall = new Hexagon<Axial>(100, new Axial()); // 49'537 hex
         regionMedium = new Hexagon<Axial>(1024, new Axial()); // 3'148'801 hex
         regionLarge = new Hexagon<Axial>(2048, new Axial());
-        return Arrays.asList(new Object[][] { { new HashMap<Axial, AxialExt>(regionXXSmall), regionXXSmall },
-            { new Constant<Axial, AxialExt>(regionXXSmall), regionXXSmall }});
+        return Arrays.asList(
+                new Object[][] { { new HashMap<Axial, AxialExt>(regionXXSmall), regionXXSmall },
+                        { new Constant<Axial, AxialExt>(regionXXSmall), regionXXSmall } });
     }
 
     private Map<Coordinate, Cube> map;
@@ -90,12 +91,15 @@ public class MapTests {
             assert map.get(c) != null;
             assert map.get(c).equals(new AxialExt(c));
         }
-        assert map.size()==region.size();
+        assert map.size() == region.size();
         for (var entry : map) {
-            assert entry.getValue()!=null;
+            assert entry.getKey() != null;
+            assert entry.getValue() != null;
+            entry.setValue(new AxialExt());
+            assert entry.getValue().equals(new AxialExt());
         }
     }
-    
+
     @Test
     public void test_FillMap_NewCoordinate() {
         assert map.isEmpty();

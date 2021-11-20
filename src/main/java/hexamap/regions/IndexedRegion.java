@@ -26,70 +26,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.maps;
+package hexamap.regions;
 
 import hexamap.coordinates.Coordinate;
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  *
- * @param <Data> some stuffs
+ * @param <CoordinateImpl>
  */
-public interface Map<CoordinateImpl extends Coordinate, Data>
-        extends java.util.Map<CoordinateImpl, Data>, Iterable<Entry<CoordinateImpl, Data>> {
+public abstract class IndexedRegion<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
 
-    @Override
-    default public boolean containsKey(Object object) {
-        throw new ClassCastException();
+    public IndexedRegion(CoordinateImpl center) {
+        super(center);
     }
-
-    public abstract boolean containsKey(CoordinateImpl coordinate);
-
-    @Override
-    default public Data get(Object object) {
-        throw new ClassCastException();
-    }
-
-    public abstract Data get(CoordinateImpl coordinate);
     
-    @Override
-    default public Data remove(Object object) {
-        throw new ClassCastException();
-    }
-
-    default public Data remove(CoordinateImpl coordinate) {
-        return put(coordinate, null);
-    }
-
-    @Override
-    public abstract Data put(CoordinateImpl coordinate, Data data);
-
-    @Override
-    public void putAll(java.util.Map<? extends CoordinateImpl, ? extends Data> map);
-
-    @Override
-    public abstract void clear();
-
-    // Unsupported methods from Map:
-    @Override
-    default public Set<CoordinateImpl> keySet() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    default public Collection<Data> values() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    default public Set<java.util.Map.Entry<CoordinateImpl, Data>> entrySet() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    default public boolean containsValue(Object object) {
-        throw new UnsupportedOperationException();
-    }
+    public abstract Coordinate get(int index);
+    public abstract int get(CoordinateImpl coordinate);
 }

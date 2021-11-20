@@ -54,7 +54,7 @@ public abstract class Coordinate {
     public abstract Coordinate add(Direction direction, int range);
 
     public abstract void move(Direction direction, int range);
-
+    
     @Override
     public boolean equals(Object obj) {
         try {

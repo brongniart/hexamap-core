@@ -28,62 +28,87 @@
  */
 package hexamap.regions;
 
-import hexamap.coordinates.Coordinate;
-import static java.lang.Math.abs;
 import java.util.Iterator;
+
+import hexamap.coordinates.Coordinate;
+import hexamap.coordinates.Direction;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<CoordinateImpl> {
+public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<CoordinateImpl> {
 
-    private int range;
+    private Direction direction;
+    private int length;
 
-    public Hexagon(int range, CoordinateImpl center) {
+    public Triangle(Direction direction, int length, CoordinateImpl center) {
         super(center);
-        this.range = Math.abs(range);
+        if (length < 0) {
+            this.direction = direction.next(3);
+            this.length = -length;
+        } else {
+            this.direction = direction;
+            this.length = length;
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public boolean contains(Object obj) {
         try {
-            return center.distance((CoordinateImpl) obj) <= range;
+            CoordinateImpl c = ((CoordinateImpl) obj);
+            
+            int direction_z = -direction.x - direction.y;
+            
+            int factor_x = direction.x == 1 ? 1 : 0;
+            int factor_y = direction.y == 1 ? 1 : 0;
+            int factor_z = direction_z == 1 ? 1 : 0;
+
+            return direction.x * Math.abs(c.getX() - center.getX()) <= factor_x * (length + 1)
+                    && direction.y * Math.abs(c.getY() - center.getY()) <= factor_y * (length + 1)
+                    && direction_z * Math.abs(c.getZ() - center.getZ()) <= factor_z * (length + 1);
         } catch (Exception e) {
             return false;
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Iterator<CoordinateImpl> iterator() {
         return new Iterator<CoordinateImpl>() {
-            Iterator<CoordinateImpl> internal;
-            boolean last = false;
+            CoordinateImpl next = center;
 
-            {
-                if (range > 0) {
-                    this.internal = (Iterator<CoordinateImpl>) center.getAllNeigbours(range).iterator();
-                }
-            }
+            boolean hasNext = true;
+            int iterLength = 0;
+            int angle = 0;
 
             @Override
             public boolean hasNext() {
-                return !last;
+                return hasNext;
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public CoordinateImpl next() {
-                if (internal.hasNext()) {
-                    return (CoordinateImpl) internal.next();
-                } else {
-                    if (!last) {
-                        last = true;
-                        return center;
+                if (hasNext) {
+                    CoordinateImpl current = next;
+
+                    if (angle == iterLength) {
+                        if (iterLength == length) {
+                            hasNext = false;
+                        } else {
+                            iterLength++;
+                            angle = 0;
+                            next = (CoordinateImpl) center.add(direction, iterLength);
+                        }
                     } else {
-                        throw new RuntimeException("calling next() when hasNext() is false");
+                        angle++;
+                        next = (CoordinateImpl) next.add(direction.next(2), 1);
                     }
+
+                    return current;
+                } else {
+                    throw new RuntimeException("calling next() when hasNext() is false");
                 }
             }
         };
@@ -91,32 +116,30 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
 
     @Override
     public int size() {
-        return 1 + 6 * (range * (range + 1)) / 2;
+        return ((length + 2) * (length + 1)) / 2;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         try {
-            return ((Hexagon<CoordinateImpl>) object).range == range
-                    && ((Hexagon<CoordinateImpl>) object).center.equals(center);
+            return false;
         } catch (Exception e) {
             return false;
         }
     }
 
-    public int getRange() {
-        return range;
+    public int getLength() {
+        return length;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public CoordinateImpl getRandom() {
-        int x = random.nextInt(range * 2 + 1) - range;
-
-        int bound = range - abs(x) - 1;
-        int y = (x > 0) ? random.nextInt(range + bound) - range : random.nextInt(range + bound) - bound;
-        return (CoordinateImpl) center.createCoordinate(center.getX() + x, center.getY() + y);
+        int x = random.nextInt(length);
+        int y = random.nextInt(length);
+        
+        return (CoordinateImpl) center.createCoordinate(center.getX()+direction.x*x, center.getY()+direction.y*y);
     }
 
     @Override

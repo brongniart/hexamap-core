@@ -28,11 +28,6 @@
  */
 package hexamap.regions;
 
-import hexamap.coordinates.Axial;
-import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Cube;
-import hexamap.coordinates.Direction;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
@@ -41,6 +36,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import hexamap.coordinates.Axial;
+import hexamap.coordinates.Coordinate;
+import hexamap.coordinates.Cube;
+import hexamap.coordinates.Direction;
 
 /**
  *
@@ -52,25 +52,26 @@ public class RegionTests {
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
         Random rand = new Random();
-        
-        Set<Axial> setAxial = new Set<Axial>(new Axial(rand.nextInt(),rand.nextInt()));
-        Hexagon<Axial> hexaAxial = new Hexagon<Axial>(32,new Axial(rand.nextInt(),rand.nextInt()));
-        
+
+        Set<Axial> setAxial = new Set<Axial>(new Axial(rand.nextInt(), rand.nextInt()));
+        Hexagon<Axial> hexaAxial = new Hexagon<Axial>(32, new Axial(rand.nextInt(), rand.nextInt()));
+
         for (Axial c : hexaAxial) {
             setAxial.add(c);
         }
-        
-        Set<Cube> setCube = new Set<Cube>(new Cube(rand.nextInt(),rand.nextInt()));
-        Hexagon<Cube> hexaCube = new Hexagon<Cube>(32,new Cube(rand.nextInt(),rand.nextInt()));
-        
+
+        Set<Cube> setCube = new Set<Cube>(new Cube(rand.nextInt(), rand.nextInt()));
+        Hexagon<Cube> hexaCube = new Hexagon<Cube>(32, new Cube(rand.nextInt(), rand.nextInt()));
+
         for (Cube c : hexaCube) {
             setAxial.add(c);
         }
-        
-        Set<Axial> setMax = new Set<Axial>(new Axial(Integer.MIN_VALUE,Integer.MAX_VALUE));
-        Hexagon<Axial> hexaMax = new Hexagon<Axial>(32,new Axial(Integer.MIN_VALUE,Integer.MAX_VALUE));
-        
-        return Arrays.asList(new Object[][]{{hexaAxial},{setAxial},{hexaCube},{setCube},{hexaMax},{setMax}});
+
+        Hexagon<Axial> hexaMax = new Hexagon<Axial>(1024, new Axial(Integer.MIN_VALUE, Integer.MAX_VALUE));
+        Triangle<Cube> triangleN = new Triangle<Cube>(Direction.NORD, 1024, new Cube(rand.nextInt(), rand.nextInt()));
+        Triangle<Cube> triangleNW = new Triangle<Cube>(Direction.NORD_WEST, 1024, new Cube(rand.nextInt(), rand.nextInt()));
+
+        return Arrays.asList(new Object[][] { { hexaAxial }, { setAxial }, { hexaCube }, { setCube }, { hexaMax }, { triangleN }, {triangleNW} });
     }
 
     private final Region<Coordinate> region;
@@ -82,31 +83,32 @@ public class RegionTests {
     @Test
     public void testContains() {
         assert region.contains(region.getCenter());
-        
-        Coordinate tmp =region.getCenter();
+
+        Coordinate tmp = region.getCenter();
         region.setCenter(tmp.add(Direction.NORD, 10));
         assert region.contains(region.getCenter());
-        
+
         try {
             region.clear();
-        } catch (UnsupportedOperationException e) {}
+        } catch (UnsupportedOperationException e) {
+        }
         assert region.contains(region.getCenter());
-        
+
         try {
             region.remove(region.getCenter());
             assert false;
-        } catch (UnsupportedOperationException e) {}
+        } catch (UnsupportedOperationException e) {
+        }
         assert region.contains(region.getCenter());
-        
+
         region.setCenter(tmp);
-        
+
         int count = 0;
         for (Coordinate c : region) {
             assert region.contains(c);
             count++;
         }
-        
-        
+
         assert count == region.size();
     }
 

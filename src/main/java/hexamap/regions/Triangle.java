@@ -149,12 +149,9 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
     @Override
     public int getIndex(CoordinateImpl coordinate) {
         int dist = center.distance(coordinate);
-        if (dist == 0) {
-            return 0;
-        }
-        int result = new Triangle<Coordinate>(direction, dist - 1, center).size();
-        Coordinate tmp = center.normalize(coordinate);
+        int result = ((dist + 1) * (dist)) / 2;
         
+        Coordinate tmp = center.normalize(coordinate);
         switch (direction) {
         case NORD:
             return result + tmp.getX();

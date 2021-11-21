@@ -28,15 +28,19 @@
  */
 package hexamap.maps;
 
+import java.util.Iterator;
+
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.IndexedRegion;
 
 public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extends AbstractMap<CoordinateImpl, Data> {
-    
+
+    private int size = 0;
+
     public IndexedMap(IndexedRegion<CoordinateImpl> region) {
         super(region);
     }
-    
+
     public IndexedRegion<CoordinateImpl> getRegion() {
         return (IndexedRegion<CoordinateImpl>) region;
     }
@@ -46,19 +50,82 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
         return indexGet(getRegion().getIndex(coordinate));
     }
 
-    protected abstract Data indexGet(double index);
+    protected abstract Data indexGet(int index);
 
     @Override
     public Data safePut(CoordinateImpl coordinate, Data data) {
-        return indexPut(getRegion().getIndex(coordinate), data);
-//        Data old = indexPut(getRegion().getIndex(coordinate), data);
-//        if (data == null && old != null) {
-//            size--;
-//        } else if (old == null) {
-//            size++;
-//        }
-//        return old;
+        Data old = indexPut(getRegion().getIndex(coordinate), data);
+        if (data == null && old != null) {
+            size--;
+        } else if (old == null) {
+            size++;
+        }
+        return old;
     }
-    
-    protected abstract Data indexPut(double index, Data data);
+
+    @Override
+    public void clear() {
+        size=0;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public Iterator<Entry<CoordinateImpl, Data>> iterator() {
+        return new Iterator<Entry<CoordinateImpl, Data>>() {
+            boolean hasNext = false;
+            Iterator<CoordinateImpl> iterator = region.iterator();
+            int index = 0;
+            {
+                advance();
+            }
+            
+            private void advance() {
+                while (indexGet(index)==null && iterator.hasNext()) {
+                    index++;
+                    iterator.next();
+                }
+                hasNext=iterator.hasNext();
+            }
+            
+            @Override
+            public boolean hasNext() {
+                return hasNext;
+            }
+
+            @Override
+            public Entry<CoordinateImpl, Data> next() {
+                Entry<CoordinateImpl, Data> entry = new Entry<CoordinateImpl, Data>(){
+                    
+                    private CoordinateImpl coordinate = iterator.next();
+
+                    @Override
+                    public CoordinateImpl getKey() {
+                        return coordinate ;
+                    }
+
+                    @Override
+                    public Data getValue() {
+                        return indexGet(getRegion().getIndex(coordinate));
+                    }
+
+                    @Override
+                    public Data setValue(Data data) {
+                        return indexPut(getRegion().getIndex(coordinate),data);
+                    }
+                };
+                advance();
+                return entry;
+            }};
+    }
+
+    protected abstract Data indexPut(int index, Data data);
 }

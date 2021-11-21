@@ -68,7 +68,6 @@ public class IndexedRegionTests {
     @Test
     public void testIndex() {
         int count=0;
-        System.err.println(region);
         for (Coordinate c : region) {
             assert region.getIndex(c)==count;
             count++;

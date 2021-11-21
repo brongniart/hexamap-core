@@ -28,9 +28,10 @@
  */
 package hexamap.maps;
 
+import java.util.Iterator;
+
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
-import java.util.Iterator;
 
 /**
  *

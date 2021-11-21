@@ -28,72 +28,42 @@
  */
 package hexamap.maps;
 
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.Region;
+import hexamap.regions.IndexedRegion;
 
 /**
  *
- * @param <Data> some stuffs
+ * @param <Data> some stuff
  */
-public interface Map<CoordinateImpl extends Coordinate, Data>
-        extends java.util.Map<CoordinateImpl, Data>, Iterable<Entry<CoordinateImpl, Data>> {
+public class ArrayMap<CoordinateImpl extends Coordinate, Data> extends IndexedMap<CoordinateImpl, Data> {
 
-    @Override
-    default public boolean containsKey(Object object) {
-        throw new ClassCastException();
-    }
+    private Data[] array;
 
-    public abstract boolean containsKey(CoordinateImpl coordinate);
-
-    @Override
-    default public Data get(Object object) {
-        throw new ClassCastException();
-    }
-
-    public abstract Data get(CoordinateImpl coordinate);
-    
-    @Override
-    default public Data remove(Object object) {
-        throw new ClassCastException();
-    }
-
-    default public Data remove(CoordinateImpl coordinate) {
-        return put(coordinate, null);
+    @SuppressWarnings("unchecked")
+    public ArrayMap(IndexedRegion<CoordinateImpl> region,Class<?> dataClass) {
+        super(region);
+        array = (Data[]) Array.newInstance(dataClass, region.size());
     }
 
     @Override
-    public abstract Data put(CoordinateImpl coordinate, Data data);
-
-    @Override
-    public void putAll(java.util.Map<? extends CoordinateImpl, ? extends Data> map);
-
-    @Override
-    public abstract void clear();
-
-    // Unsupported methods from Map:
-    @Override
-    default public Set<CoordinateImpl> keySet() {
-        throw new UnsupportedOperationException();
+    public void clear() {
+        super.clear();
+        Arrays.fill(array, null);
     }
 
     @Override
-    default public Collection<Data> values() {
-        throw new UnsupportedOperationException();
+    protected Data indexGet(int index) {
+        return array[index];
     }
 
     @Override
-    default public Set<java.util.Map.Entry<CoordinateImpl, Data>> entrySet() {
-        throw new UnsupportedOperationException();
+    protected Data indexPut(int index, Data data) {
+        Data old = array[index];
+        array[index] = data;
+        return old;
     }
 
-    @Override
-    default public boolean containsValue(Object object) {
-        throw new UnsupportedOperationException();
-    }
-
-    public abstract Region<CoordinateImpl> getRegion();
 }

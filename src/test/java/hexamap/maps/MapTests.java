@@ -45,7 +45,9 @@ import org.junit.runners.Parameterized.Parameters;
 import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Cube;
+import hexamap.coordinates.Direction;
 import hexamap.regions.Hexagon;
+import hexamap.regions.Triangle;
 
 /**
  *
@@ -55,28 +57,31 @@ import hexamap.regions.Hexagon;
 public class MapTests {
 
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> regionXXSmall;
+    private static Hexagon<Axial> hexaXXSmall;
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> regionMedium;
+    private static Hexagon<Axial> hexaMedium;
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> regionLarge;
+    private static Hexagon<Axial> hexaLarge;
 
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
-        regionXXSmall = new Hexagon<Axial>(100, new Axial()); // 49'537 hex
-        regionMedium = new Hexagon<Axial>(1024, new Axial()); // 3'148'801 hex
-        regionLarge = new Hexagon<Axial>(2048, new Axial());
+        hexaXXSmall = new Hexagon<Axial>(64, new Axial());  //    49'537 hex
+        hexaMedium = new Hexagon<Axial>(1024, new Axial()); // 3'148'801 hex
+        hexaLarge = new Hexagon<Axial>(2048, new Axial());  // 12'576'769 hex
+        
+        Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(new Random()),1024, new Axial()); 
+        Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(new Random()),2048, new Axial());
         return Arrays.asList(
-                new Object[][] { { new HashMap<Axial, AxialExt>(regionXXSmall), regionXXSmall },
-                        { new Constant<Axial, AxialExt>(regionXXSmall), regionXXSmall } });
+                new Object[][] { { new HashMap<Axial, AxialExt>(hexaXXSmall)},
+                        { new Constant<Axial, AxialExt>(hexaLarge)},
+                        { new ArrayMap<Axial, AxialExt>(hexaLarge,AxialExt.class)} ,
+                        { new ArrayMap<Axial, AxialExt>(triangleLarge,AxialExt.class)} });
     }
 
     private Map<Coordinate, Cube> map;
-    private final Hexagon<Coordinate> region;
-
-    public MapTests(Map<Coordinate, Cube> map, Hexagon<Coordinate> region) throws Exception {
+    
+    public MapTests(Map<Coordinate, Cube> map) throws Exception {
         this.map = map;
-        this.region = region;
     }
 
     @After
@@ -87,12 +92,12 @@ public class MapTests {
     @Test
     public void test_FillMap() {
         assert map.isEmpty();
-        for (Coordinate c : region) {
+        for (Coordinate c : map.getRegion()) {
             map.put(c, new AxialExt(c));
             assert map.get(c) != null;
             assert map.get(c).equals(new AxialExt(c));
         }
-        assert map.size() == region.size();
+        assert map.size() == map.getRegion().size();
         for (var entry : map) {
             assert entry.getKey() != null;
             assert entry.getValue() != null;
@@ -105,9 +110,9 @@ public class MapTests {
     public void test_FillMap_NewCoordinate() {
         Random random = new Random();
         assert map.isEmpty();
-        int NB_ITER = region.size();
+        int NB_ITER = map.getRegion().size();
         for (int i = 0; i < NB_ITER; i++) {
-            Coordinate c = region.getRandom(random);
+            Coordinate c = map.getRegion().getRandom(random);
 
             map.put(new Axial(c), new AxialExt(c));
             assert map.get(c) != null;

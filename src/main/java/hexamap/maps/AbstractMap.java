@@ -49,6 +49,11 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
 
     protected final Region<CoordinateImpl> region;
 
+    @Override
+    public Region<CoordinateImpl> getRegion() {
+        return region;
+    }
+
     public AbstractMap(Region<CoordinateImpl> region) {
         this.region = region;
     }

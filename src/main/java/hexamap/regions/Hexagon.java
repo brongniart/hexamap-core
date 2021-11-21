@@ -122,15 +122,10 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     @Override
     public int getIndex(CoordinateImpl coordinate) {
 
-        if (center.equals(coordinate)) {
-            return size()-1;
-        }
-        
         int dist = center.distance(coordinate);
-        @SuppressWarnings("unchecked")
-        CoordinateImpl tmp = (CoordinateImpl) center.normalize(coordinate);
-        int result = new Hexagon<Coordinate>(dist - 1, center).size();
-
+        int result = 1 + 6 * (dist * (dist - 1)) / 2;
+        
+        Coordinate tmp = center.normalize(coordinate);
         if (tmp.getZ() == -dist) {
             result = result + 6 * dist - tmp.getX();
         } else if (tmp.getX() == dist) {

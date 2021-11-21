@@ -54,7 +54,11 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
 
     @Override
     public Data safePut(CoordinateImpl coordinate, Data data) {
-        Data old = indexPut(getRegion().getIndex(coordinate), data);
+        return safePut(getRegion().getIndex(coordinate), data);
+    }
+    
+    public Data safePut(int index, Data data) {
+        Data old = indexPut(index, data);
         if (data == null && old != null) {
             size--;
         } else if (old == null) {
@@ -89,7 +93,7 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
             }
             
             private void advance() {
-                while (indexGet(index)==null && iterator.hasNext()) {
+                while (iterator.hasNext() && indexGet(index)==null) {
                     index++;
                     iterator.next();
                 }
@@ -106,7 +110,8 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
                 Entry<CoordinateImpl, Data> entry = new Entry<CoordinateImpl, Data>(){
                     
                     private CoordinateImpl coordinate = iterator.next();
-
+                    private int index_iter = getRegion().getIndex(coordinate);
+                    
                     @Override
                     public CoordinateImpl getKey() {
                         return coordinate ;
@@ -114,15 +119,20 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
 
                     @Override
                     public Data getValue() {
-                        return indexGet(getRegion().getIndex(coordinate));
+                        return indexGet(index_iter);
                     }
 
                     @Override
                     public Data setValue(Data data) {
-                        return indexPut(getRegion().getIndex(coordinate),data);
+                        return safePut(index_iter,data);
                     }
                 };
+                if (iterator.hasNext()) {
+                    index++;
+                }
+                assert entry.getValue()!=null;
                 advance();
+                
                 return entry;
             }};
     }

@@ -60,12 +60,12 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
     
     @Override
     public boolean containsKey(CoordinateImpl coordinate) {
-        return region.contains(coordinate);
+        return region.contains(coordinate) && safeGet(coordinate)!=null;
     }
 
     @SuppressWarnings("unchecked")
     private void checkCoordinate(CoordinateImpl coordinate) {
-        if (!containsKey(coordinate)) {
+        if (!region.contains(coordinate)) {
             throw new OutOfRegion((Coordinate) coordinate, (Region<Coordinate>) region);
         }
     }

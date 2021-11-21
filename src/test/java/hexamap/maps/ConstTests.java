@@ -56,7 +56,7 @@ import hexamap.regions.Triangle;
  */
 @RunWith(Parameterized.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MapTests {
+public class ConstTests {
 
     @SuppressWarnings("unused")
     private static Hexagon<Axial> hexaXXSmall;
@@ -79,21 +79,18 @@ public class MapTests {
         hexaSmall = new Hexagon<Axial>(256, new Axial(rand.nextInt(),rand.nextInt())); // 
         hexaMedium = new Hexagon<Axial>(1024, new Axial(rand.nextInt(),rand.nextInt())); // 3'148'801 hex
         hexaLarge = new Hexagon<Axial>(2048, new Axial(rand.nextInt(),rand.nextInt()));  //12'589'057 hex
-
+        
+        Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*3, new Axial());
         Triangle<Axial> triangleSmall = new Triangle<Axial>(Direction.getRandom(rand),256*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
-        Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(rand),1024*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
-        Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*3, new Axial()); // 75'515'905
         return Arrays.asList(
-                new Object[][] { { new HashMap<Axial, AxialExt>(hexaSmall)},
-                        { new HashMap<Axial, AxialExt>(triangleSmall)},
-                        { new ArrayMap<Axial, AxialExt>(hexaSmall,AxialExt.class)} ,
-                        { new ArrayMap<Axial, AxialExt>(triangleSmall,AxialExt.class)} 
+                new Object[][] { { new Constant<Axial, AxialExt>(hexaSmall)},
+                        { new Constant<Axial, AxialExt>(triangleSmall)} 
                 });
     }
 
-    private Map<Coordinate, Cube> map;
+    private Constant<Coordinate, Cube> map;
     
-    public MapTests(Map<Coordinate, Cube> map) throws Exception {
+    public ConstTests(Constant<Coordinate, Cube> map) throws Exception {
         this.map = map;
     }
 
@@ -103,93 +100,35 @@ public class MapTests {
     }
     
     @Test
-    public void test_01_FillMap() {
+    public void test_01_SetValue() {
         assert map.isEmpty();
-        for (Coordinate c : map.getRegion()) {
-
-            assert !map.containsKey(c);
-            map.put(c, new AxialExt(c));
-            assert map.containsKey(c);
-            
-            assert map.get(c).equals(new AxialExt(c));
-            
-            map.put(c, null);
-            assert !map.containsKey(c);
-            
-            map.put(c, new AxialExt(c));
-        }
+        map.setData(new AxialExt());
         assert map.size() == map.getRegion().size();
+        assert !map.isEmpty();
+        for (Coordinate c : map.getRegion()) {
+            assert map.containsKey(c);
+            assert map.get(c).equals(new AxialExt());
+        }
+        map.setData(null);
+        assert map.isEmpty();
     }
     
     @Test
     public void test_02_IterateMap_Full() {
-
-        assert map.size() == map.getRegion().size();
+        
+        map.setData(new AxialExt());
+        Coordinate last = new AxialExt();
         for (var entry : map) {
             assert map.containsKey(entry.getKey());
+            assert entry.getValue().equals(last);
             
-            assert entry.getValue() != null;
-            assert entry.getValue().equals(map.get(entry.getKey()));
-            
-            entry.setValue(new AxialExt());
-            
-            assert entry.getValue().equals(new AxialExt());
-            assert entry.getValue().equals(map.get(entry.getKey()));
-
-            entry.setValue(null);
-            assert !map.containsKey(entry.getKey());
+            entry.setValue(new AxialExt(entry.getKey()));
+            last = new AxialExt(entry.getKey());
         }
+        map.setData(null);
         assert map.size() == 0;
-    }
-
-    @Test
-    public void test_03_FillMap_NewCoordinate() {
-        map.clear();
-        assert map.isEmpty();
-        for (Coordinate c : map.getRegion()) {
-            assert !map.containsKey(c);
-            map.put(new Axial(c), new AxialExt(c));
-            assert map.containsKey(c);
-            assert map.get(new Axial(c)) != null;
-            assert map.get(new Axial(c)).equals(new AxialExt(c));
-        }
-    }
-
-    @Test
-    public void test_04_FillMap_Random() {
-        map.clear();
-        assert map.isEmpty();
-        int NB_ITER = map.getRegion().size();
-        for (int i = 0; i < NB_ITER; i++) {
-            Coordinate c = map.getRegion().getRandom(rand);
-            
-            map.put(c, new AxialExt(c));
-            assert map.containsKey(c);
-            
-            assert map.get(c).equals(new AxialExt(c));
-        }
     }
     
-    @Test
-    public void test_05_IterateMap_Partial() {
-
-        assert map.size() >= 0;
-        for (var entry : map) {
-            assert entry.getKey() != null;
-            assert map.containsKey(entry.getKey());
-            assert entry.getValue() != null;
-            
-            assert entry.getValue().equals(map.get(entry.getKey()));
-            
-            entry.setValue(new AxialExt());
-            assert entry.getValue().equals(new AxialExt());
-            
-            entry.setValue(null);
-            assert !map.containsKey(entry.getKey());
-        }
-        assert map.size() == 0;
-    }
-
     public static class AxialExt extends Cube implements Externalizable {
 
         public AxialExt() {

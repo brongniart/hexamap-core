@@ -28,9 +28,11 @@
  */
 package hexamap.maps;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
-import java.util.Iterator;
 
 /**
  *
@@ -57,7 +59,11 @@ public class HashMap<CoordinateImpl extends Coordinate,Data> extends AbstractMap
 
     @Override
     public int size() {
+        cleanup();
         return map.size();
+    }
+    private void cleanup() {
+        map.values().removeAll(Collections.singleton(null));
     }
 
     @Override

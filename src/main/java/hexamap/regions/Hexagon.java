@@ -49,10 +49,9 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean contains(Object obj) {
         try {
-            return center.distance((CoordinateImpl) obj) <= range;
+            return center.distance((Coordinate) obj) <= range;
         } catch (Exception e) {
             return false;
         }

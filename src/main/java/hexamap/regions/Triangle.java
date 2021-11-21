@@ -55,10 +55,9 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean contains(Object obj) {
         try {
-            Coordinate c = center.normalize((CoordinateImpl) obj);
+            Coordinate c = center.normalize((Coordinate) obj);
             
             switch (direction) {
             case NORD:
@@ -142,7 +141,7 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
     public int getLength() {
         return length;
     }
-
+    
     @Override
     public Coordinate getRandom(Random random) {
         int x = random.nextInt(length);

@@ -64,7 +64,7 @@ public class Constant<CoordinateImpl extends Coordinate,Data> extends AbstractMa
 
     @Override
     public int size() {
-        return region.size();
+        return data==null? 0 : region.size();
     }
 
     @Override

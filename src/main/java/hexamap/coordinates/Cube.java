@@ -54,15 +54,15 @@ public class Cube extends Axial {
     }
 
     public Cube createCoordinate(int x, int y) {
-        return new Cube(new Axial(x, y));
+        return new Cube(super.createCoordinate(x, y));
     }
 
     public Axial createCoordinateXZ(int x, int z) {
-        return new Cube(new Axial(x, -y - z));
+        return new Cube(super.createCoordinateXZ(x, z));
     }
 
     public Axial createCoordinateYZ(int y, int z) {
-        return new Cube(new Axial(-y - z, z));
+        return new Cube(super.createCoordinateYZ(y, z));
     }
 
     public Cube add(Direction direction, int range) {

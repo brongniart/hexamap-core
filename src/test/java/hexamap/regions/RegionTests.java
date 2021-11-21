@@ -49,10 +49,14 @@ import hexamap.coordinates.Direction;
 @RunWith(Parameterized.class)
 public class RegionTests {
 
+    private static Random rand; 
+            
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
-        Random rand = new Random();
-
+        long seed = System.currentTimeMillis();
+        rand = new Random(seed);
+        System.err.println("seed:"+seed);
+        
         Set<Axial> setAxial = new Set<Axial>(new Axial(rand.nextInt(), rand.nextInt()));
         Hexagon<Axial> hexaAxial = new Hexagon<Axial>(32, new Axial(rand.nextInt(), rand.nextInt()));
 
@@ -115,10 +119,9 @@ public class RegionTests {
 
     @Test
     public void testGetRandom() {
-        Random random = new Random();
         for (@SuppressWarnings("unused")
         Coordinate c : region) {
-            assert region.contains(region.getRandom(random));
+            assert region.contains(region.getRandom(rand));
         }
     }
 }

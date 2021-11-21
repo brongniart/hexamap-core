@@ -50,7 +50,7 @@ public abstract class Coordinate {
 
     public abstract Coordinate createCoordinateXZ(int x, int z);
 
-    public abstract Coordinate createCoordinateYZ(int y, int x);
+    public abstract Coordinate createCoordinateYZ(int y, int z);
 
     public abstract Coordinate add(Direction direction, int range);
 

@@ -40,7 +40,7 @@ import hexamap.coordinates.Direction;
  */
 public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<CoordinateImpl> {
 
-    Direction direction;
+    private Direction direction;
     private int length;
 
     public Triangle(Direction direction, int length, CoordinateImpl center) {
@@ -52,23 +52,31 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
             this.direction = direction;
             this.length = length;
         }
+        System.err.println(direction+" "+length);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public boolean contains(Object obj) {
         try {
-            CoordinateImpl c = ((CoordinateImpl) obj);
-
-            int direction_z = -direction.x - direction.y;
-
-            int factor_x = direction.x == 1 ? 1 : 0;
-            int factor_y = direction.y == 1 ? 1 : 0;
-            int factor_z = direction_z == 1 ? 1 : 0;
-
-            return direction.x * Math.abs(c.getX() - center.getX()) <= factor_x * (length + 1)
-                    && direction.y * Math.abs(c.getY() - center.getY()) <= factor_y * (length + 1)
-                    && direction_z * Math.abs(c.getZ() - center.getZ()) <= factor_z * (length + 1);
+            Coordinate c = center.normalize((CoordinateImpl) obj);
+            
+            switch (direction) {
+            case NORD:
+                return c.getX() <= length && c.getY() <= length;
+            case NORD_EAST:
+                return c.getY() >= -length && c.getZ() >= -length;
+            case SOUTH_EAST:
+                return c.getX() <= length && c.getZ() <= length;
+            case SOUTH:
+                return c.getX() >= -length && c.getY() >= -length;
+            case SOUTH_WEST:
+                return c.getY() <= length && c.getZ() <= length;
+            case NORD_WEST:
+                return c.getX() >= -length && c.getZ() <= length;
+            default:
+                throw new RuntimeException("Unexpected direction");
+            }
         } catch (Exception e) {
             return false;
         }
@@ -82,7 +90,7 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
             boolean hasNext = true;
             int iterLength = 0;
             int angle = 0;
-
+            Direction dir_angle = direction.next(2);
             @Override
             public boolean hasNext() {
                 return hasNext;
@@ -104,7 +112,7 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
                         }
                     } else {
                         angle++;
-                        next = (CoordinateImpl) next.add(direction.next(2), 1);
+                        next = (CoordinateImpl) next.add(dir_angle, 1);
                     }
 
                     return current;
@@ -137,34 +145,44 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public CoordinateImpl getRandom(Random random) {
+    public Coordinate getRandom(Random random) {
         int x = random.nextInt(length);
-        int y = random.nextInt(length);
-
-        return (CoordinateImpl) center.createCoordinate(center.getX() + direction.x * x,
-                center.getY() + direction.y * y);
+        int y = 1+random.nextInt(length-x);
+        
+        switch (direction) {
+        case NORD:
+            return center.createCoordinate(center.getX() + x, center.getY() +  y);
+        case NORD_EAST:
+            return center.createCoordinateYZ(center.getY() - x, center.getZ() -  y);
+        case SOUTH_EAST:
+            return center.createCoordinateXZ(center.getX() + x, center.getZ() + y);
+        case SOUTH:
+            return center.createCoordinate(center.getX() - x, center.getY() - y);
+        case SOUTH_WEST:
+            return center.createCoordinateYZ(center.getY() + x, center.getZ() + y);
+        case NORD_WEST:
+            return center.createCoordinateXZ(center.getX() - x, center.getZ() - y);
+        default:
+            throw new RuntimeException("Unexpected direction");
+        }
     }
 
     @Override
     public int getIndex(CoordinateImpl coordinate) {
-        int dist = center.distance(coordinate);
-        int result = ((dist + 1) * (dist)) / 2;
-        
         Coordinate tmp = center.normalize(coordinate);
         switch (direction) {
         case NORD:
-            return result + tmp.getX();
+            return ((-tmp.getZ() + 1) * (-tmp.getZ())) / 2 + tmp.getX();
         case NORD_EAST:
-            return result - tmp.getY();
+            return ((tmp.getX() + 1) * (tmp.getX())) / 2 - tmp.getY();
         case SOUTH_EAST:
-            return result + tmp.getZ();
+            return ((-tmp.getY() + 1) * (-tmp.getY())) / 2 + tmp.getZ();
         case SOUTH:
-            return result - tmp.getX();
+            return ((tmp.getZ() + 1) * (tmp.getZ())) / 2 - tmp.getX();
         case SOUTH_WEST:
-            return result + tmp.getY();
+            return ((-tmp.getX() + 1) * (-tmp.getX())) / 2 + tmp.getY();
         case NORD_WEST:
-            return result - tmp.getZ();
+            return ((tmp.getY() + 1) * (tmp.getY())) / 2 - tmp.getZ();
         default:
             throw new RuntimeException("Unexpected direction");
         }

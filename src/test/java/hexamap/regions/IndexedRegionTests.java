@@ -51,7 +51,9 @@ public class IndexedRegionTests {
 
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
-        Random rand = new Random();
+        long seed = System.currentTimeMillis();
+        Random rand = new Random(seed);
+        System.err.println("seed:"+seed);
 
         Hexagon<Axial> hexaAxial = new Hexagon<Axial>(1024, new Axial(rand.nextInt(),rand.nextInt()));
         Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024, new Cube(rand.nextInt(),rand.nextInt()));

@@ -59,23 +59,34 @@ public class MapTests {
     @SuppressWarnings("unused")
     private static Hexagon<Axial> hexaXXSmall;
     @SuppressWarnings("unused")
+    private static Hexagon<Axial> hexaSmall;
+    @SuppressWarnings("unused")
     private static Hexagon<Axial> hexaMedium;
     @SuppressWarnings("unused")
     private static Hexagon<Axial> hexaLarge;
 
+    private static Random rand; 
+            
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
-        hexaXXSmall = new Hexagon<Axial>(64, new Axial());  //    49'537 hex
-        hexaMedium = new Hexagon<Axial>(1024, new Axial()); // 3'148'801 hex
-        hexaLarge = new Hexagon<Axial>(2048, new Axial());  //12'589'057 hex
+        long seed = System.currentTimeMillis();
+        rand = new Random(seed);
+        System.err.println("seed:"+seed);
         
-        Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(new Random()),1024*6, new Axial());// 18'883'585
-        //Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(new Random()),2048*6, new Axial()); // 75'515'905
+        hexaXXSmall = new Hexagon<Axial>(64, new Axial(rand.nextInt(),rand.nextInt()));  //    49'537 hex
+        hexaSmall = new Hexagon<Axial>(256, new Axial(rand.nextInt(),rand.nextInt())); // 3'148'801 hex
+        hexaMedium = new Hexagon<Axial>(1024, new Axial(rand.nextInt(),rand.nextInt())); // 3'148'801 hex
+        hexaLarge = new Hexagon<Axial>(2048, new Axial(rand.nextInt(),rand.nextInt()));  //12'589'057 hex
+        
+        Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),1024, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
+        //Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*6, new Axial()); // 75'515'905
         return Arrays.asList(
-                new Object[][] { { new HashMap<Axial, AxialExt>(hexaXXSmall)},
+                new Object[][] { { new HashMap<Axial, AxialExt>(hexaSmall)},
                         { new Constant<Axial, AxialExt>(hexaLarge)},
+                        { new Constant<Axial, AxialExt>(triangleLarge)},
                         { new ArrayMap<Axial, AxialExt>(hexaLarge,AxialExt.class)} ,
-                        { new ArrayMap<Axial, AxialExt>(triangleMedium,AxialExt.class)} });
+                        { new ArrayMap<Axial, AxialExt>(triangleLarge,AxialExt.class)} 
+                });
     }
 
     private Map<Coordinate, Cube> map;
@@ -90,7 +101,7 @@ public class MapTests {
     }
 
     @Test
-    public void test_FillMap() {
+    public void test_FillMap_NoRandom() {
         assert map.isEmpty();
         for (Coordinate c : map.getRegion()) {
             map.put(c, new AxialExt(c));
@@ -100,20 +111,24 @@ public class MapTests {
         assert map.size() == map.getRegion().size();
         for (var entry : map) {
             assert entry.getKey() != null;
+            assert map.containsKey(entry.getKey());
+            
             assert entry.getValue() != null;
+            assert entry.getValue().equals(map.get(entry.getKey()));
+            
             entry.setValue(new AxialExt());
             assert entry.getValue().equals(new AxialExt());
+            assert entry.getValue().equals(map.get(entry.getKey()));
         }
     }
 
     @Test
-    public void test_FillMap_NewCoordinate() {
-        System.err.println(map.getRegion().getClass()+" "+map.getRegion().size());
-        Random random = new Random();
+    public void test_FillMap__Random_NewCoordinate() {
         assert map.isEmpty();
         int NB_ITER = map.getRegion().size();
         for (int i = 0; i < NB_ITER; i++) {
-            Coordinate c = map.getRegion().getRandom(random);
+            Coordinate c = map.getRegion().getRandom(rand);
+            assert map.containsKey(c);
 
             map.put(new Axial(c), new AxialExt(c));
             assert map.get(c) != null;

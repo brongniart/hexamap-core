@@ -86,8 +86,8 @@ public class MapTests {
         return Arrays.asList(
                 new Object[][] { { new HashMap<Axial, AxialExt>(hexaSmall)},
                         { new HashMap<Axial, AxialExt>(triangleSmall)},
-                        { new ArrayMap<Axial, AxialExt>(hexaSmall,AxialExt.class)} ,
-                        { new ArrayMap<Axial, AxialExt>(triangleSmall,AxialExt.class)} 
+                        { new ArrayMap<Axial, AxialExt>(hexaMedium,AxialExt.class)} ,
+                        { new ArrayMap<Axial, AxialExt>(triangleMedium,AxialExt.class)} 
                 });
     }
 
@@ -127,15 +127,13 @@ public class MapTests {
         assert map.size() == map.getRegion().size();
         for (var entry : map) {
             assert map.containsKey(entry.getKey());
-            
             assert entry.getValue() != null;
             assert entry.getValue().equals(map.get(entry.getKey()));
             
             entry.setValue(new AxialExt());
-            
             assert entry.getValue().equals(new AxialExt());
-            assert entry.getValue().equals(map.get(entry.getKey()));
-
+            assert map.get(entry.getKey()).equals(new AxialExt());
+            
             entry.setValue(null);
             assert !map.containsKey(entry.getKey());
         }
@@ -162,6 +160,7 @@ public class MapTests {
         int NB_ITER = map.getRegion().size();
         for (int i = 0; i < NB_ITER; i++) {
             Coordinate c = map.getRegion().getRandom(rand);
+            assert map.getRegion().contains(c);
             
             map.put(c, new AxialExt(c));
             assert map.containsKey(c);
@@ -183,6 +182,7 @@ public class MapTests {
             
             entry.setValue(new AxialExt());
             assert entry.getValue().equals(new AxialExt());
+            assert map.get(entry.getKey()).equals(new AxialExt());
             
             entry.setValue(null);
             assert !map.containsKey(entry.getKey());

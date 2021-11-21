@@ -26,50 +26,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.regions;
-
-import java.util.AbstractCollection;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
+package hexamap.maps.streams;
 
 import hexamap.coordinates.Coordinate;
 
 /**
  *
- * @param <CoordinateImpl>
  */
-public abstract class Region<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl> implements Set<CoordinateImpl> {
+public class MapStream<CoordinateImpl extends Coordinate> {
 
-    protected CoordinateImpl center;
-    
-    public Region() {}
-    
-    public Region(CoordinateImpl center) {
-        this.center = center;
-    }
-    
-    public CoordinateImpl getCenter() {
-        return center;
-    }
-
-    public void setCenter(CoordinateImpl center) {
-        this.center = center;
-    }
-
-    @Override
-    public abstract int size();
-    
-    @Override
-    public abstract Iterator<CoordinateImpl> iterator();
-
-    public abstract Coordinate getRandom(Random random);
-    
-    //public abstract CoordinateStream<CoordinateImpl>  coordinates();
-    //public abstract MapStream<CoordinateImpl>  maps();
-    //public abstract MapStream<CoordinateImpl>  maps(Class<?> klass);
-    
-    public String toString() {
-        return "["+this.getClass()+": "+center+"]";
-    }
 }

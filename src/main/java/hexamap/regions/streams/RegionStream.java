@@ -26,50 +26,59 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.regions;
+package hexamap.regions.streams;
 
-import java.util.AbstractCollection;
 import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
+import java.util.Spliterator;
+import java.util.stream.BaseStream;
 
 import hexamap.coordinates.Coordinate;
 
 /**
  *
- * @param <CoordinateImpl>
  */
-public abstract class Region<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl> implements Set<CoordinateImpl> {
-
-    protected CoordinateImpl center;
+public class RegionStream<CoordinateImpl extends Coordinate> implements BaseStream<CoordinateImpl,RegionStream<CoordinateImpl>> {
     
-    public Region() {}
-    
-    public Region(CoordinateImpl center) {
-        this.center = center;
-    }
-    
-    public CoordinateImpl getCenter() {
-        return center;
-    }
-
-    public void setCenter(CoordinateImpl center) {
-        this.center = center;
+    @Override
+    public Iterator<CoordinateImpl> iterator() {
+        return null;
     }
 
     @Override
-    public abstract int size();
-    
-    @Override
-    public abstract Iterator<CoordinateImpl> iterator();
+    public Spliterator<CoordinateImpl> spliterator() {
+        return null;
+    }
 
-    public abstract Coordinate getRandom(Random random);
-    
-    //public abstract CoordinateStream<CoordinateImpl>  coordinates();
-    //public abstract MapStream<CoordinateImpl>  maps();
-    //public abstract MapStream<CoordinateImpl>  maps(Class<?> klass);
-    
-    public String toString() {
-        return "["+this.getClass()+": "+center+"]";
+    @Override
+    public boolean isParallel() {
+        return false;
+    }
+
+    @Override
+    public RegionStream<CoordinateImpl> sequential() {
+        return null;
+    }
+
+    @Override
+    public RegionStream<CoordinateImpl> parallel() {
+        return null;
+    }
+
+    @Override
+    public RegionStream<CoordinateImpl> unordered() {
+        return null;
+    }
+
+    @Override
+    public RegionStream<CoordinateImpl> onClose(Runnable closeHandler) {
+        return null;
+    }
+
+    @Override
+    public void close() {
+    }
+
+    public RegionStream<CoordinateImpl> touch(RegionStream<CoordinateImpl> region) {
+        return null;
     }
 }

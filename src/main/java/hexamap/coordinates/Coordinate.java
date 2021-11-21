@@ -32,12 +32,50 @@ import static java.lang.Math.abs;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Random;
+
+import hexamap.regions.Region;
 
 /**
  *
  */
-public abstract class Coordinate {
+public abstract class Coordinate extends Region<Coordinate> {
 
+    @Override
+    public int size() {
+        return 1;
+    }
+
+    private class IteratorCoordinate implements Iterator<Coordinate>{
+
+        private final Coordinate c;
+
+        public IteratorCoordinate(Coordinate c) {
+            this.c = c;
+        }
+        
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public Coordinate next() {
+            return c;
+        }
+        
+    }
+    
+    @Override
+    public Iterator<Coordinate> iterator() {
+        return new IteratorCoordinate(this);
+    }
+
+    @Override
+    public Coordinate getRandom(Random random) {
+        return this;
+    }
+    
     public abstract int getX();
 
     public abstract int getY();

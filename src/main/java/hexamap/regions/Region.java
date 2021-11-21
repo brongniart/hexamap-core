@@ -43,7 +43,7 @@ public abstract class Region<CoordinateImpl extends Coordinate> extends Abstract
 
     protected CoordinateImpl center;
     
-    public Region() {}
+    protected Region() {}
     
     public Region(CoordinateImpl center) {
         this.center = center;

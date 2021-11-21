@@ -40,7 +40,27 @@ import hexamap.regions.Region;
  *
  */
 public abstract class Coordinate extends Region<Coordinate> {
+    
+    @Override
+    public boolean contains(Object center) {
+        return equals(center);
+    }
+    
+    @Override
+    public boolean remove(Object center) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public Coordinate getCenter() {
+        return this;
+    }
 
+    @Override
+    public void setCenter(Coordinate center) {
+        throw new UnsupportedOperationException();
+    }
+    
     @Override
     public int size() {
         return 1;
@@ -49,6 +69,7 @@ public abstract class Coordinate extends Region<Coordinate> {
     private class IteratorCoordinate implements Iterator<Coordinate>{
 
         private final Coordinate c;
+        private boolean nextCalled = false;
 
         public IteratorCoordinate(Coordinate c) {
             this.c = c;
@@ -56,11 +77,12 @@ public abstract class Coordinate extends Region<Coordinate> {
         
         @Override
         public boolean hasNext() {
-            return false;
+            return !nextCalled ;
         }
 
         @Override
         public Coordinate next() {
+            nextCalled = true;
             return c;
         }
         

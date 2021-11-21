@@ -76,7 +76,7 @@ public class RegionTests {
                 new Cube(rand.nextInt(), rand.nextInt()));
 
         return Arrays.asList(
-                new Object[][] { { hexaAxial }, { setAxial }, { hexaCube }, { setCube }, { hexaMax }, { triangle } });
+                new Object[][] { { new Axial() },{ new Cube() },{ hexaAxial }, { setAxial }, { hexaCube }, { setCube }, { hexaMax }, { triangle } });
     }
 
     private final Region<Coordinate> region;
@@ -90,9 +90,11 @@ public class RegionTests {
         assert region.contains(region.getCenter());
 
         Coordinate tmp = region.getCenter();
-        region.setCenter(tmp.add(Direction.NORD, 10));
-        assert region.contains(region.getCenter());
-
+        try {
+            region.setCenter(tmp.add(Direction.NORD, 10));
+            assert region.contains(region.getCenter());
+        } catch (UnsupportedOperationException e) {}
+        
         try {
             region.clear();
         } catch (UnsupportedOperationException e) {
@@ -106,7 +108,9 @@ public class RegionTests {
         }
         assert region.contains(region.getCenter());
 
-        region.setCenter(tmp);
+        try {
+            region.setCenter(tmp);
+        } catch (UnsupportedOperationException e) {}
 
         int count = 0;
         for (Coordinate c : region) {

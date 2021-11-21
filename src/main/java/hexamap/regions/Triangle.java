@@ -52,7 +52,6 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
             this.direction = direction;
             this.length = length;
         }
-        System.err.println(direction+" "+length);
     }
 
     @Override

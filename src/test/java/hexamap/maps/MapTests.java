@@ -74,18 +74,18 @@ public class MapTests {
         System.err.println("seed:"+seed);
         
         hexaXXSmall = new Hexagon<Axial>(64, new Axial(rand.nextInt(),rand.nextInt()));  //    49'537 hex
-        hexaSmall = new Hexagon<Axial>(256, new Axial(rand.nextInt(),rand.nextInt())); // 3'148'801 hex
+        hexaSmall = new Hexagon<Axial>(256, new Axial(rand.nextInt(),rand.nextInt())); // 
         hexaMedium = new Hexagon<Axial>(1024, new Axial(rand.nextInt(),rand.nextInt())); // 3'148'801 hex
         hexaLarge = new Hexagon<Axial>(2048, new Axial(rand.nextInt(),rand.nextInt()));  //12'589'057 hex
         
-        Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),1024, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
-        //Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*6, new Axial()); // 75'515'905
+        Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(rand),1024*6, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
+        Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*6, new Axial()); // 75'515'905
         return Arrays.asList(
                 new Object[][] { { new HashMap<Axial, AxialExt>(hexaSmall)},
                         { new Constant<Axial, AxialExt>(hexaLarge)},
                         { new Constant<Axial, AxialExt>(triangleLarge)},
                         { new ArrayMap<Axial, AxialExt>(hexaLarge,AxialExt.class)} ,
-                        { new ArrayMap<Axial, AxialExt>(triangleLarge,AxialExt.class)} 
+                        { new ArrayMap<Axial, AxialExt>(triangleMedium,AxialExt.class)} 
                 });
     }
 

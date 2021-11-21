@@ -110,18 +110,16 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public CoordinateImpl getRandom(Random random) {
+    public Coordinate getRandom(Random random) {
         int x = random.nextInt(range * 2 + 1) - range;
 
         int bound = range - abs(x) - 1;
         int y = (x > 0) ? random.nextInt(range + bound) - range : random.nextInt(range + bound) - bound;
-        return (CoordinateImpl) center.createCoordinate(center.getX() + x, center.getY() + y);
+        return center.createCoordinate(center.getX() + x, center.getY() + y);
     }
 
     @Override
     public int getIndex(CoordinateImpl coordinate) {
-
         int dist = center.distance(coordinate);
         int result = 1 + 6 * (dist * (dist - 1)) / 2;
         
@@ -141,7 +139,6 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
         } else {
             throw new RuntimeException();
         }
-
         return size() - result;
     }
 }

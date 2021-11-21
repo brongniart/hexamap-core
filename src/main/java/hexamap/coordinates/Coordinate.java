@@ -31,6 +31,7 @@ package hexamap.coordinates;
 import static java.lang.Math.abs;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  *
@@ -65,7 +66,7 @@ public abstract class Coordinate {
     }
 
     public int distance(Coordinate other) {
-        return (abs(getX() - other.getX()) + abs(getY() - other.getY()) + abs(getZ() - other.getZ())) / 2;
+        return Math.max(abs(getX()- other.getX()),Math.max(abs(getY()- other.getY()),abs(getZ()- other.getZ())));
     }
 
     public class NeigboursIterator implements Iterator<Coordinate> {
@@ -138,7 +139,7 @@ public abstract class Coordinate {
 
     @Override
     public int hashCode() {
-        return getX() << Integer.SIZE / 2 + getX() >> Integer.SIZE / 2;
+        return  Objects.hash(getX(),getY());
     }
 
     public Coordinate normalize(Coordinate coordinate) {

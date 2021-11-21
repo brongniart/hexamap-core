@@ -61,7 +61,7 @@ public abstract class Region<CoordinateImpl extends Coordinate> extends Abstract
     @Override
     public abstract Iterator<CoordinateImpl> iterator();
 
-    public abstract CoordinateImpl getRandom(Random random);
+    public abstract Coordinate getRandom(Random random);
     
     public String toString() {
         return "["+this.getClass()+": "+center+"]";

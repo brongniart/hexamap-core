@@ -42,7 +42,6 @@ import hexamap.coordinates.Coordinate;
 public abstract class Region<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl> implements Set<CoordinateImpl> {
 
     protected CoordinateImpl center;
-    protected final Random random = new Random();
     
     public Region(CoordinateImpl center) {
         this.center = center;
@@ -62,5 +61,9 @@ public abstract class Region<CoordinateImpl extends Coordinate> extends Abstract
     @Override
     public abstract Iterator<CoordinateImpl> iterator();
 
-    public abstract CoordinateImpl getRandom();
+    public abstract CoordinateImpl getRandom(Random random);
+    
+    public String toString() {
+        return "["+this.getClass()+": "+center+"]";
+    }
 }

@@ -34,6 +34,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Random;
 
 import org.junit.After;
 import org.junit.Test;
@@ -102,10 +103,11 @@ public class MapTests {
 
     @Test
     public void test_FillMap_NewCoordinate() {
+        Random random = new Random();
         assert map.isEmpty();
         int NB_ITER = region.size();
         for (int i = 0; i < NB_ITER; i++) {
-            Coordinate c = region.getRandom();
+            Coordinate c = region.getRandom(random);
 
             map.put(new Axial(c), new AxialExt(c));
             assert map.get(c) != null;

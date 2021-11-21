@@ -31,6 +31,7 @@ package hexamap.regions;
 import static java.lang.Math.abs;
 
 import java.util.Iterator;
+import java.util.Random;
 
 import hexamap.coordinates.Coordinate;
 
@@ -63,11 +64,8 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
         return new Iterator<CoordinateImpl>() {
             Iterator<CoordinateImpl> internal;
             boolean last = false;
-
             {
-                if (range > 0) {
-                    this.internal = (Iterator<CoordinateImpl>) center.getAllNeigbours(range).iterator();
-                }
+                internal = (Iterator<CoordinateImpl>) center.getAllNeigbours(range).iterator();
             }
 
             @Override
@@ -113,7 +111,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
 
     @Override
     @SuppressWarnings("unchecked")
-    public CoordinateImpl getRandom() {
+    public CoordinateImpl getRandom(Random random) {
         int x = random.nextInt(range * 2 + 1) - range;
 
         int bound = range - abs(x) - 1;

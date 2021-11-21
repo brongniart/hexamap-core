@@ -68,10 +68,11 @@ public class RegionTests {
         }
 
         Hexagon<Axial> hexaMax = new Hexagon<Axial>(1024, new Axial(Integer.MIN_VALUE, Integer.MAX_VALUE));
-        Triangle<Cube> triangleN = new Triangle<Cube>(Direction.NORD, 1024, new Cube(rand.nextInt(), rand.nextInt()));
-        Triangle<Cube> triangleNW = new Triangle<Cube>(Direction.NORD_WEST, 1024, new Cube(rand.nextInt(), rand.nextInt()));
+        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024,
+                new Cube(rand.nextInt(), rand.nextInt()));
 
-        return Arrays.asList(new Object[][] { { hexaAxial }, { setAxial }, { hexaCube }, { setCube }, { hexaMax }, { triangleN }, {triangleNW} });
+        return Arrays.asList(
+                new Object[][] { { hexaAxial }, { setAxial }, { hexaCube }, { setCube }, { hexaMax }, { triangle } });
     }
 
     private final Region<Coordinate> region;
@@ -114,8 +115,10 @@ public class RegionTests {
 
     @Test
     public void testGetRandom() {
-        for (@SuppressWarnings("unused") Coordinate c : region) {
-            assert region.contains(region.getRandom());
+        Random random = new Random();
+        for (@SuppressWarnings("unused")
+        Coordinate c : region) {
+            assert region.contains(region.getRandom(random));
         }
     }
 }

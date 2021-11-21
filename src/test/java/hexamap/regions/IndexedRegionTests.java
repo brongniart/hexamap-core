@@ -53,10 +53,10 @@ public class IndexedRegionTests {
     public static Collection<Object[]> getParameters() throws Exception {
         Random rand = new Random();
 
-        Hexagon<Axial> hexaAxial = new Hexagon<Axial>(1024, new Axial());
-        Triangle<Cube> triangleNW = new Triangle<Cube>(Direction.NORD_WEST, 3, new Cube());
+        Hexagon<Axial> hexaAxial = new Hexagon<Axial>(1024, new Axial(rand.nextInt(),rand.nextInt()));
+        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024, new Cube(rand.nextInt(),rand.nextInt()));
 
-        return Arrays.asList(new Object[][] { { hexaAxial }, {triangleNW} });
+        return Arrays.asList(new Object[][] { { hexaAxial }, {triangle} });
     }
 
     private final IndexedRegion<Coordinate> region;
@@ -68,7 +68,7 @@ public class IndexedRegionTests {
     @Test
     public void testIndex() {
         int count=0;
-        System.out.println(region.size());
+        System.err.println(region);
         for (Coordinate c : region) {
             assert region.getIndex(c)==count;
             count++;

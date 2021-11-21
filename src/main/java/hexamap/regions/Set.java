@@ -30,6 +30,7 @@ package hexamap.regions;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Random;
 
 import hexamap.coordinates.Coordinate;
 
@@ -98,7 +99,7 @@ public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImp
 
     @Override
     @SuppressWarnings("unchecked")
-    public CoordinateImpl getRandom() {
+    public CoordinateImpl getRandom(Random random) {
         return (CoordinateImpl) set.toArray()[random.nextInt(set.size())];
     }
 }

@@ -28,6 +28,8 @@
  */
 package hexamap.coordinates;
 
+import java.util.Random;
+
 /**
  *
  */
@@ -60,5 +62,9 @@ public enum Direction {
 
     public static Direction getIndex(int index) {
         return values()[(index % values().length + values().length)%values().length];
+    }
+    
+    public static Direction getRandom(Random rand) {
+        return values()[rand.nextInt(values().length)];
     }
 }

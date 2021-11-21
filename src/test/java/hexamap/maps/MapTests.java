@@ -67,15 +67,15 @@ public class MapTests {
     public static Collection<Object[]> getParameters() throws Exception {
         hexaXXSmall = new Hexagon<Axial>(64, new Axial());  //    49'537 hex
         hexaMedium = new Hexagon<Axial>(1024, new Axial()); // 3'148'801 hex
-        hexaLarge = new Hexagon<Axial>(2048, new Axial());  // 12'576'769 hex
+        hexaLarge = new Hexagon<Axial>(2048, new Axial());  //12'589'057 hex
         
-        Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(new Random()),1024, new Axial()); 
-        Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(new Random()),2048, new Axial());
+        Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(new Random()),1024*6, new Axial());// 18'883'585
+        //Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(new Random()),2048*6, new Axial()); // 75'515'905
         return Arrays.asList(
                 new Object[][] { { new HashMap<Axial, AxialExt>(hexaXXSmall)},
                         { new Constant<Axial, AxialExt>(hexaLarge)},
                         { new ArrayMap<Axial, AxialExt>(hexaLarge,AxialExt.class)} ,
-                        { new ArrayMap<Axial, AxialExt>(triangleLarge,AxialExt.class)} });
+                        { new ArrayMap<Axial, AxialExt>(triangleMedium,AxialExt.class)} });
     }
 
     private Map<Coordinate, Cube> map;
@@ -108,6 +108,7 @@ public class MapTests {
 
     @Test
     public void test_FillMap_NewCoordinate() {
+        System.err.println(map.getRegion().getClass()+" "+map.getRegion().size());
         Random random = new Random();
         assert map.isEmpty();
         int NB_ITER = map.getRegion().size();

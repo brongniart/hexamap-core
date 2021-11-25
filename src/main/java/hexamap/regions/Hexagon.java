@@ -32,6 +32,8 @@ import static java.lang.Math.abs;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 import hexamap.coordinates.Coordinate;
 
@@ -139,5 +141,31 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
             throw new RuntimeException();
         }
         return size() - result;
+    }
+
+    @Override
+    public Spliterator<CoordinateImpl> spliterator() {
+        return new Spliterator<CoordinateImpl>() {
+
+            @Override
+            public boolean tryAdvance(Consumer<? super CoordinateImpl> action) {
+                return false;
+            }
+
+            @Override
+            public Spliterator<CoordinateImpl> trySplit() {
+                return null;
+            }
+
+            @Override
+            public long estimateSize() {
+                return 0;
+            }
+
+            @Override
+            public int characteristics() {
+                return 0;
+            }
+        };
     }
 }

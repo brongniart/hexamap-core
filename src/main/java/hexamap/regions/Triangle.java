@@ -30,6 +30,8 @@ package hexamap.regions;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
@@ -184,5 +186,31 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
         default:
             throw new RuntimeException("Unexpected direction");
         }
+    }
+    
+    @Override
+    public Spliterator<CoordinateImpl> spliterator() {
+        return new Spliterator<CoordinateImpl>() {
+
+            @Override
+            public boolean tryAdvance(Consumer<? super CoordinateImpl> action) {
+                return false;
+            }
+
+            @Override
+            public Spliterator<CoordinateImpl> trySplit() {
+                return null;
+            }
+
+            @Override
+            public long estimateSize() {
+                return 0;
+            }
+
+            @Override
+            public int characteristics() {
+                return 0;
+            }
+        };
     }
 }

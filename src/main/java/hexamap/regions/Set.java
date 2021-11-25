@@ -31,6 +31,8 @@ package hexamap.regions;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Random;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import hexamap.coordinates.Coordinate;
 
@@ -63,6 +65,11 @@ public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImp
         return set.iterator();
     }
 
+    @Override
+    public Stream<CoordinateImpl> tryParallel() {
+        return StreamSupport.stream(set.spliterator(),true);
+    }
+    
     @Override
     public int size() {
         return set.size();

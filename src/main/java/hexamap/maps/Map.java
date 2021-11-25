@@ -69,7 +69,7 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
 
     @Override
     public Iterator<Entry<CoordinateImpl, Data>> iterator();
-
+    
     public Stream<Entry<CoordinateImpl, Data>> stream();
     
     @Override

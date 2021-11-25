@@ -32,10 +32,6 @@ import java.util.AbstractCollection;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import hexamap.coordinates.Coordinate;
 
@@ -68,11 +64,6 @@ public abstract class Region<CoordinateImpl extends Coordinate> extends Abstract
 
     @Override
     public abstract Iterator<CoordinateImpl> iterator();
-
-    public Stream<CoordinateImpl> stream() {
-        return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
-                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
-    }
     
     public abstract Coordinate getRandom(Random random);
 

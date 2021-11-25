@@ -28,10 +28,6 @@
  */
 package hexamap.regions;
 
-import java.util.Spliterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import hexamap.coordinates.Coordinate;
 
 /**
@@ -45,11 +41,4 @@ public abstract class IndexedRegion<CoordinateImpl extends Coordinate> extends R
     }
     
     public abstract int getIndex(CoordinateImpl coordinate);
-
-    public abstract Spliterator<CoordinateImpl> spliterator();
-    
-    @Override
-    public Stream<CoordinateImpl> stream() {
-        return StreamSupport.stream(spliterator(),true);
-    }
 }

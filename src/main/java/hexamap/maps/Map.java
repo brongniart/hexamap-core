@@ -29,8 +29,13 @@
 package hexamap.maps;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
@@ -65,6 +70,20 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
         return put(coordinate, null);
     }
 
+    @Override
+    public Iterator<Entry<CoordinateImpl, Data>> iterator();
+
+    public default Stream<Entry<CoordinateImpl, Data>> sequential() {
+        return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
+                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
+    }
+
+    public default Stream<Entry<CoordinateImpl, Data>> tryParallel() {
+        return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
+                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT | Spliterator.IMMUTABLE), true);
+    }
+
+    
     @Override
     public abstract Data put(CoordinateImpl coordinate, Data data);
 

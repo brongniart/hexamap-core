@@ -71,12 +71,12 @@ public abstract class Region<CoordinateImpl extends Coordinate> extends Abstract
 
     public Stream<CoordinateImpl> sequential() {
         return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
-                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT), false);
+                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
     }
 
     public Stream<CoordinateImpl> tryParallel() {
         return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
-                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT), false);
+                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT | Spliterator.IMMUTABLE), true);
     }
 
     public abstract Coordinate getRandom(Random random);

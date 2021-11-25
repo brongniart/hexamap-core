@@ -49,7 +49,7 @@ public abstract class IndexedRegion<CoordinateImpl extends Coordinate> extends R
     public abstract Spliterator<CoordinateImpl> spliterator();
     
     @Override
-    public Stream<CoordinateImpl> tryParallel() {
+    public Stream<CoordinateImpl> stream() {
         return StreamSupport.stream(spliterator(),true);
     }
 }

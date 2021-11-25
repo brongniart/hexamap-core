@@ -66,7 +66,7 @@ public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImp
     }
 
     @Override
-    public Stream<CoordinateImpl> tryParallel() {
+    public Stream<CoordinateImpl> stream() {
         return StreamSupport.stream(set.spliterator(),true);
     }
     

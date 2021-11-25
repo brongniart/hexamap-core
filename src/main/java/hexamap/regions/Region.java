@@ -69,16 +69,11 @@ public abstract class Region<CoordinateImpl extends Coordinate> extends Abstract
     @Override
     public abstract Iterator<CoordinateImpl> iterator();
 
-    public Stream<CoordinateImpl> sequential() {
+    public Stream<CoordinateImpl> stream() {
         return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
                 Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
     }
     
-    public Stream<CoordinateImpl> tryParallel() {
-        return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
-                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT | Spliterator.IMMUTABLE), true);
-    }
-
     public abstract Coordinate getRandom(Random random);
 
     // public abstract CoordinateStream<CoordinateImpl> coordinates();

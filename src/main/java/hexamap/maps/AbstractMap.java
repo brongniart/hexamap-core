@@ -105,13 +105,8 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
 
     protected abstract Data safePut(CoordinateImpl coordinate, Data data);
     
-    public Stream<Entry<CoordinateImpl, Data>> sequential() {
+    public Stream<Entry<CoordinateImpl, Data>> stream() {
         return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
                 Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
-    }
-    
-    public Stream<Entry<CoordinateImpl, Data>> tryParallel() {
-        return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
-                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT | Spliterator.IMMUTABLE), true);
     }
 }

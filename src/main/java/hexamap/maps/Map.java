@@ -32,10 +32,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
@@ -73,16 +70,9 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
     @Override
     public Iterator<Entry<CoordinateImpl, Data>> iterator();
 
-    public default Stream<Entry<CoordinateImpl, Data>> sequential() {
-        return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
-                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
-    }
-
-    public default Stream<Entry<CoordinateImpl, Data>> tryParallel() {
-        return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
-                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT | Spliterator.IMMUTABLE), true);
-    }
-
+    public Stream<Entry<CoordinateImpl, Data>> sequential();
+    
+    public Stream<Entry<CoordinateImpl, Data>> tryParallel();
     
     @Override
     public abstract Data put(CoordinateImpl coordinate, Data data);
@@ -92,7 +82,9 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
 
     @Override
     public abstract void clear();
-
+    
+    public abstract Region<CoordinateImpl> getRegion();
+    
     // Unsupported methods from Map:
     @Override
     default public Set<CoordinateImpl> keySet() {
@@ -113,6 +105,4 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
     default public boolean containsValue(Object object) {
         throw new UnsupportedOperationException();
     }
-
-    public abstract Region<CoordinateImpl> getRegion();
 }

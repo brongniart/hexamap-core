@@ -29,6 +29,10 @@
 package hexamap.maps;
 
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
@@ -100,4 +104,14 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
     }
 
     protected abstract Data safePut(CoordinateImpl coordinate, Data data);
+    
+    public Stream<Entry<CoordinateImpl, Data>> sequential() {
+        return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
+                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
+    }
+    
+    public Stream<Entry<CoordinateImpl, Data>> tryParallel() {
+        return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
+                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT | Spliterator.IMMUTABLE), true);
+    }
 }

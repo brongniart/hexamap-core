@@ -81,10 +81,11 @@ public class MapTests {
         hexaLarge = new Hexagon<Axial>(2048, new Axial(rand.nextInt(),rand.nextInt()));  //12'589'057 hex
 
         Triangle<Axial> triangleSmall = new Triangle<Axial>(Direction.getRandom(rand),256*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
-        Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(rand),1024*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
+        Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(rand),1024*2, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
         Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*3, new Axial()); // 75'515'905
         return Arrays.asList(
-                new Object[][] { { new HashMap<Axial, AxialExt>(hexaSmall)},
+                new Object[][] { 
+                        { new HashMap<Axial, AxialExt>(hexaSmall)},
                         { new HashMap<Axial, AxialExt>(triangleSmall)},
                         { new ArrayMap<Axial, AxialExt>(hexaMedium,AxialExt.class)} ,
                         { new ArrayMap<Axial, AxialExt>(triangleMedium,AxialExt.class)} 
@@ -97,11 +98,6 @@ public class MapTests {
         this.map = map;
     }
 
-    //@After
-    public void cleaup() {
-        map.clear();
-    }
-    
     @Test
     public void test_01_FillMap() {
         assert map.isEmpty();
@@ -119,8 +115,15 @@ public class MapTests {
             map.put(c, new AxialExt(c));
         }
         assert map.size() == map.getRegion().size();
+        System.out.println(map.getRegion()+" : "+map.getRegion().size());
     }
     
+    @Test
+    public void testSpliterators() {
+        System.out.println(map.parallelStream().isParallel());
+        System.out.println(map.stream().isParallel());
+    }
+
     @Test
     public void test_02_IterateMap_Full() {
 

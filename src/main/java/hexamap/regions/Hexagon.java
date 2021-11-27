@@ -32,8 +32,6 @@ import static java.lang.Math.abs;
 
 import java.util.Iterator;
 import java.util.Random;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 import hexamap.coordinates.Coordinate;
 
@@ -51,12 +49,8 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     }
 
     @Override
-    public boolean contains(Object obj) {
-        try {
-            return center.distance((Coordinate) obj) <= range;
-        } catch (Exception e) {
-            return false;
-        }
+    public boolean contains(CoordinateImpl coordinate) {
+        return getCenter().distance((Coordinate) coordinate) <= range;
     }
 
     @Override
@@ -66,7 +60,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
             Iterator<CoordinateImpl> internal;
             boolean last = false;
             {
-                internal = (Iterator<CoordinateImpl>) center.getAllNeigbours(range).iterator();
+                internal = (Iterator<CoordinateImpl>) getCenter().getAllNeigbours(range).iterator();
             }
 
             @Override
@@ -81,7 +75,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
                 } else {
                     if (!last) {
                         last = true;
-                        return center;
+                        return getCenter();
                     } else {
                         throw new RuntimeException("calling next() when hasNext() is false");
                     }
@@ -92,7 +86,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
 
     @Override
     public int size() {
-        return 1 + 6 * (range * (range + 1)) / 2;
+        return 1 + 3 * (range * (range + 1));
     }
 
     @Override
@@ -100,7 +94,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     public boolean equals(Object object) {
         try {
             return ((Hexagon<CoordinateImpl>) object).range == range
-                    && ((Hexagon<CoordinateImpl>) object).center.equals(center);
+                    && ((Hexagon<CoordinateImpl>) object).getCenter().equals(getCenter());
         } catch (Exception e) {
             return false;
         }
@@ -111,32 +105,35 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     }
 
     @Override
-    public Coordinate getRandom(Random random) {
+    @SuppressWarnings("unchecked")
+    public CoordinateImpl getRandom(Random random) {
         int x = random.nextInt(range * 2 + 1) - range;
 
         int bound = range - abs(x) - 1;
         int y = (x > 0) ? random.nextInt(range + bound) - range : random.nextInt(range + bound) - bound;
-        return center.createCoordinate(center.getX() + x, center.getY() + y);
+        return (CoordinateImpl) getCenter().createCoordinate(getCenter().getX() + x, getCenter().getY() + y);
     }
 
     @Override
     public int getIndex(CoordinateImpl coordinate) {
-        int dist = center.distance(coordinate);
+        int dist = getCenter().distance(coordinate);
         int result = 1 + 6 * (dist * (dist - 1)) / 2;
         
-        Coordinate tmp = center.normalize(coordinate);
-        if (tmp.getZ() == -dist) {
-            result = result + 6 * dist - tmp.getX();
-        } else if (tmp.getX() == dist) {
-            result = result + 5 * dist + tmp.getY();
-        } else if (tmp.getY() == -dist) {
-            result = result + 4 * dist - tmp.getZ();
-        } else if (tmp.getZ() == dist) {
-            result = result + 3 * dist + tmp.getX();
-        } else if (tmp.getX() ==  -dist) {
-            result = result + 2 * dist - tmp.getY();
-        } else if (tmp.getY() == dist) {
-            result = result + 1 * dist + tmp.getZ();
+        int x = coordinate.getX() - getCenter().getX();
+        int y = coordinate.getY() - getCenter().getY();
+        int z = coordinate.getZ() - getCenter().getZ();
+        if (z == -dist) {
+            result = result + 6 * dist - x;
+        } else if (x == dist) {
+            result = result + 5 * dist + y;
+        } else if (y == -dist) {
+            result = result + 4 * dist - z;
+        } else if (z == dist) {
+            result = result + 3 * dist + x;
+        } else if (x ==  -dist) {
+            result = result + 2 * dist - y;
+        } else if (y == dist) {
+            result = result + 1 * dist + z;
         } else {
             throw new RuntimeException();
         }
@@ -144,28 +141,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     }
 
     @Override
-    public Spliterator<CoordinateImpl> spliterator() {
-        return new Spliterator<CoordinateImpl>() {
-
-            @Override
-            public boolean tryAdvance(Consumer<? super CoordinateImpl> action) {
-                return false;
-            }
-
-            @Override
-            public Spliterator<CoordinateImpl> trySplit() {
-                return null;
-            }
-
-            @Override
-            public long estimateSize() {
-                return 0;
-            }
-
-            @Override
-            public int characteristics() {
-                return 0;
-            }
-        };
+    public CoordinateImpl getCoordinate(int index) {
+        return null;
     }
 }

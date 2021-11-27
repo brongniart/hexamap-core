@@ -30,6 +30,10 @@ package hexamap.maps;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.IndexedRegion;
@@ -65,5 +69,16 @@ public class ArrayMap<CoordinateImpl extends Coordinate, Data> extends IndexedMa
         array[index] = data;
         return old;
     }
-
+    
+    @Override
+    public Stream<Entry<CoordinateImpl, Data>> stream() {
+        return StreamSupport.stream(Spliterators.spliterator(array, 0, size(),
+                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
+    }
+    
+    @Override
+    public Stream<Entry<CoordinateImpl, Data>> parallelStream() {
+        return StreamSupport.stream(Spliterators.spliterator(array, 0, size(),
+                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), true);
+    }
 }

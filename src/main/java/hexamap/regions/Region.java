@@ -28,50 +28,25 @@
  */
 package hexamap.regions;
 
-import java.util.AbstractCollection;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Random;
-import java.util.Set;
 
 import hexamap.coordinates.Coordinate;
 
 /**
  *
- * @param <CoordinateImpl>
  */
-public abstract class Region<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl>
-        implements Set<CoordinateImpl> {
-
-    protected CoordinateImpl center;
-
-    protected Region() {
-    }
-
-    public Region(CoordinateImpl center) {
-        this.center = center;
-    }
-
-    public CoordinateImpl getCenter() {
-        return center;
-    }
-
-    public void setCenter(CoordinateImpl center) {
-        this.center = center;
-    }
-
-    @Override
-    public abstract int size();
-
-    @Override
-    public abstract Iterator<CoordinateImpl> iterator();
+public interface Region<CoordinateImpl extends Coordinate> extends Collection<CoordinateImpl>{
     
-    public abstract Coordinate getRandom(Random random);
-
-    // public abstract CoordinateStream<CoordinateImpl> coordinates();
-    // public abstract MapStream<CoordinateImpl> maps();
-    // public abstract MapStream<CoordinateImpl> maps(Class<?> klass);
-
-    public String toString() {
-        return "[" + this.getClass() + ": " + center + "]";
+    @Override
+    default public boolean contains(Object object) {
+        throw new ClassCastException();
     }
+    
+    public boolean contains(CoordinateImpl obj);
+
+    public CoordinateImpl getRandom(Random random);
+    
+    public void setCenter(CoordinateImpl center);
+    public CoordinateImpl getCenter();
 }

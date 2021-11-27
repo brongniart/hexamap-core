@@ -26,64 +26,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.maps.streams;
+package hexamap.regions;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Spliterator;
-import java.util.stream.BaseStream;
+import java.util.AbstractCollection;
+
+import hexamap.coordinates.Coordinate;
 
 /**
  *
+ * @param <CoordinateImpl>
  */
-public class MapStream<CoordinateImpl,Data> implements BaseStream<Entry<CoordinateImpl,Data>,MapStream<CoordinateImpl,Data>>  {
+public abstract class AbstractRegion<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl>
+        implements Region<CoordinateImpl> {
 
-    @Override
-    public Iterator<Entry<CoordinateImpl, Data>> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+    private CoordinateImpl center;
+
+    protected AbstractRegion() {
     }
 
-    @Override
-    public Spliterator<Entry<CoordinateImpl, Data>> spliterator() {
-        // TODO Auto-generated method stub
-        return null;
+    public AbstractRegion(CoordinateImpl center) {
+        this.center = center;
     }
 
-    @Override
-    public boolean isParallel() {
-        // TODO Auto-generated method stub
-        return false;
+    public CoordinateImpl getCenter() {
+        return center;
     }
 
-    @Override
-    public MapStream<CoordinateImpl, Data> sequential() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public MapStream<CoordinateImpl, Data> parallel() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public MapStream<CoordinateImpl, Data> unordered() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public MapStream<CoordinateImpl, Data> onClose(Runnable closeHandler) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void close() {
-        // TODO Auto-generated method stub
-        
+    public void setCenter(CoordinateImpl center) {
+        this.center = center;
     }
     
+    public String toString() {
+        return "[" + this.getClass() + ": " + center + "]";
+    }
 }

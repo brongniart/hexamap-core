@@ -28,7 +28,7 @@
  */
 package hexamap.maps;
 
-import java.util.Set;
+import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -51,7 +51,7 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
         }
     }
 
-    protected final Region<CoordinateImpl> region;
+    private final Region<CoordinateImpl> region;
 
     @Override
     public Region<CoordinateImpl> getRegion() {
@@ -59,6 +59,7 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
     }
 
     public AbstractMap(Region<CoordinateImpl> region) {
+        Objects.nonNull(region);
         this.region = region;
     }
     
@@ -84,29 +85,29 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
 
     @Override
     public Data put(CoordinateImpl coordinate, Data data) {
+        Objects.nonNull(data);
         checkCoordinate(coordinate);
         return safePut(coordinate, data);
     }
 
     @Override
     public void putAll(java.util.Map<? extends CoordinateImpl, ? extends Data> map) {
-        checkCoordinates(map.keySet());
         map.entrySet().forEach(entry -> {
-            safePut(entry.getKey(), entry.getValue());
-        });
-    }
-
-    private void checkCoordinates(Set<? extends CoordinateImpl> keySet) {
-        keySet.forEach(coordinate -> {
-            assert coordinate != null;
-            checkCoordinate(coordinate);
+            put(entry.getKey(), entry.getValue());
         });
     }
 
     protected abstract Data safePut(CoordinateImpl coordinate, Data data);
     
+    @Override
     public Stream<Entry<CoordinateImpl, Data>> stream() {
         return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
                 Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
+    }
+    
+    @Override
+    public Stream<Entry<CoordinateImpl, Data>> parallelStream() {
+        return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
+                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), true);
     }
 }

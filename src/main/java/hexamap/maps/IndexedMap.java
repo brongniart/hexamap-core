@@ -40,9 +40,9 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
     public IndexedMap(IndexedRegion<CoordinateImpl> region) {
         super(region);
     }
-
+    
     public IndexedRegion<CoordinateImpl> getRegion() {
-        return (IndexedRegion<CoordinateImpl>) region;
+        return (IndexedRegion<CoordinateImpl>) super.getRegion();
     }
 
     @Override
@@ -86,7 +86,7 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
     public Iterator<Entry<CoordinateImpl, Data>> iterator() {
         return new Iterator<Entry<CoordinateImpl, Data>>() {
             boolean hasNext = false;
-            Iterator<CoordinateImpl> iterator = region.iterator();
+            Iterator<CoordinateImpl> iterator = getRegion().iterator();
             int index = 0;
             {
                 advance();
@@ -110,7 +110,7 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
                 Entry<CoordinateImpl, Data> entry = new Entry<CoordinateImpl, Data>(){
                     
                     private CoordinateImpl coordinate = iterator.next();
-                    private int index_iter = getRegion().getIndex(coordinate);
+                    private int index_iter = index;
                     
                     @Override
                     public CoordinateImpl getKey() {
@@ -136,6 +136,6 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
                 return entry;
             }};
     }
-
+    
     protected abstract Data indexPut(int index, Data data);
 }

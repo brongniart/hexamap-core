@@ -62,8 +62,9 @@ public class Axial extends Coordinate {
         return -x - y;
     }
 
+    private static final Axial zero = new Axial();
     public Axial getZero() {
-        return new Axial();
+        return zero;
     }
     
     public Axial createCoordinate(int x, int y) {

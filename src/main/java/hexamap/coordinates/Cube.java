@@ -52,6 +52,11 @@ public class Cube extends Axial {
     public int getZ() {
         return z;
     }
+    
+    private static final Cube zero = new Cube();
+    public Cube getZero() {
+        return zero;
+    }
 
     public Cube createCoordinate(int x, int y) {
         return new Cube(super.createCoordinate(x, y));

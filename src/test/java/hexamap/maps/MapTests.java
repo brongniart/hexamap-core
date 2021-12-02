@@ -87,6 +87,8 @@ public class MapTests {
                 new Object[][] { 
                         { new HashMap<Axial, AxialExt>(hexaSmall)},
                         { new HashMap<Axial, AxialExt>(triangleSmall)},
+                        { new ArrayMap<Axial, AxialExt>(hexaSmall,AxialExt.class)} ,
+                        { new ArrayMap<Axial, AxialExt>(triangleSmall,AxialExt.class)},
                         { new ArrayMap<Axial, AxialExt>(hexaMedium,AxialExt.class)} ,
                         { new ArrayMap<Axial, AxialExt>(triangleMedium,AxialExt.class)} 
                 });

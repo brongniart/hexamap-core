@@ -42,8 +42,8 @@ import hexamap.regions.AbstractRegion;
 public abstract class Coordinate extends AbstractRegion<Coordinate> {
 
     @Override
-    public boolean contains(Coordinate obj) {
-        return getX() == obj.getX() && getY() == obj.getY();
+    public boolean contains(Coordinate coordinate) {
+        return getX() == coordinate.getX() && getY() == coordinate.getY();
     }
 
     @Override
@@ -58,7 +58,7 @@ public abstract class Coordinate extends AbstractRegion<Coordinate> {
     }
 
     @Override
-    public boolean remove(Object center) {
+    public boolean remove(Object coordinate) {
         throw new UnsupportedOperationException();
     }
 

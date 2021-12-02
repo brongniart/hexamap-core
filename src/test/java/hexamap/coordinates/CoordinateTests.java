@@ -141,7 +141,7 @@ public class CoordinateTests {
         
         count = 0;
         int d=2;
-        for (Coordinate c : coordinate.getAllNeigbours(2)) {
+        for (Coordinate c : coordinate.getAllNeigbours(d)) {
             count++;
             if (count==13) {
                 d--;

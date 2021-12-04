@@ -87,7 +87,7 @@ public class RegionTests {
 
     @Test
     public void testSpliterators() {
-        System.err.println(region);
+        //System.err.println(region);
         //System.out.println(region.parallelStream().isParallel());
         //System.out.println(region.stream().isParallel());
     }

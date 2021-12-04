@@ -85,7 +85,7 @@ public class MapTests {
         Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*3, new Axial()); // 75'515'905
         return Arrays.asList(
                 new Object[][] { 
-                        { new HashMap<Axial, AxialExt>(hexaSmall)},
+                        { new HashMap<Axial, AxialExt>(hexaXXSmall)},
                         { new HashMap<Axial, AxialExt>(triangleSmall)},
                         { new ArrayMap<Axial, AxialExt>(hexaSmall,AxialExt.class)} ,
                         { new ArrayMap<Axial, AxialExt>(triangleSmall,AxialExt.class)},
@@ -104,7 +104,6 @@ public class MapTests {
     public void test_01_FillMap() {
         assert map.isEmpty();
         for (Coordinate c : map.getRegion()) {
-
             assert !map.containsKey(c);
             map.put(c, new AxialExt(c));
             assert map.containsKey(c);
@@ -117,13 +116,13 @@ public class MapTests {
             map.put(c, new AxialExt(c));
         }
         assert map.size() == map.getRegion().size();
-        System.out.println(map.getRegion()+" : "+map.getRegion().size());
+        System.out.println(map.getRegion() + " : " + map.getRegion().size());
     }
     
     @Test
     public void testSpliterators() {
-        System.out.println(map.parallelStream().isParallel());
-        System.out.println(map.stream().isParallel());
+        //System.out.println(map.parallelStream().isParallel());
+        //System.out.println(map.stream().isParallel());
     }
 
     @Test
@@ -146,21 +145,7 @@ public class MapTests {
     }
 
     @Test
-    public void test_03_FillMap_NewCoordinate() {
-        map.clear();
-        assert map.isEmpty();
-        for (Coordinate c : map.getRegion()) {
-            assert !map.containsKey(c);
-            map.put(new Axial(c), new AxialExt(c));
-            assert map.containsKey(c);
-            assert map.get(new Axial(c)) != null;
-            assert map.get(new Axial(c)).equals(new AxialExt(c));
-        }
-    }
-
-    @Test
     public void test_04_FillMap_Random() {
-        map.clear();
         assert map.isEmpty();
         int NB_ITER = map.getRegion().size();
         for (int i = 0; i < NB_ITER; i++) {

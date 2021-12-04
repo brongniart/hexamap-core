@@ -142,20 +142,25 @@ public class CoordinateTests {
         assert !iter.hasNext();
         
         count = 0;
-        int d=2;
-        for (Coordinate c : coordinate.getAllNeigbours(d)) {
+        int count_iter = 0;
+        int distance=128;
+        int distance_origin=distance;
+        for (Coordinate c : coordinate.getAllNeigbours(distance)) {
             count++;
-            if (count==13) {
-                d--;
+            count_iter++;
+            if (count_iter==6*distance+1) {
+                distance--;
+                count_iter=1;
             }
-            assert coordinate.distance(c)==d;
+            assert coordinate.distance(c)==distance;
         }
-        assert count == 6 + 6 * 2;
+        assert count == 3*(distance_origin*(distance_origin+1));
         
         count = 0;
-        for (@SuppressWarnings("unused") Coordinate c : coordinate.getAllNeigbours(1024)) {
+        distance=1024;
+        for (@SuppressWarnings("unused") Coordinate c : coordinate.getAllNeigbours(distance)) {
             count++;
         }
-        assert count==3148800;
+        assert count==3*(distance*(distance+1));
     }
 }

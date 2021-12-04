@@ -155,9 +155,9 @@ public abstract class Coordinate extends AbstractRegion<Coordinate> {
         @Override
         public boolean hasNext() {
             if (all) {
-                return range > 0;
+                return range > 1 || nbDir < 6 || nbIters < range;
             } else {
-                return nbDir < 6 || nbIters < range-1;
+                return nbDir < 6 || nbIters < range;
             }
         }
 
@@ -167,28 +167,23 @@ public abstract class Coordinate extends AbstractRegion<Coordinate> {
                 current = center.add(INIT_DIRECTION, range);
                 direction = INIT_DIRECTION.next(2);
 
-                nbIters = 0;
-                if (range==1) {
-                    nbDir = 2;
-                } else {
-                    nbDir = 1;   
-                }
+                nbIters = 1;
+                nbDir = 1;
             } else if (nbIters < range) {
                 current.move(direction, 1);
                 nbIters++;
             } else if (nbDir < 6) {
-                direction = direction.next();
                 current.move(direction, 1);
+                direction = direction.next();
 
                 nbIters = 1;
                 nbDir++;
-            } else if (nbDir == 6 && all) {
-                if (range == 0) {
-                    assert !hasNext();
-                    throw new RuntimeException("Calling next() while hasNext() is false");
-                }
+            } else if (all) {
                 range--;
+                nbIters = 1;
                 nbDir = 1;
+                direction = INIT_DIRECTION.next(2);
+                current.move(direction, 1);
             } else {
                 throw new RuntimeException("Calling next() while hasNext() is false");
             }

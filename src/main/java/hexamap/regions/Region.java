@@ -43,7 +43,7 @@ public interface Region<CoordinateImpl extends Coordinate> extends Collection<Co
         throw new ClassCastException();
     }
     
-    public boolean contains(CoordinateImpl obj);
+    public boolean contains(CoordinateImpl coordinate);
 
     public CoordinateImpl getRandom(Random random);
     

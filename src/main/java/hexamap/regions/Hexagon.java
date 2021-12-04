@@ -70,8 +70,10 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
 
             @Override
             public CoordinateImpl next() {
+                assert hasNext();
+                
                 if (internal.hasNext()) {
-                    return (CoordinateImpl) internal.next();
+                    return internal.next();
                 } else {
                     if (!last) {
                         last = true;

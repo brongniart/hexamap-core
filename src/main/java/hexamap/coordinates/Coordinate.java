@@ -36,9 +36,6 @@ import java.util.Random;
 
 import hexamap.regions.AbstractRegion;
 
-/**
- *
- */
 public abstract class Coordinate extends AbstractRegion<Coordinate> {
 
     @Override

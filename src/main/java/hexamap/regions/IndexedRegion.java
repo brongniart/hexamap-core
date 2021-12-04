@@ -45,6 +45,11 @@ public abstract class IndexedRegion<CoordinateImpl extends Coordinate> extends A
     
     public abstract int getIndex(CoordinateImpl coordinate);
     public abstract CoordinateImpl getCoordinate(int index);
+
+    @Override
+    public boolean remove(Object object) {
+        throw new UnsupportedOperationException();
+    }
     
     @Override
     public Spliterator<CoordinateImpl> spliterator() {

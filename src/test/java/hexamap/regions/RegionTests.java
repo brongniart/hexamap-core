@@ -49,14 +49,14 @@ import hexamap.coordinates.Direction;
 @RunWith(Parameterized.class)
 public class RegionTests {
 
-    private static Random rand; 
-            
+    private static Random rand;
+
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
         long seed = System.currentTimeMillis();
         rand = new Random(seed);
-        System.err.println("seed:"+seed);
-        
+        System.err.println("seed:" + seed);
+
         Set<Axial> setAxial = new Set<Axial>(new Axial(rand.nextInt(), rand.nextInt()));
         Hexagon<Axial> hexaAxial = new Hexagon<Axial>(32, new Axial(rand.nextInt(), rand.nextInt()));
 
@@ -72,24 +72,24 @@ public class RegionTests {
         }
 
         Hexagon<Axial> hexaMax = new Hexagon<Axial>(1024, new Axial(Integer.MIN_VALUE, Integer.MAX_VALUE));
-        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024*3,
+        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024,
                 new Cube(rand.nextInt(), rand.nextInt()));
 
-        return Arrays.asList(
-                new Object[][] { { new Axial() },{ new Cube() },{ hexaAxial }, { setAxial }, { hexaCube }, { setCube }, { hexaMax }, { triangle } });
+        return Arrays.asList(new Object[][] { { new Axial() }, { new Cube() }, { hexaAxial }, { setAxial },
+                { hexaCube }, { setCube }, { hexaMax }, { triangle } });
     }
 
     private final AbstractRegion<Coordinate> region;
 
     public RegionTests(AbstractRegion<Coordinate> region) throws Exception {
         this.region = region;
+        System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + region.size());
     }
 
     @Test
     public void testSpliterators() {
-        //System.err.println(region);
-        //System.out.println(region.parallelStream().isParallel());
-        //System.out.println(region.stream().isParallel());
+        // System.out.println(region.parallelStream().isParallel());
+        // System.out.println(region.stream().isParallel());
     }
 
     @Test
@@ -100,8 +100,9 @@ public class RegionTests {
         try {
             region.setCenter(tmp.add(Direction.NORD, 10));
             assert region.contains(region.getCenter());
-        } catch (UnsupportedOperationException e) {}
-        
+        } catch (UnsupportedOperationException e) {
+        }
+
         try {
             region.clear();
         } catch (UnsupportedOperationException e) {
@@ -117,7 +118,8 @@ public class RegionTests {
 
         try {
             region.setCenter(tmp);
-        } catch (UnsupportedOperationException e) {}
+        } catch (UnsupportedOperationException e) {
+        }
 
         int count = 0;
         for (Coordinate c : region) {

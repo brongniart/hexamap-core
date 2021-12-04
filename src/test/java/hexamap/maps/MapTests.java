@@ -82,7 +82,7 @@ public class MapTests {
 
         Triangle<Axial> triangleSmall = new Triangle<Axial>(Direction.getRandom(rand),256*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
         Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(rand),1024*2, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
-        Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*3, new Axial()); // 75'515'905
+        //Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*3, new Axial()); // 75'515'905
         return Arrays.asList(
                 new Object[][] { 
                         { new HashMap<Axial, AxialExt>(hexaXXSmall)},
@@ -98,6 +98,7 @@ public class MapTests {
     
     public MapTests(Map<Coordinate, Cube> map) throws Exception {
         this.map = map;
+        System.out.println(this.getClass() + ", map:" + map.getClass() + ": " + map.getRegion().size());
     }
 
     @Test
@@ -116,7 +117,6 @@ public class MapTests {
             map.put(c, new AxialExt(c));
         }
         assert map.size() == map.getRegion().size();
-        System.out.println(map.getRegion() + " : " + map.getRegion().size());
     }
     
     @Test

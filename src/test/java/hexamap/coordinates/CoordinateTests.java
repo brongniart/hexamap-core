@@ -51,13 +51,13 @@ public class CoordinateTests {
     public static Collection<Object[]> getParameters() throws Exception {
         Random rand = new Random();
         return Arrays.asList(new Object[][]{
-            {new Axial()}});
-        /*,{new Cube()},
+            {new Axial()},
+           // {new Cube()},
             {new Axial(rand.nextInt(),rand.nextInt())},
-            {new Cube(rand.nextInt(),rand.nextInt())},
+           // {new Cube(rand.nextInt(),rand.nextInt())},
             {new Axial(Integer.MAX_VALUE,Integer.MIN_VALUE)}});
-            */
     }
+
     private Coordinate coordinate;
 
     public CoordinateTests(Coordinate coordinate) {
@@ -70,6 +70,7 @@ public class CoordinateTests {
     }
 
     @Test
+    @SuppressWarnings("unlikely-arg-type")
     public void testBasic() {
         
         assert coordinate.equals(Direction.NORD)==false;

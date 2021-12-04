@@ -65,13 +65,14 @@ public class IndexedRegionTests {
 
     public IndexedRegionTests(IndexedRegion<Coordinate> region) throws Exception {
         this.region = region;
+        System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + region.size());
     }
 
     @Test
     public void testIndex() {
         int count=0;
         for (Coordinate c : region) {
-            assert region.getIndex(c)==count;
+            assert region.getIndex(new Axial(c))==count;
             count++;
         }
 

@@ -40,7 +40,7 @@ import hexamap.coordinates.Direction;
  *
  * @param <CoordinateImpl>
  */
-public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<CoordinateImpl> {
+public class Diamond<CoordinateImpl extends Coordinate> extends IndexedRegion<CoordinateImpl> {
 
     private BiPredicate<Coordinate, Integer> testContains;
     private Function<Coordinate, Integer> coordinateX;
@@ -48,7 +48,7 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
     private Direction direction;
     private int length;
 
-    public Triangle(Direction direction, int length, CoordinateImpl center) {
+    public Diamond(Direction direction, int length, CoordinateImpl center) {
         super(center);
         if (length < 0) {
             this.direction = direction.next(3);
@@ -58,18 +58,16 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
             this.length = length;
         }
         testContains = Direction.getContainTest(direction, center)
-                .and(Direction.getContainTest(direction.previous(2), center));
-        coordinateX = Direction.getCoordinate(direction);
-        coordinateY = Direction.getCoordinate(direction.previous());
+                .and(Direction.getContainTest(direction.previous(), center));
     }
 
     @Override
     public void setCenter(CoordinateImpl center) {
         super.setCenter(center);
         testContains = Direction.getContainTest(direction, center)
-                .and(Direction.getContainTest(direction.previous(2), center));
+                .and(Direction.getContainTest(direction.previous(), center));
     }
-
+    
     @Override
     public boolean contains(CoordinateImpl coordinate) {
         return testContains.test(coordinate, length);
@@ -78,7 +76,7 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
     @Override
     public Iterator<CoordinateImpl> iterator() {
         return new Iterator<CoordinateImpl>() {
-            CoordinateImpl current = null;
+            CoordinateImpl next = getCenter();
 
             boolean hasNext = true;
             int iterLength = 0;
@@ -93,27 +91,26 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
             @Override
             @SuppressWarnings("unchecked")
             public CoordinateImpl next() {
-                assert hasNext();
+                if (hasNext) {
+                    CoordinateImpl current = next;
 
-                if (current == null) {
-                    current = (CoordinateImpl) getCenter().add(Direction.NORD, 0);
-                } else if (angle == iterLength) {
+                    if (angle == iterLength) {
+                        if (iterLength == length) {
+                            hasNext = false;
+                        } else {
+                            iterLength++;
+                            angle = 0;
+                            next = (CoordinateImpl) getCenter().add(direction, iterLength);
+                        }
+                    } else {
+                        angle++;
+                        next = (CoordinateImpl) next.add(dir_angle, 1);
+                    }
 
-                    current.move(dir_angle.next(3),iterLength);
-                    current.move(direction,1);
-                    
-                    iterLength++;
-                    angle = 0;
+                    return current;
                 } else {
-                    angle++;
-                    current.move(dir_angle, 1);
+                    throw new RuntimeException("calling next() when hasNext() is false");
                 }
-
-                if (iterLength == length && angle == iterLength) {
-                    hasNext = false;
-                }
-                
-                return current;
             }
         };
     }
@@ -127,9 +124,9 @@ public class Triangle<CoordinateImpl extends Coordinate> extends IndexedRegion<C
     @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         try {
-            return ((Triangle<CoordinateImpl>) object).direction == direction
-                    && ((Triangle<CoordinateImpl>) object).length == length
-                    && ((Triangle<CoordinateImpl>) object).getCenter() == getCenter();
+            return ((Diamond<CoordinateImpl>) object).direction == direction
+                    && ((Diamond<CoordinateImpl>) object).length == length
+                    && ((Diamond<CoordinateImpl>) object).getCenter() == getCenter();
         } catch (Exception e) {
             return false;
         }

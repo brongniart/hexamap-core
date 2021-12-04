@@ -136,8 +136,9 @@ public abstract class Coordinate extends AbstractRegion<Coordinate> {
         private final boolean all;
         private final Coordinate center;
         private int range;
+        private int nbIters;
+        private int nbDir;
         private Coordinate current;
-        private Coordinate first;
         private Direction direction;
 
         private final Direction INIT_DIRECTION = Direction.NORD;
@@ -148,42 +149,51 @@ public abstract class Coordinate extends AbstractRegion<Coordinate> {
             this.range = Math.abs(range);
             this.center = center;
 
-            current = center.add(INIT_DIRECTION, range);
-            first = null;
-            direction = INIT_DIRECTION.next();
+            current = null;
         }
 
         @Override
         public boolean hasNext() {
             if (all) {
-                return range > 1 || !current.equals(first);
+                return range > 0;
             } else {
-                return !current.equals(first);
+                return nbDir < 6 || nbIters < range-1;
             }
         }
 
         @Override
         public Coordinate next() {
-            Coordinate returnValue = current;
+            if (current == null) {
+                current = center.add(INIT_DIRECTION, range);
+                direction = INIT_DIRECTION.next(2);
 
-            Coordinate next = current.add(direction, 1);
-            if (all && next.equals(first)) {
+                nbIters = 0;
+                if (range==1) {
+                    nbDir = 2;
+                } else {
+                    nbDir = 1;   
+                }
+            } else if (nbIters < range) {
+                current.move(direction, 1);
+                nbIters++;
+            } else if (nbDir < 6) {
+                direction = direction.next();
+                current.move(direction, 1);
+
+                nbIters = 1;
+                nbDir++;
+            } else if (nbDir == 6 && all) {
+                if (range == 0) {
+                    assert !hasNext();
+                    throw new RuntimeException("Calling next() while hasNext() is false");
+                }
                 range--;
-                next = center.add(INIT_DIRECTION, range);
-                direction = INIT_DIRECTION.next();
-                first = null;
+                nbDir = 1;
             } else {
-                if (first == null) {
-                    first = current;
-                }
-                if (center.distance(next) > range) {
-                    direction = direction.next();
-                    next = current.add(direction, 1);
-                }
+                throw new RuntimeException("Calling next() while hasNext() is false");
             }
-            current = next;
 
-            return returnValue;
+            return current;
         }
     }
 

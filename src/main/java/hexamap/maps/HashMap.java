@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Direction;
 import hexamap.regions.Region;
 
 /**
@@ -57,7 +56,7 @@ public class HashMap<CoordinateImpl extends Coordinate,Data> extends AbstractMap
     @Override
     @SuppressWarnings("unchecked")
     protected Data safePut(CoordinateImpl coordinate, Data data) {
-        return map.put((CoordinateImpl) coordinate.add(Direction.NORD, 0), data);
+        return map.put((CoordinateImpl) coordinate.copy(), data);
     }
 
     @Override

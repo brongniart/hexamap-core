@@ -34,6 +34,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Random;
 
 import org.junit.FixMethodOrder;
@@ -78,11 +79,11 @@ public class MapTests {
         hexaXXSmall = new Hexagon<Axial>(64, new Axial(rand.nextInt(),rand.nextInt()));  //    49'537 hex
         hexaSmall = new Hexagon<Axial>(256, new Axial(rand.nextInt(),rand.nextInt())); // 
         hexaMedium = new Hexagon<Axial>(1024, new Axial(rand.nextInt(),rand.nextInt())); // 3'148'801 hex
-        hexaLarge = new Hexagon<Axial>(2048, new Axial(rand.nextInt(),rand.nextInt()));  //12'589'057 hex
+        hexaLarge = new Hexagon<Axial>(2048*2, new Axial(rand.nextInt(),rand.nextInt()));  //12'589'057 hex
 
         Triangle<Axial> triangleSmall = new Triangle<Axial>(Direction.getRandom(rand),256*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
         Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(rand),1024*2, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
-        //Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*3, new Axial()); // 75'515'905
+        Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*4, new Axial()); // 75'515'905
         return Arrays.asList(
                 new Object[][] { 
                         { new HashMap<Axial, AxialExt>(hexaXXSmall)},
@@ -98,13 +99,14 @@ public class MapTests {
     
     public MapTests(Map<Coordinate, Cube> map) throws Exception {
         this.map = map;
-        System.out.println(this.getClass() + ", map:" + map.getClass() + ": " + map.getRegion().size());
+        System.out.println(this.getClass() + ", map:" + map.getClass() + ": " + String.format(Locale.US,"%,d", map.getRegion().size()));
     }
 
     @Test
     public void test_01_FillMap() {
         assert map.isEmpty();
         for (Coordinate c : map.getRegion()) {
+            assert map.getRegion().contains(c);
             assert !map.containsKey(c);
             map.put(c, new AxialExt(c));
             assert map.containsKey(c);
@@ -119,7 +121,7 @@ public class MapTests {
         assert map.size() == map.getRegion().size();
     }
     
-    @Test
+    //@Test
     public void testSpliterators() {
         //System.out.println(map.parallelStream().isParallel());
         //System.out.println(map.stream().isParallel());

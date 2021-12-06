@@ -65,7 +65,7 @@ public class IndexedRegionTests {
 
     public IndexedRegionTests(IndexedRegion<Coordinate> region) throws Exception {
         this.region = region;
-        System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + region.size());
+        System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
     }
 
     @Test

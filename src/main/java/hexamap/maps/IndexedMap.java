@@ -31,7 +31,6 @@ package hexamap.maps;
 import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Direction;
 import hexamap.regions.IndexedRegion;
 
 public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extends AbstractMap<CoordinateImpl, Data> {
@@ -111,7 +110,7 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
                 Entry<CoordinateImpl, Data> entry = new Entry<CoordinateImpl, Data>(){
                     
                     @SuppressWarnings("unchecked")
-                    private CoordinateImpl coordinate = (CoordinateImpl) iterator.next().add(Direction.NORD,0);
+                    private CoordinateImpl coordinate = (CoordinateImpl) iterator.next().copy();
                     private int index_iter = index;
                     
                     @Override

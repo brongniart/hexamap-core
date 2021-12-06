@@ -32,80 +32,28 @@ import static java.lang.Math.abs;
 
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Random;
 
-import hexamap.regions.AbstractRegion;
+public abstract class Coordinate {
 
-public abstract class Coordinate extends AbstractRegion<Coordinate> {
-
-    @Override
-    public boolean contains(Coordinate coordinate) {
+    public boolean isEquals(Coordinate coordinate) {
         return getX() == coordinate.getX() && getY() == coordinate.getY();
     }
 
     @Override
     public boolean equals(Object obj) {
         try {
-            return contains((Coordinate) obj);
+            return isEquals((Coordinate) obj);
         } catch (ClassCastException e) {
             return false;
         } catch (NullPointerException e) {
             return false;
         }
     }
-
-    @Override
-    public boolean remove(Object coordinate) {
-        throw new UnsupportedOperationException();
+    
+    public boolean equals(Coordinate coordinate) {
+        return getX() == coordinate.getX() && getY() == coordinate.getY();
     }
-
-    @Override
-    public Coordinate getCenter() {
-        return this;
-    }
-
-    @Override
-    public void setCenter(Coordinate center) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int size() {
-        return 1;
-    }
-
-    private class IteratorCoordinate implements Iterator<Coordinate> {
-
-        private final Coordinate c;
-        private boolean nextCalled = false;
-
-        public IteratorCoordinate(Coordinate c) {
-            this.c = c;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return !nextCalled;
-        }
-
-        @Override
-        public Coordinate next() {
-            nextCalled = true;
-            return c;
-        }
-
-    }
-
-    @Override
-    public Iterator<Coordinate> iterator() {
-        return new IteratorCoordinate(this);
-    }
-
-    @Override
-    public Coordinate getRandom(Random random) {
-        return this;
-    }
-
+    
     public abstract int getX();
 
     public abstract int getY();
@@ -204,5 +152,9 @@ public abstract class Coordinate extends AbstractRegion<Coordinate> {
     @Override
     public int hashCode() {
         return Objects.hash(getX(), getY());
+    }
+
+    public Coordinate copy() {
+        return add(Direction.NORD,0);
     }
 }

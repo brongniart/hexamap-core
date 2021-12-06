@@ -72,18 +72,18 @@ public class RegionTests {
         }
 
         Hexagon<Axial> hexaMax = new Hexagon<Axial>(1024, new Axial(Integer.MIN_VALUE, Integer.MAX_VALUE));
-        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024,
+        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024*3,
                 new Cube(rand.nextInt(), rand.nextInt()));
 
-        return Arrays.asList(new Object[][] { { new Axial() }, { new Cube() }, { hexaAxial }, { setAxial },
+        return Arrays.asList(new Object[][] { { new Cube() }, { hexaAxial }, { setAxial },
                 { hexaCube }, { setCube }, { hexaMax }, { triangle } });
     }
 
-    private final AbstractRegion<Coordinate> region;
+    private final Region<Coordinate> region;
 
-    public RegionTests(AbstractRegion<Coordinate> region) throws Exception {
+    public RegionTests(Region<Coordinate> region) throws Exception {
         this.region = region;
-        System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + region.size());
+        System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
     }
 
     @Test

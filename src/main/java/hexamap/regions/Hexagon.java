@@ -96,7 +96,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     public boolean equals(Object object) {
         try {
             return ((Hexagon<CoordinateImpl>) object).range == range
-                    && ((Hexagon<CoordinateImpl>) object).getCenter().equals(getCenter());
+                    && ((Hexagon<CoordinateImpl>) object).getCenter().isEquals(getCenter());
         } catch (Exception e) {
             return false;
         }

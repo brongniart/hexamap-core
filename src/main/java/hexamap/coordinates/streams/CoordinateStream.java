@@ -33,53 +33,56 @@ import java.util.Spliterator;
 import java.util.stream.BaseStream;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.Region;
+import hexamap.regions.AbstractRegion;
 
 /**
  *
  */
-public class CoordinateStream<CoordinateImpl extends Coordinate> implements BaseStream<CoordinateImpl,CoordinateStream<CoordinateImpl>> {
+public abstract class CoordinateStream<CoordinateImpl extends Coordinate> implements BaseStream<CoordinateImpl,CoordinateStream<CoordinateImpl>> {
+    
+    public abstract CoordinateStream<CoordinateImpl> containedIn(AbstractRegion<Coordinate> region);
+    public abstract CoordinateStream<CoordinateImpl> containedIn(CoordinateStream<Coordinate> streams[]);
+    public abstract CoordinateStream<CoordinateImpl> within(CoordinateImpl min, CoordinateImpl max);
 
+    public abstract void unique();
+    
     @Override
     public Iterator<CoordinateImpl> iterator() {
-        return null;
+        throw new UnsupportedOperationException();
     }
-
+    
     @Override
     public Spliterator<CoordinateImpl> spliterator() {
-        return null;
+       throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isParallel() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public CoordinateStream<CoordinateImpl> sequential() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public CoordinateStream<CoordinateImpl> parallel() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public CoordinateStream<CoordinateImpl> unordered() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public CoordinateStream<CoordinateImpl> onClose(Runnable closeHandler) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void close() {
-    }
-    
-    public CoordinateStream<CoordinateImpl> containedIn(Region<CoordinateImpl> region) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

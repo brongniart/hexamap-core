@@ -28,11 +28,62 @@
  */
 package hexamap.maps.streams;
 
-import hexamap.coordinates.Coordinate;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Spliterator;
+import java.util.stream.BaseStream;
 
 /**
  *
  */
-public class MapStream<CoordinateImpl extends Coordinate> {
+public class MapStream<CoordinateImpl,Data> implements BaseStream<Entry<CoordinateImpl,Data>,MapStream<CoordinateImpl,Data>>  {
 
+    @Override
+    public Iterator<Entry<CoordinateImpl, Data>> iterator() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Spliterator<Entry<CoordinateImpl, Data>> spliterator() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isParallel() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public MapStream<CoordinateImpl, Data> sequential() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public MapStream<CoordinateImpl, Data> parallel() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public MapStream<CoordinateImpl, Data> unordered() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public MapStream<CoordinateImpl, Data> onClose(Runnable closeHandler) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+        
+    }
+    
 }

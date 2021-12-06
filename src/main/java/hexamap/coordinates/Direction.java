@@ -29,6 +29,8 @@
 package hexamap.coordinates;
 
 import java.util.Random;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
 
 /**
  *
@@ -39,11 +41,121 @@ public enum Direction {
     public final int x;
     public final int y;
 
+    static public BiPredicate<Coordinate, Integer> getContainTest(Direction direction, Coordinate coordinate) {
+        switch (direction) {
+        case NORD:
+            return new BiPredicate<Coordinate, Integer>() {
+                Coordinate center = coordinate;
+
+                @Override
+                public boolean test(Coordinate coordinate, Integer distance) {
+                    return 0 <= coordinate.getX() - center.getX() && coordinate.getX() - center.getX() <= distance;
+                }
+            };
+        case NORD_EAST:
+            return new BiPredicate<Coordinate, Integer>() {
+                Coordinate center = coordinate;
+
+                @Override
+                public boolean test(Coordinate coordinate, Integer distance) {
+                    return -distance <= coordinate.getY() - center.getY() && coordinate.getY() - center.getY() <= 0;
+                }
+            };
+        case SOUTH_EAST:
+            return new BiPredicate<Coordinate, Integer>() {
+                Coordinate center = coordinate;
+
+                @Override
+                public boolean test(Coordinate coordinate, Integer distance) {
+                    return 0 <= coordinate.getZ() - center.getZ() && coordinate.getZ() - center.getZ() <= distance;
+                }
+            };
+        case SOUTH:
+            return new BiPredicate<Coordinate, Integer>() {
+                Coordinate center = coordinate;
+
+                @Override
+                public boolean test(Coordinate coordinate, Integer distance) {
+                    return -distance <= coordinate.getX() - center.getX() && coordinate.getX() - center.getX() <= 0;
+                }
+            };
+        case SOUTH_WEST:
+            return new BiPredicate<Coordinate, Integer>() {
+                Coordinate center = coordinate;
+
+                @Override
+                public boolean test(Coordinate coordinate, Integer distance) {
+                    return 0 <= coordinate.getY() - center.getY() && coordinate.getY() - center.getY() <= distance;
+                }
+            };
+        case NORD_WEST:
+            return new BiPredicate<Coordinate, Integer>() {
+                Coordinate center = coordinate;
+
+                @Override
+                public boolean test(Coordinate coordinate, Integer distance) {
+                    return -distance <= coordinate.getZ() - center.getZ() && coordinate.getZ() - center.getZ() <= 0;
+                }
+            };
+        default:
+            throw new RuntimeException("Unexpected direction");
+        }
+    }
+
+    static public Function<Coordinate, Integer> getCoordinate(Direction direction) {
+        switch (direction) {
+        case NORD:
+            return new Function<Coordinate, Integer>() {
+                @Override
+                public Integer apply(Coordinate coordinate) {
+                    return coordinate.getX();
+                }
+            };
+        case NORD_EAST:
+            return new Function<Coordinate, Integer>() {
+                @Override
+                public Integer apply(Coordinate coordinate) {
+                    return -coordinate.getY();
+                }
+            };
+        case SOUTH_EAST:
+            return new Function<Coordinate, Integer>() {
+                @Override
+                public Integer apply(Coordinate coordinate) {
+                    return coordinate.getZ();
+                }
+            };
+        case SOUTH:
+            return new Function<Coordinate, Integer>() {
+                @Override
+                public Integer apply(Coordinate coordinate) {
+                    return -coordinate.getX();
+                }
+            };
+        case SOUTH_WEST:
+            return new Function<Coordinate, Integer>() {
+                @Override
+                public Integer apply(Coordinate coordinate) {
+                    return coordinate.getY();
+                }
+            };
+        case NORD_WEST:
+            return new Function<Coordinate, Integer>() {
+                @Override
+                public Integer apply(Coordinate coordinate) {
+                    return -coordinate.getZ();
+                }
+            };
+        default:
+            throw new RuntimeException("Unexpected direction");
+        }
+    }
+
     private Direction(int x, int y) {
         this.x = x;
         this.y = y;
     }
-    
+
     public Direction next() {
         return next(1);
     }
@@ -61,9 +173,9 @@ public enum Direction {
     }
 
     public static Direction getIndex(int index) {
-        return values()[(index % values().length + values().length)%values().length];
+        return values()[(index % values().length + values().length) % values().length];
     }
-    
+
     public static Direction getRandom(Random rand) {
         return values()[rand.nextInt(values().length)];
     }

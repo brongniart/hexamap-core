@@ -62,8 +62,9 @@ public class Axial extends Coordinate {
         return -x - y;
     }
 
+    private static final Axial zero = new Axial();
     public Axial getZero() {
-        return new Axial();
+        return zero;
     }
     
     public Axial createCoordinate(int x, int y) {
@@ -79,8 +80,8 @@ public class Axial extends Coordinate {
     }
     
     public void move(Direction direction, int range) {
-        x = range * (x + direction.x);
-        y = range * (y + direction.y);
+        x = x + range * direction.x;
+        y = y + range * direction.y;
     }
     
     public Axial add(Direction direction, int range) {
@@ -90,10 +91,5 @@ public class Axial extends Coordinate {
     @Override
     public String toString() {
         return "{"+x+","+y+"}";
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-       return super.equals(obj);
     }
 }

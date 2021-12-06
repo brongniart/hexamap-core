@@ -30,6 +30,7 @@ package hexamap.maps;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
@@ -53,8 +54,9 @@ public class HashMap<CoordinateImpl extends Coordinate,Data> extends AbstractMap
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Data safePut(CoordinateImpl coordinate, Data data) {
-        return map.put(coordinate, data);
+        return map.put((CoordinateImpl) coordinate.copy(), data);
     }
 
     @Override
@@ -79,5 +81,15 @@ public class HashMap<CoordinateImpl extends Coordinate,Data> extends AbstractMap
     @Override
     public Iterator<java.util.Map.Entry<CoordinateImpl, Data>> iterator() {
         return map.entrySet().iterator();
+    }
+    
+    @Override
+    public Stream<Entry<CoordinateImpl, Data>> stream() {
+        return map.entrySet().stream();
+    }
+    
+    @Override
+    public Stream<Entry<CoordinateImpl, Data>> parallelStream() {
+        return map.entrySet().parallelStream();
     }
 }

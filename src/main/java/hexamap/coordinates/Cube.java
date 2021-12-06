@@ -28,11 +28,14 @@
  */
 package hexamap.coordinates;
 
-/**
- *
- */
-public class Cube extends Axial {
-    
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Random;
+
+import hexamap.regions.Region;
+
+public class Cube extends Axial implements Region<Cube> {
+
     protected int z = 0;
 
     public Cube() {
@@ -51,6 +54,12 @@ public class Cube extends Axial {
     @Override
     public int getZ() {
         return z;
+    }
+
+    private static final Cube zero = new Cube();
+
+    public Cube getZero() {
+        return zero;
     }
 
     public Cube createCoordinate(int x, int y) {
@@ -74,7 +83,104 @@ public class Cube extends Axial {
     }
 
     @Override
-    public boolean equals(Object obj) {
-       return super.equals(obj);
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public Object[] toArray() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean add(Cube e) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends Cube> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Cube getRandom(Random random) {
+        return this;
+    }
+
+    @Override
+    public void setCenter(Cube center) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Cube getCenter() {
+        return this;
+    }
+
+    @Override
+    public int size() {
+        return 1;
+    }
+
+    private class IteratorCoordinate implements Iterator<Cube> {
+
+        private final Cube c;
+        private boolean nextCalled = false;
+
+        public IteratorCoordinate(Cube c) {
+            this.c = c;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !nextCalled;
+        }
+
+        @Override
+        public Cube next() {
+            nextCalled = true;
+            return c;
+        }
+
+    }
+
+    @Override
+    public Iterator<Cube> iterator() {
+        return new IteratorCoordinate(this);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean contains(Cube coordinate) {
+        return isEquals(coordinate);
     }
 }

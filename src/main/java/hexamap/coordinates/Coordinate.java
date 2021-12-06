@@ -32,48 +32,26 @@ import static java.lang.Math.abs;
 
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Random;
 
-import hexamap.regions.Region;
+public abstract class Coordinate {
 
-/**
- *
- */
-public abstract class Coordinate extends Region<Coordinate> {
-
-    @Override
-    public int size() {
-        return 1;
+    public boolean isEquals(Coordinate coordinate) {
+        return getX() == coordinate.getX() && getY() == coordinate.getY();
     }
 
-    private class IteratorCoordinate implements Iterator<Coordinate>{
-
-        private final Coordinate c;
-
-        public IteratorCoordinate(Coordinate c) {
-            this.c = c;
-        }
-        
-        @Override
-        public boolean hasNext() {
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            return isEquals((Coordinate) obj);
+        } catch (ClassCastException e) {
+            return false;
+        } catch (NullPointerException e) {
             return false;
         }
-
-        @Override
-        public Coordinate next() {
-            return c;
-        }
-        
     }
     
-    @Override
-    public Iterator<Coordinate> iterator() {
-        return new IteratorCoordinate(this);
-    }
-
-    @Override
-    public Coordinate getRandom(Random random) {
-        return this;
+    public boolean equals(Coordinate coordinate) {
+        return getX() == coordinate.getX() && getY() == coordinate.getY();
     }
     
     public abstract int getX();
@@ -94,17 +72,8 @@ public abstract class Coordinate extends Region<Coordinate> {
 
     public abstract void move(Direction direction, int range);
 
-    @Override
-    public boolean equals(Object obj) {
-        try {
-            return getX() == ((Coordinate) obj).getX() && getY() == ((Coordinate) obj).getY();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public int distance(Coordinate other) {
-        return Math.max(abs(getX()- other.getX()),Math.max(abs(getY()- other.getY()),abs(getZ()- other.getZ())));
+        return Math.max(abs(getX() - other.getX()), Math.max(abs(getY() - other.getY()), abs(getZ() - other.getZ())));
     }
 
     public class NeigboursIterator implements Iterator<Coordinate> {
@@ -112,8 +81,9 @@ public abstract class Coordinate extends Region<Coordinate> {
         private final boolean all;
         private final Coordinate center;
         private int range;
+        private int nbIters;
+        private int nbDir;
         private Coordinate current;
-        private Coordinate first;
         private Direction direction;
 
         private final Direction INIT_DIRECTION = Direction.NORD;
@@ -124,42 +94,46 @@ public abstract class Coordinate extends Region<Coordinate> {
             this.range = Math.abs(range);
             this.center = center;
 
-            current = center.add(INIT_DIRECTION, range);
-            first = null;
-            direction = INIT_DIRECTION.next();
+            current = null;
         }
 
         @Override
         public boolean hasNext() {
             if (all) {
-                return range > 1 || !current.equals(first);
+                return range > 1 || nbDir < 6 || nbIters < range;
             } else {
-                return !current.equals(first);
+                return nbDir < 6 || nbIters < range;
             }
         }
 
         @Override
         public Coordinate next() {
-            Coordinate returnValue = current;
+            if (current == null) {
+                current = center.add(INIT_DIRECTION, range);
+                direction = INIT_DIRECTION.next(2);
 
-            Coordinate next = current.add(direction, 1);
-            if (all && next.equals(first)) {
+                nbIters = 1;
+                nbDir = 1;
+            } else if (nbIters < range) {
+                current.move(direction, 1);
+                nbIters++;
+            } else if (nbDir < 6) {
+                current.move(direction, 1);
+                direction = direction.next();
+
+                nbIters = 1;
+                nbDir++;
+            } else if (all) {
                 range--;
-                next = center.add(INIT_DIRECTION, range);
-                direction = INIT_DIRECTION.next();
-                first = null;
+                nbIters = 1;
+                nbDir = 1;
+                direction = INIT_DIRECTION.next(2);
+                current.move(direction, 1);
             } else {
-                if (first == null) {
-                    first = current;
-                }
-                if (center.distance(next) > range) {
-                    direction = direction.next();
-                    next = current.add(direction, 1);
-                }
+                throw new RuntimeException("Calling next() while hasNext() is false");
             }
-            current = next;
 
-            return returnValue;
+            return current;
         }
     }
 
@@ -177,10 +151,10 @@ public abstract class Coordinate extends Region<Coordinate> {
 
     @Override
     public int hashCode() {
-        return  Objects.hash(getX(),getY());
+        return Objects.hash(getX(), getY());
     }
 
-    public Coordinate normalize(Coordinate coordinate) {
-        return createCoordinate(coordinate.getX() - getX(), coordinate.getY() - getY());
+    public Coordinate copy() {
+        return add(Direction.NORD,0);
     }
 }

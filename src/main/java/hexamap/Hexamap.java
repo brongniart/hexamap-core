@@ -28,8 +28,6 @@
  */
 package hexamap;
 
-import javax.xml.crypto.Data;
-
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.streams.CoordinateStream;
 import hexamap.maps.Map;
@@ -40,31 +38,23 @@ import hexamap.regions.streams.RegionStream;
 /**
  *
  */
-public interface Hexamap<CoordinateImpl extends Coordinate> {
-
-    public void addRegion(Region<CoordinateImpl> region);
-
-    public boolean removeRegion(Region<CoordinateImpl> region);
-
-    public void addMap(Region<CoordinateImpl> region, Map<CoordinateImpl, Data> map);
-
-    public boolean removeMap(Region<CoordinateImpl> region, Map<CoordinateImpl, Data> map);
+public interface Hexamap<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
+    
+    public void add(Region<CoordinateImpl> region);
+    public boolean remove(Region<CoordinateImpl> region);
+    public Region<CoordinateImpl> getCluster(Region<CoordinateImpl> region);
+    
+    public <Data> void add(Region<CoordinateImpl> region, Data data);
+    public <Data> boolean remove(Region<CoordinateImpl> region, Data data);
+    
+    public <Data> void add(Region<CoordinateImpl> region, Map<CoordinateImpl, Data> map);
+    public <Data> boolean remove(Region<CoordinateImpl> region, Map<CoordinateImpl, Data> map);
 
     public RegionStream<CoordinateImpl> regions();
+    public RegionStream<CoordinateImpl> cluster(Region<CoordinateImpl> region);
+    
+    public <Data> MapStream<Region<CoordinateImpl>,Data> maps(Class<Data> dataClass);
+    public <Data> MapStream<CoordinateImpl,Data> maps(Region<CoordinateImpl> region, Class<Data> dataClass);
 
-    public MapStream<CoordinateImpl> maps();
-
-    public MapStream<CoordinateImpl> maps(Class<?> klass);
-
-    public MapStream<CoordinateImpl> maps(Region<CoordinateImpl> region);
-
-    public MapStream<CoordinateImpl> maps(Region<CoordinateImpl> region, Class<?> klass);
-
-    public CoordinateStream<CoordinateImpl> coordinates();
-
-    public CoordinateStream<CoordinateImpl> coordinates(Region<CoordinateImpl> region);
-
-    public CoordinateStream<CoordinateImpl> coordinates(Map<CoordinateImpl, Data> map);
-
-    public CoordinateStream<CoordinateImpl> coordinates(Region<CoordinateImpl> region, Map<CoordinateImpl, Data> map, Class<?> klass);
+    public <Data> CoordinateStream<CoordinateImpl> coordinates(Class<Data> dataClass);
 }

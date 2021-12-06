@@ -49,14 +49,14 @@ import hexamap.coordinates.Direction;
 @RunWith(Parameterized.class)
 public class RegionTests {
 
-    private static Random rand; 
-            
+    private static Random rand;
+
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
         long seed = System.currentTimeMillis();
         rand = new Random(seed);
-        System.err.println("seed:"+seed);
-        
+        System.err.println("seed:" + seed);
+
         Set<Axial> setAxial = new Set<Axial>(new Axial(rand.nextInt(), rand.nextInt()));
         Hexagon<Axial> hexaAxial = new Hexagon<Axial>(32, new Axial(rand.nextInt(), rand.nextInt()));
 
@@ -72,17 +72,24 @@ public class RegionTests {
         }
 
         Hexagon<Axial> hexaMax = new Hexagon<Axial>(1024, new Axial(Integer.MIN_VALUE, Integer.MAX_VALUE));
-        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024,
+        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024*3,
                 new Cube(rand.nextInt(), rand.nextInt()));
 
-        return Arrays.asList(
-                new Object[][] { { hexaAxial }, { setAxial }, { hexaCube }, { setCube }, { hexaMax }, { triangle } });
+        return Arrays.asList(new Object[][] { { new Cube() }, { hexaAxial }, { setAxial },
+                { hexaCube }, { setCube }, { hexaMax }, { triangle } });
     }
 
     private final Region<Coordinate> region;
 
     public RegionTests(Region<Coordinate> region) throws Exception {
         this.region = region;
+        System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
+    }
+
+    @Test
+    public void testSpliterators() {
+        // System.out.println(region.parallelStream().isParallel());
+        // System.out.println(region.stream().isParallel());
     }
 
     @Test
@@ -90,8 +97,11 @@ public class RegionTests {
         assert region.contains(region.getCenter());
 
         Coordinate tmp = region.getCenter();
-        region.setCenter(tmp.add(Direction.NORD, 10));
-        assert region.contains(region.getCenter());
+        try {
+            region.setCenter(tmp.add(Direction.NORD, 10));
+            assert region.contains(region.getCenter());
+        } catch (UnsupportedOperationException e) {
+        }
 
         try {
             region.clear();
@@ -106,7 +116,10 @@ public class RegionTests {
         }
         assert region.contains(region.getCenter());
 
-        region.setCenter(tmp);
+        try {
+            region.setCenter(tmp);
+        } catch (UnsupportedOperationException e) {
+        }
 
         int count = 0;
         for (Coordinate c : region) {

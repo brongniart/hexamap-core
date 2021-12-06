@@ -28,54 +28,35 @@
  */
 package hexamap.regions;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Random;
+import java.util.AbstractCollection;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Cube;
-import hexamap.coordinates.Direction;
 
 /**
  *
- * 
+ * @param <CoordinateImpl>
  */
-@RunWith(Parameterized.class)
-public class IndexedRegionTests {
+public abstract class AbstractRegion<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl>
+        implements Region<CoordinateImpl> {
 
-    @Parameters
-    public static Collection<Object[]> getParameters() throws Exception {
-        long seed = System.currentTimeMillis();
-        Random rand = new Random(seed);
-        System.err.println("seed:"+seed);
+    private CoordinateImpl center;
 
-        Hexagon<Axial> hexaAxial = new Hexagon<Axial>(1024, new Axial(rand.nextInt(),rand.nextInt()));
-        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024, new Cube(rand.nextInt(),rand.nextInt()));
-
-        return Arrays.asList(new Object[][] { { hexaAxial }, {triangle} });
+    protected AbstractRegion() {
     }
 
-    private final IndexedRegion<Coordinate> region;
-
-    public IndexedRegionTests(IndexedRegion<Coordinate> region) throws Exception {
-        this.region = region;
-        System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
+    public AbstractRegion(CoordinateImpl center) {
+        this.center = center;
     }
 
-    @Test
-    public void testIndex() {
-        int count=0;
-        for (Coordinate c : region) {
-            assert region.getIndex(new Axial(c))==count;
-            count++;
-        }
+    public CoordinateImpl getCenter() {
+        return center;
+    }
 
-        assert count == region.size();
+    public void setCenter(CoordinateImpl center) {
+        this.center = center;
+    }
+    
+    public String toString() {
+        return "[" + this.getClass() + ": " + center + "]";
     }
 }

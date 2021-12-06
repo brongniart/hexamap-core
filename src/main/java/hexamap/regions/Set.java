@@ -31,6 +31,7 @@ package hexamap.regions;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Random;
+import java.util.Spliterator;
 
 import hexamap.coordinates.Coordinate;
 
@@ -38,7 +39,7 @@ import hexamap.coordinates.Coordinate;
  *
  * @param <CoordinateImpl>
  */
-public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
+public class Set<CoordinateImpl extends Coordinate> extends AbstractRegion<CoordinateImpl> {
 
     private LinkedHashSet<CoordinateImpl> set = new LinkedHashSet<CoordinateImpl>();
 
@@ -54,7 +55,7 @@ public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImp
     }
 
     @Override
-    public boolean contains(Object obj) {
+    public boolean contains(CoordinateImpl obj) {
         return set.contains(obj);
     }
 
@@ -63,6 +64,11 @@ public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImp
         return set.iterator();
     }
 
+    @Override
+    public Spliterator<CoordinateImpl> spliterator() {
+        return set.spliterator();
+    }
+    
     @Override
     public int size() {
         return set.size();
@@ -75,7 +81,7 @@ public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImp
 
     @Override
     public boolean remove(Object coordinate) {
-        if (center.equals(coordinate)) {
+        if (getCenter().equals(coordinate)) {
             throw new UnsupportedOperationException("Center cannot be removed");
         }
         return set.remove(coordinate);
@@ -84,7 +90,7 @@ public class Set<CoordinateImpl extends Coordinate> extends Region<CoordinateImp
     @Override
     public void clear() {
         set.clear();
-        set.add(center);
+        set.add(getCenter());
     }
 
     @Override

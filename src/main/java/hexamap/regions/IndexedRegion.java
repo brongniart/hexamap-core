@@ -28,17 +28,52 @@
  */
 package hexamap.regions;
 
+import java.util.Spliterator;
+import java.util.function.Consumer;
+
 import hexamap.coordinates.Coordinate;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public abstract class IndexedRegion<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
+public abstract class IndexedRegion<CoordinateImpl extends Coordinate> extends AbstractRegion<CoordinateImpl> {
 
     public IndexedRegion(CoordinateImpl center) {
         super(center);
     }
     
     public abstract int getIndex(CoordinateImpl coordinate);
+    public abstract CoordinateImpl getCoordinate(int index);
+
+    @Override
+    public boolean remove(Object object) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public Spliterator<CoordinateImpl> spliterator() {
+        return new Spliterator<CoordinateImpl>() {
+            
+            @Override
+            public boolean tryAdvance(Consumer<? super CoordinateImpl> action) {
+                return false;
+            }
+
+            @Override
+            public Spliterator<CoordinateImpl> trySplit() {
+                return null;
+            }
+
+            @Override
+            public long estimateSize() {
+                return 0;
+            }
+
+            @Override
+            public int characteristics() {
+                return 0;
+            }
+        };
+    }
 }

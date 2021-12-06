@@ -31,6 +31,7 @@ package hexamap.maps;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
@@ -46,7 +47,7 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
     default public boolean containsKey(Object object) {
         throw new ClassCastException();
     }
-
+    
     public abstract boolean containsKey(CoordinateImpl coordinate);
 
     @Override
@@ -64,16 +65,9 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
     default public Data remove(CoordinateImpl coordinate) {
         return put(coordinate, null);
     }
-
-    @Override
-    public abstract Data put(CoordinateImpl coordinate, Data data);
-
-    @Override
-    public void putAll(java.util.Map<? extends CoordinateImpl, ? extends Data> map);
-
-    @Override
-    public abstract void clear();
-
+    
+    public abstract Region<CoordinateImpl> getRegion();
+    
     // Unsupported methods from Map:
     @Override
     default public Set<CoordinateImpl> keySet() {
@@ -86,7 +80,7 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
     }
 
     @Override
-    default public Set<java.util.Map.Entry<CoordinateImpl, Data>> entrySet() {
+    default public Set<Entry<CoordinateImpl, Data>> entrySet() {
         throw new UnsupportedOperationException();
     }
 
@@ -95,5 +89,7 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
         throw new UnsupportedOperationException();
     }
 
-    public abstract Region<CoordinateImpl> getRegion();
+    public Stream<Entry<CoordinateImpl, Data>> stream();
+
+    public Stream<Entry<CoordinateImpl, Data>> parallelStream();
 }

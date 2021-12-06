@@ -51,11 +51,13 @@ public class CoordinateTests {
     public static Collection<Object[]> getParameters() throws Exception {
         Random rand = new Random();
         return Arrays.asList(new Object[][]{
-            {new Axial()},{new Cube()},
+            {new Axial()},
+           // {new Cube()},
             {new Axial(rand.nextInt(),rand.nextInt())},
-            {new Cube(rand.nextInt(),rand.nextInt())},
+           // {new Cube(rand.nextInt(),rand.nextInt())},
             {new Axial(Integer.MAX_VALUE,Integer.MIN_VALUE)}});
     }
+
     private Coordinate coordinate;
 
     public CoordinateTests(Coordinate coordinate) {
@@ -68,7 +70,10 @@ public class CoordinateTests {
     }
 
     @Test
+    @SuppressWarnings("unlikely-arg-type")
     public void testBasic() {
+        
+        assert coordinate.equals(Direction.NORD)==false;
         
         assert coordinate.add(Direction.NORD.next(3), 2).equals(coordinate.add(Direction.NORD.previous(3), 2));
         
@@ -138,20 +143,25 @@ public class CoordinateTests {
         assert !iter.hasNext();
         
         count = 0;
-        int d=2;
-        for (Coordinate c : coordinate.getAllNeigbours(2)) {
+        int count_iter = 0;
+        int distance=128;
+        int distance_origin=distance;
+        for (Coordinate c : coordinate.getAllNeigbours(distance)) {
             count++;
-            if (count==13) {
-                d--;
+            count_iter++;
+            if (count_iter==6*distance+1) {
+                distance--;
+                count_iter=1;
             }
-            assert coordinate.distance(c)==d;
+            assert coordinate.distance(c)==distance;
         }
-        assert count == 6 + 6 * 2;
+        assert count == 3*(distance_origin*(distance_origin+1));
         
         count = 0;
-        for (@SuppressWarnings("unused") Coordinate c : coordinate.getAllNeigbours(1024)) {
+        distance=1024;
+        for (@SuppressWarnings("unused") Coordinate c : coordinate.getAllNeigbours(distance)) {
             count++;
         }
-        assert count==3148800;
+        assert count==3*(distance*(distance+1));
     }
 }

@@ -29,24 +29,42 @@
 package hexamap.regions.streams;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.stream.BaseStream;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.maps.streams.MapStream;
+import hexamap.regions.AbstractRegion;
+import hexamap.regions.Region;
 
 /**
- *
+ * Only callable from Hexamap
  */
-public class RegionStream<CoordinateImpl extends Coordinate> implements BaseStream<CoordinateImpl,RegionStream<CoordinateImpl>> {
+public abstract class RegionStream<CoordinateImpl extends Coordinate> implements BaseStream<Region<CoordinateImpl>,RegionStream<CoordinateImpl>> {
+    
+    public abstract RegionStream<CoordinateImpl> including(AbstractRegion<CoordinateImpl> region);
+    public abstract RegionStream<CoordinateImpl> including(RegionStream<CoordinateImpl> regions);
+
+    public abstract RegionStream<CoordinateImpl> intersecting();
+    public abstract RegionStream<CoordinateImpl> intersecting(Region<CoordinateImpl> region);
+    public abstract RegionStream<CoordinateImpl> intersectingCluster(Region<CoordinateImpl> cluster);
+    
+    public abstract RegionStream<CoordinateImpl> containing(Class<?> dataClass);
+    
+    public abstract <Data> MapStream<CoordinateImpl,Data> map(Class<Data> dataClass);
+    
+    public abstract Optional<CoordinateImpl> findAny();
+    public abstract Optional<CoordinateImpl> findFirst();
     
     @Override
-    public Iterator<CoordinateImpl> iterator() {
-        return null;
+    public Iterator<Region<CoordinateImpl>> iterator() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public Spliterator<CoordinateImpl> spliterator() {
-        return null;
+    public Spliterator<Region<CoordinateImpl>> spliterator() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -56,29 +74,25 @@ public class RegionStream<CoordinateImpl extends Coordinate> implements BaseStre
 
     @Override
     public RegionStream<CoordinateImpl> sequential() {
-        return null;
+        return this;
     }
 
     @Override
     public RegionStream<CoordinateImpl> parallel() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public RegionStream<CoordinateImpl> unordered() {
-        return null;
+        return this;
     }
 
     @Override
     public RegionStream<CoordinateImpl> onClose(Runnable closeHandler) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void close() {
-    }
-
-    public RegionStream<CoordinateImpl> touch(RegionStream<CoordinateImpl> region) {
-        return null;
     }
 }

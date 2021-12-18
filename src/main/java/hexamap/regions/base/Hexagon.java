@@ -26,7 +26,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.regions;
+package hexamap.regions.base;
 
 import static java.lang.Math.abs;
 
@@ -34,12 +34,13 @@ import java.util.Iterator;
 import java.util.Random;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.regions.AbstractRegion;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<CoordinateImpl> {
+public class Hexagon<CoordinateImpl extends Coordinate> extends BaseRegion<CoordinateImpl> {
 
     private int range;
 
@@ -97,7 +98,9 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
         try {
             return ((Hexagon<CoordinateImpl>) object).range == range
                     && ((Hexagon<CoordinateImpl>) object).getCenter().isEquals(getCenter());
-        } catch (Exception e) {
+        } catch (ClassCastException e) {
+            return false;
+        } catch (NullPointerException e) {
             return false;
         }
     }
@@ -145,5 +148,38 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     @Override
     public CoordinateImpl getCoordinate(int index) {
         return null;
+    }
+
+    @Override
+    public AbstractRegion<CoordinateImpl> intersection(BaseRegion<CoordinateImpl> region) {
+        return new AbstractRegion<CoordinateImpl>() {
+            @Override
+            public boolean contains(CoordinateImpl coordinate) {
+                return false;
+            }
+            @Override
+            public CoordinateImpl getRandom(Random random) {
+                return null;
+            }
+            @Override
+            public Iterator<CoordinateImpl> iterator() {
+                return new Iterator<CoordinateImpl>() {
+
+                    @Override
+                    public boolean hasNext() {
+                        return false;
+                    }
+
+                    @Override
+                    public CoordinateImpl next() {
+                        return null;
+                    }
+                };
+            }
+            @Override
+            public int size() {
+                return 0;
+            }
+        };
     }
 }

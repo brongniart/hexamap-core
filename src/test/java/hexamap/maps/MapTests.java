@@ -48,8 +48,8 @@ import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Cube;
 import hexamap.coordinates.Direction;
-import hexamap.regions.Hexagon;
-import hexamap.regions.Triangle;
+import hexamap.regions.base.Hexagon;
+import hexamap.regions.base.Triangle;
 
 /**
  *
@@ -201,8 +201,8 @@ public class MapTests {
 
         @Override
         public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-            x = in.readInt();
-            y = in.readInt();
+            x = (short) in.readInt();
+            y = (short) in.readInt();
             z = -x - y;
         }
     }

@@ -26,26 +26,29 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.regions;
+package hexamap.regions.base;
 
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.regions.AbstractRegion;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public abstract class IndexedRegion<CoordinateImpl extends Coordinate> extends AbstractRegion<CoordinateImpl> {
+public abstract class BaseRegion<CoordinateImpl extends Coordinate> extends AbstractRegion<CoordinateImpl> {
 
-    public IndexedRegion(CoordinateImpl center) {
+    public BaseRegion(CoordinateImpl center) {
         super(center);
     }
     
     public abstract int getIndex(CoordinateImpl coordinate);
     public abstract CoordinateImpl getCoordinate(int index);
-
+    
+    public abstract AbstractRegion<CoordinateImpl> intersection(BaseRegion<CoordinateImpl> region);
+        
     @Override
     public boolean remove(Object object) {
         throw new UnsupportedOperationException();

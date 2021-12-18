@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.IndexedRegion;
+import hexamap.regions.base.BaseRegion;
 
 /**
  *
@@ -47,7 +47,7 @@ public class ArrayMap<CoordinateImpl extends Coordinate, Data> extends IndexedMa
     private Data[] array;
 
     @SuppressWarnings("unchecked")
-    public ArrayMap(IndexedRegion<CoordinateImpl> region,Class<?> dataClass) {
+    public ArrayMap(BaseRegion<CoordinateImpl> region,Class<?> dataClass) {
         super(region);
         array = (Data[]) Array.newInstance(dataClass, region.size());
     }

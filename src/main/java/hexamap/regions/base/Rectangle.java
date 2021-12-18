@@ -26,7 +26,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.regions;
+package hexamap.regions.base;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -35,12 +35,13 @@ import java.util.function.Function;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
+import hexamap.regions.AbstractRegion;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public class Diamond<CoordinateImpl extends Coordinate> extends IndexedRegion<CoordinateImpl> {
+public class Rectangle<CoordinateImpl extends Coordinate> extends BaseRegion<CoordinateImpl> {
 
     private BiPredicate<Coordinate, Integer> testContains;
     private Function<Coordinate, Integer> coordinateX;
@@ -48,7 +49,7 @@ public class Diamond<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     private Direction direction;
     private int length;
 
-    public Diamond(Direction direction, int length, CoordinateImpl center) {
+    public Rectangle(Direction direction, int length, CoordinateImpl center) {
         super(center);
         if (length < 0) {
             this.direction = direction.next(3);
@@ -124,10 +125,12 @@ public class Diamond<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
     @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         try {
-            return ((Diamond<CoordinateImpl>) object).direction == direction
-                    && ((Diamond<CoordinateImpl>) object).length == length
-                    && ((Diamond<CoordinateImpl>) object).getCenter() == getCenter();
-        } catch (Exception e) {
+            return ((Rectangle<CoordinateImpl>) object).direction == direction
+                    && ((Rectangle<CoordinateImpl>) object).length == length
+                    && ((Rectangle<CoordinateImpl>) object).getCenter() == getCenter();
+        } catch (ClassCastException e) {
+            return false;
+        } catch (NullPointerException e) {
             return false;
         }
     }
@@ -172,6 +175,39 @@ public class Diamond<CoordinateImpl extends Coordinate> extends IndexedRegion<Co
         return null;
     }
 
+    @Override
+    public AbstractRegion<CoordinateImpl> intersection(BaseRegion<CoordinateImpl> region) {
+        return new AbstractRegion<CoordinateImpl>() {
+            @Override
+            public boolean contains(CoordinateImpl coordinate) {
+                return false;
+            }
+            @Override
+            public CoordinateImpl getRandom(Random random) {
+                return null;
+            }
+            @Override
+            public Iterator<CoordinateImpl> iterator() {
+                return new Iterator<CoordinateImpl>() {
+
+                    @Override
+                    public boolean hasNext() {
+                        return false;
+                    }
+
+                    @Override
+                    public CoordinateImpl next() {
+                        return null;
+                    }
+                };
+            }
+            @Override
+            public int size() {
+                return 0;
+            }
+        };
+    }
+    
     public String toString() {
         return "[" + this.getClass() + ": " + direction + "," + getCenter() + "]";
     }

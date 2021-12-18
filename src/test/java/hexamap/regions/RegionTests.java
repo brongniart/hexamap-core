@@ -41,6 +41,8 @@ import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Cube;
 import hexamap.coordinates.Direction;
+import hexamap.regions.base.Hexagon;
+import hexamap.regions.base.Triangle;
 
 /**
  *

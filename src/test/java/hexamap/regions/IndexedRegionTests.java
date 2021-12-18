@@ -41,6 +41,9 @@ import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Cube;
 import hexamap.coordinates.Direction;
+import hexamap.regions.base.Hexagon;
+import hexamap.regions.base.BaseRegion;
+import hexamap.regions.base.Triangle;
 
 /**
  *
@@ -61,9 +64,9 @@ public class IndexedRegionTests {
         return Arrays.asList(new Object[][] { { hexaAxial }, {triangle} });
     }
 
-    private final IndexedRegion<Coordinate> region;
+    private final BaseRegion<Coordinate> region;
 
-    public IndexedRegionTests(IndexedRegion<Coordinate> region) throws Exception {
+    public IndexedRegionTests(BaseRegion<Coordinate> region) throws Exception {
         this.region = region;
         System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
     }

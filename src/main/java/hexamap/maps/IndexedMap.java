@@ -31,18 +31,18 @@ package hexamap.maps;
 import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.IndexedRegion;
+import hexamap.regions.base.BaseRegion;
 
 public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extends AbstractMap<CoordinateImpl, Data> {
 
     private int size = 0;
 
-    public IndexedMap(IndexedRegion<CoordinateImpl> region) {
+    public IndexedMap(BaseRegion<CoordinateImpl> region) {
         super(region);
     }
     
-    public IndexedRegion<CoordinateImpl> getRegion() {
-        return (IndexedRegion<CoordinateImpl>) super.getRegion();
+    public BaseRegion<CoordinateImpl> getRegion() {
+        return (BaseRegion<CoordinateImpl>) super.getRegion();
     }
 
     @Override

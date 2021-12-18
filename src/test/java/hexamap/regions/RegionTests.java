@@ -104,20 +104,7 @@ public class RegionTests {
             assert region.contains(region.getCenter());
         } catch (UnsupportedOperationException e) {
         }
-
-        try {
-            region.clear();
-        } catch (UnsupportedOperationException e) {
-        }
-        assert region.contains(region.getCenter());
-
-        try {
-            region.remove(region.getCenter());
-            assert false;
-        } catch (UnsupportedOperationException e) {
-        }
-        assert region.contains(region.getCenter());
-
+        
         try {
             region.setCenter(tmp);
         } catch (UnsupportedOperationException e) {

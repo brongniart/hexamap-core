@@ -28,9 +28,9 @@
  */
 package hexamap.coordinates;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Spliterator;
 
 import hexamap.regions.Region;
 
@@ -86,47 +86,7 @@ public class Cube extends Axial implements Region<Cube> {
     public boolean isEmpty() {
         return false;
     }
-
-    @Override
-    public Object[] toArray() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean add(Cube e) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends Cube> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void clear() {
-        throw new UnsupportedOperationException();
-    }
-
+    
     @Override
     public Cube getRandom(Random random) {
         return this;
@@ -175,12 +135,12 @@ public class Cube extends Axial implements Region<Cube> {
     }
 
     @Override
-    public boolean remove(Object o) {
-        throw new UnsupportedOperationException();
+    public boolean contains(Cube coordinate) {
+        return isEquals(coordinate);
     }
 
     @Override
-    public boolean contains(Cube coordinate) {
-        return isEquals(coordinate);
+    public Spliterator<Cube> spliterator() {
+        return null;
     }
 }

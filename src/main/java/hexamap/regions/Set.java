@@ -73,21 +73,18 @@ public class Set<CoordinateImpl extends Coordinate> extends AbstractRegion<Coord
     public int size() {
         return set.size();
     }
-
-    @Override
+    
     public boolean add(CoordinateImpl coordinate) {
         return set.add(coordinate);
     }
-
-    @Override
+    
     public boolean remove(Object coordinate) {
         if (getCenter().equals(coordinate)) {
             throw new UnsupportedOperationException("Center cannot be removed");
         }
         return set.remove(coordinate);
     }
-
-    @Override
+    
     public void clear() {
         set.clear();
         set.add(getCenter());

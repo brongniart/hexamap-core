@@ -48,11 +48,6 @@ public abstract class BaseRegion<CoordinateImpl extends Coordinate> extends Abst
     public abstract CoordinateImpl getCoordinate(int index);
     
     public abstract AbstractRegion<CoordinateImpl> intersection(BaseRegion<CoordinateImpl> region);
-        
-    @Override
-    public boolean remove(Object object) {
-        throw new UnsupportedOperationException();
-    }
     
     @Override
     public Spliterator<CoordinateImpl> spliterator() {

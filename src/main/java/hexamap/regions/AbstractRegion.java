@@ -28,16 +28,13 @@
  */
 package hexamap.regions;
 
-import java.util.AbstractCollection;
-
 import hexamap.coordinates.Coordinate;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public abstract class AbstractRegion<CoordinateImpl extends Coordinate> extends AbstractCollection<CoordinateImpl>
-        implements Region<CoordinateImpl> {
+public abstract class AbstractRegion<CoordinateImpl extends Coordinate> implements Region<CoordinateImpl> {
 
     private CoordinateImpl center;
 
@@ -54,6 +51,10 @@ public abstract class AbstractRegion<CoordinateImpl extends Coordinate> extends 
 
     public void setCenter(CoordinateImpl center) {
         this.center = center;
+    }
+    
+    public boolean isEmpty() {
+        return size()==0;
     }
     
     public String toString() {

@@ -32,6 +32,7 @@ import static java.lang.Math.abs;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Spliterator;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.AbstractRegion;
@@ -179,6 +180,11 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BaseRegion<Coord
             @Override
             public int size() {
                 return 0;
+            }
+            @Override
+            public Spliterator<CoordinateImpl> spliterator() {
+                // TODO Auto-generated method stub
+                return null;
             }
         };
     }

@@ -28,7 +28,6 @@
  */
 package hexamap.regions;
 
-import java.util.Collection;
 import java.util.Random;
 
 import hexamap.coordinates.Coordinate;
@@ -36,12 +35,10 @@ import hexamap.coordinates.Coordinate;
 /**
  *
  */
-public interface Region<CoordinateImpl extends Coordinate> extends Collection<CoordinateImpl>{
-    
-    @Override
-    default public boolean contains(Object object) {
-        throw new ClassCastException();
-    }
+public interface Region<CoordinateImpl extends Coordinate> extends Iterable<CoordinateImpl> {
+
+    public boolean isEmpty();
+    public int size();
     
     public boolean contains(CoordinateImpl coordinate);
 

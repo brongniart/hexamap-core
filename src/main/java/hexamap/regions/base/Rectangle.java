@@ -30,6 +30,7 @@ package hexamap.regions.base;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Spliterator;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
@@ -204,6 +205,11 @@ public class Rectangle<CoordinateImpl extends Coordinate> extends BaseRegion<Coo
             @Override
             public int size() {
                 return 0;
+            }
+            @Override
+            public Spliterator<CoordinateImpl> spliterator() {
+                // TODO Auto-generated method stub
+                return null;
             }
         };
     }

@@ -59,14 +59,14 @@ public class RegionTests {
         rand = new Random(seed);
         System.err.println("seed:" + seed);
 
-        Set<Axial> setAxial = new Set<Axial>(new Axial(rand.nextInt(), rand.nextInt()));
+        Set<Axial> setAxial = new Set<Axial>();
         Hexagon<Axial> hexaAxial = new Hexagon<Axial>(32, new Axial(rand.nextInt(), rand.nextInt()));
 
         for (Axial c : hexaAxial) {
             setAxial.add(c);
         }
 
-        Set<Cube> setCube = new Set<Cube>(new Cube(rand.nextInt(), rand.nextInt()));
+        Set<Cube> setCube = new Set<Cube>();
         Hexagon<Cube> hexaCube = new Hexagon<Cube>(32, new Cube(rand.nextInt(), rand.nextInt()));
 
         for (Cube c : hexaCube) {
@@ -96,20 +96,6 @@ public class RegionTests {
 
     @Test
     public void testContains() {
-        assert region.contains(region.getCenter());
-
-        Coordinate tmp = region.getCenter();
-        try {
-            region.setCenter(tmp.add(Direction.NORD, 10));
-            assert region.contains(region.getCenter());
-        } catch (UnsupportedOperationException e) {
-        }
-        
-        try {
-            region.setCenter(tmp);
-        } catch (UnsupportedOperationException e) {
-        }
-
         int count = 0;
         for (Coordinate c : region) {
             assert region.contains(c);

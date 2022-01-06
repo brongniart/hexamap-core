@@ -31,29 +31,30 @@ package hexamap.maps;
 import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.base.BaseRegion;
+import hexamap.regions.Region.OutOfRegion;
+import hexamap.regions.base.BasePolygon;
 
 public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extends AbstractMap<CoordinateImpl, Data> {
 
     private int size = 0;
 
-    public IndexedMap(BaseRegion<CoordinateImpl> region) {
+    public IndexedMap(BasePolygon<CoordinateImpl> region) {
         super(region);
     }
     
-    public BaseRegion<CoordinateImpl> getRegion() {
-        return (BaseRegion<CoordinateImpl>) super.getRegion();
+    public BasePolygon<CoordinateImpl> getRegion() {
+        return (BasePolygon<CoordinateImpl>) super.getRegion();
     }
 
     @Override
-    public Data safeGet(CoordinateImpl coordinate) {
+    public Data safeGet(CoordinateImpl coordinate) throws OutOfRegion {
         return indexGet(getRegion().getIndex(coordinate));
     }
 
     protected abstract Data indexGet(int index);
 
     @Override
-    public Data safePut(CoordinateImpl coordinate, Data data) {
+    public Data safePut(CoordinateImpl coordinate, Data data) throws OutOfRegion {
         return safePut(getRegion().getIndex(coordinate), data);
     }
     

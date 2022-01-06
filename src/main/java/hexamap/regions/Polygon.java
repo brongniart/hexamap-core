@@ -26,46 +26,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.coordinates;
+package hexamap.regions;
 
 import java.util.Random;
+
+import hexamap.coordinates.Coordinate;
+import hexamap.coordinates.Segment;
 
 /**
  *
  */
-public enum Direction {
-    NORD(0, 1), NORD_EAST(1, 0), SOUTH_EAST(1, -1), SOUTH(0, -1), SOUTH_WEST(-1, 0), NORD_WEST(-1, 1);
+public interface Polygon<CoordinateImpl extends Coordinate> extends IndexedRegion<CoordinateImpl> {
 
-    public final int x;
-    public final int y;
+    public abstract Segment<CoordinateImpl>[] getSegments();
 
-
-    private Direction(int x, int y) {
-        this.x = x;
-        this.y = y;
+    @Override
+    default CoordinateImpl getRandom(Random random) { 
+        try {
+            return getCoordinate(random.nextInt(size()));
+        } catch (OutOfRegion e) {
+            assert false;
+            return null;
+        }
     }
 
-    public Direction next() {
-        return next(1);
-    }
-
-    public Direction next(int i) {
-        return getIndex(this.ordinal() + i);
-    }
-
-    public Direction previous() {
-        return previous(1);
-    }
-
-    public Direction previous(int i) {
-        return getIndex(this.ordinal() - i);
-    }
-
-    public static Direction getIndex(int index) {
-        return values()[(index % values().length + values().length) % values().length];
-    }
-
-    public static Direction getRandom(Random rand) {
-        return values()[rand.nextInt(values().length)];
-    }
 }

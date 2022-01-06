@@ -28,20 +28,16 @@
  */
 package hexamap.regions.base;
 
-import static java.lang.Math.abs;
-
 import java.util.Iterator;
-import java.util.Random;
-import java.util.Spliterator;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.AbstractRegion;
+import hexamap.coordinates.Segment;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public class Hexagon<CoordinateImpl extends Coordinate> extends BaseRegion<CoordinateImpl> {
+public class Hexagon<CoordinateImpl extends Coordinate> extends BasePolygon<CoordinateImpl> {
 
     private int range;
 
@@ -52,7 +48,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BaseRegion<Coord
 
     @Override
     public boolean contains(CoordinateImpl coordinate) {
-        return getCenter().distance((Coordinate) coordinate) <= range;
+        return center.distance((Coordinate) coordinate) <= range;
     }
 
     @Override
@@ -62,7 +58,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BaseRegion<Coord
             Iterator<CoordinateImpl> internal;
             boolean last = false;
             {
-                internal = (Iterator<CoordinateImpl>) getCenter().getAllNeigbours(range).iterator();
+                internal = (Iterator<CoordinateImpl>) center.getAllNeigbours(range).iterator();
             }
 
             @Override
@@ -79,7 +75,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BaseRegion<Coord
                 } else {
                     if (!last) {
                         last = true;
-                        return getCenter();
+                        return center;
                     } else {
                         throw new RuntimeException("calling next() when hasNext() is false");
                     }
@@ -98,7 +94,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BaseRegion<Coord
     public boolean equals(Object object) {
         try {
             return ((Hexagon<CoordinateImpl>) object).range == range
-                    && ((Hexagon<CoordinateImpl>) object).getCenter().isEquals(getCenter());
+                    && ((Hexagon<CoordinateImpl>) object).center.isEquals(center);
         } catch (ClassCastException e) {
             return false;
         } catch (NullPointerException e) {
@@ -111,23 +107,13 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BaseRegion<Coord
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public CoordinateImpl getRandom(Random random) {
-        int x = random.nextInt(range * 2 + 1) - range;
-
-        int bound = range - abs(x) - 1;
-        int y = (x > 0) ? random.nextInt(range + bound) - range : random.nextInt(range + bound) - bound;
-        return (CoordinateImpl) getCenter().createCoordinate(getCenter().getX() + x, getCenter().getY() + y);
-    }
-
-    @Override
     public int getIndex(CoordinateImpl coordinate) {
-        int dist = getCenter().distance(coordinate);
+        int dist = center.distance(coordinate);
         int result = 1 + 6 * (dist * (dist - 1)) / 2;
         
-        int x = coordinate.getX() - getCenter().getX();
-        int y = coordinate.getY() - getCenter().getY();
-        int z = coordinate.getZ() - getCenter().getZ();
+        int x = coordinate.getX() - center.getX();
+        int y = coordinate.getY() - center.getY();
+        int z = coordinate.getZ() - center.getZ();
         if (z == -dist) {
             result = result + 6 * dist - x;
         } else if (x == dist) {
@@ -152,40 +138,8 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BaseRegion<Coord
     }
 
     @Override
-    public AbstractRegion<CoordinateImpl> intersection(BaseRegion<CoordinateImpl> region) {
-        return new AbstractRegion<CoordinateImpl>() {
-            @Override
-            public boolean contains(CoordinateImpl coordinate) {
-                return false;
-            }
-            @Override
-            public CoordinateImpl getRandom(Random random) {
-                return null;
-            }
-            @Override
-            public Iterator<CoordinateImpl> iterator() {
-                return new Iterator<CoordinateImpl>() {
-
-                    @Override
-                    public boolean hasNext() {
-                        return false;
-                    }
-
-                    @Override
-                    public CoordinateImpl next() {
-                        return null;
-                    }
-                };
-            }
-            @Override
-            public int size() {
-                return 0;
-            }
-            @Override
-            public Spliterator<CoordinateImpl> spliterator() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-        };
+    public Segment<CoordinateImpl>[] getSegments() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

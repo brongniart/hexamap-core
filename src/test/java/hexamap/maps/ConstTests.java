@@ -47,6 +47,7 @@ import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Cube;
 import hexamap.coordinates.Direction;
+import hexamap.regions.Region.OutOfRegion;
 import hexamap.regions.base.Hexagon;
 import hexamap.regions.base.Triangle;
 
@@ -100,7 +101,7 @@ public class ConstTests {
     }
     
     @Test
-    public void test_01_SetValue() {
+    public void test_01_SetValue() throws OutOfRegion {
         assert map.isEmpty();
         map.setData(new AxialExt());
         assert map.size() == map.getRegion().size();

@@ -28,50 +28,19 @@
  */
 package hexamap.regions.base;
 
-import java.util.Spliterator;
-import java.util.function.Consumer;
-
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.AbstractRegion;
+import hexamap.regions.Polygon;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public abstract class BaseRegion<CoordinateImpl extends Coordinate> extends AbstractRegion<CoordinateImpl> {
+public abstract class BasePolygon<CoordinateImpl extends Coordinate> extends AbstractRegion<CoordinateImpl> implements Polygon<CoordinateImpl> {
 
-    public BaseRegion(CoordinateImpl center) {
-        super(center);
-    }
+    protected CoordinateImpl center;
     
-    public abstract int getIndex(CoordinateImpl coordinate);
-    public abstract CoordinateImpl getCoordinate(int index);
-    
-    public abstract AbstractRegion<CoordinateImpl> intersection(BaseRegion<CoordinateImpl> region);
-    
-    @Override
-    public Spliterator<CoordinateImpl> spliterator() {
-        return new Spliterator<CoordinateImpl>() {
-            
-            @Override
-            public boolean tryAdvance(Consumer<? super CoordinateImpl> action) {
-                return false;
-            }
-
-            @Override
-            public Spliterator<CoordinateImpl> trySplit() {
-                return null;
-            }
-
-            @Override
-            public long estimateSize() {
-                return 0;
-            }
-
-            @Override
-            public int characteristics() {
-                return 0;
-            }
-        };
+    public BasePolygon(CoordinateImpl center) {
+        this.center = center;
     }
 }

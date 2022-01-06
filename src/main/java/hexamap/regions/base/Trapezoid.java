@@ -29,12 +29,12 @@
 package hexamap.regions.base;
 
 import java.util.Iterator;
-import java.util.Random;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
+import hexamap.coordinates.Segment;
 
 /**
  *
@@ -58,15 +58,8 @@ public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<Coord
             this.direction = direction;
             this.length = length;
         }
-        testContains = Direction.getContainTest(direction, center)
-                .and(Direction.getContainTest(direction.previous(), center));
-    }
-
-    @Override
-    public void setCenter(CoordinateImpl center) {
-        super.setCenter(center);
-        testContains = Direction.getContainTest(direction, center)
-                .and(Direction.getContainTest(direction.previous(), center));
+        testContains = Segment.getContainTest(direction, center)
+                .and(Segment.getContainTest(direction.previous(), center));
     }
     
     @Override
@@ -77,7 +70,7 @@ public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<Coord
     @Override
     public Iterator<CoordinateImpl> iterator() {
         return new Iterator<CoordinateImpl>() {
-            CoordinateImpl next = getCenter();
+            CoordinateImpl next = center;
 
             boolean hasNext = true;
             int iterLength = 0;
@@ -101,7 +94,7 @@ public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<Coord
                         } else {
                             iterLength++;
                             angle = 0;
-                            next = (CoordinateImpl) getCenter().add(direction, iterLength);
+                            next = (CoordinateImpl) center.add(direction, iterLength);
                         }
                     } else {
                         angle++;
@@ -127,7 +120,7 @@ public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<Coord
         try {
             return ((Trapezoid<CoordinateImpl>) object).direction == direction
                     && ((Trapezoid<CoordinateImpl>) object).length == length
-                    && ((Trapezoid<CoordinateImpl>) object).getCenter() == getCenter();
+                    && ((Trapezoid<CoordinateImpl>) object).center == center;
         } catch (ClassCastException e) {
             return false;
         } catch (NullPointerException e) {
@@ -140,33 +133,9 @@ public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<Coord
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public CoordinateImpl getRandom(Random random) {
-        int x = random.nextInt(length);
-        int y = 1 + random.nextInt(length - x);
-
-        switch (direction) {
-        case NORD:
-            return (CoordinateImpl) getCenter().createCoordinate(getCenter().getX() + x, getCenter().getY() + y);
-        case NORD_EAST:
-            return (CoordinateImpl) getCenter().createCoordinateYZ(getCenter().getY() - x, getCenter().getZ() - y);
-        case SOUTH_EAST:
-            return (CoordinateImpl) getCenter().createCoordinateXZ(getCenter().getX() + x, getCenter().getZ() + y);
-        case SOUTH:
-            return (CoordinateImpl) getCenter().createCoordinate(getCenter().getX() - x, getCenter().getY() - y);
-        case SOUTH_WEST:
-            return (CoordinateImpl) getCenter().createCoordinateYZ(getCenter().getY() + x, getCenter().getZ() + y);
-        case NORD_WEST:
-            return (CoordinateImpl) getCenter().createCoordinateXZ(getCenter().getX() - x, getCenter().getZ() - y);
-        default:
-            throw new RuntimeException("Unexpected direction");
-        }
-    }
-
-    @Override
     public int getIndex(CoordinateImpl coordinate) {
-        int a = coordinateY.apply(coordinate) - coordinateY.apply(getCenter());
-        return ((a + 1) * a) / 2 + (coordinateX.apply(coordinate) - coordinateX.apply(getCenter()));
+        int a = coordinateY.apply(coordinate) - coordinateY.apply(center);
+        return ((a + 1) * a) / 2 + (coordinateX.apply(coordinate) - coordinateX.apply(center));
 
     }
 
@@ -176,6 +145,6 @@ public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<Coord
     }
 
     public String toString() {
-        return "[" + this.getClass() + ": " + direction + "," + getCenter() + "]";
+        return "[" + this.getClass() + ": " + direction + "," + center + "]";
     }
 }

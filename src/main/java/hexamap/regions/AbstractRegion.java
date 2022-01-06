@@ -36,21 +36,7 @@ import hexamap.coordinates.Coordinate;
  */
 public abstract class AbstractRegion<CoordinateImpl extends Coordinate> implements Region<CoordinateImpl> {
 
-    private CoordinateImpl center;
-
     protected AbstractRegion() {
-    }
-
-    public AbstractRegion(CoordinateImpl center) {
-        this.center = center;
-    }
-
-    public CoordinateImpl getCenter() {
-        return center;
-    }
-
-    public void setCenter(CoordinateImpl center) {
-        this.center = center;
     }
     
     public boolean isEmpty() {
@@ -58,6 +44,6 @@ public abstract class AbstractRegion<CoordinateImpl extends Coordinate> implemen
     }
     
     public String toString() {
-        return "[" + this.getClass() + ": " + center + "]";
+        return "[" + this.getClass() + "]";
     }
 }

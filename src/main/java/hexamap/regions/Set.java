@@ -43,15 +43,7 @@ public class Set<CoordinateImpl extends Coordinate> extends AbstractRegion<Coord
 
     private LinkedHashSet<CoordinateImpl> set = new LinkedHashSet<CoordinateImpl>();
 
-    public Set(CoordinateImpl center) {
-        super(center);
-        set.add(center);
-    }
-
-    @Override
-    public void setCenter(CoordinateImpl center) {
-        super.setCenter(center);
-        set.add(center);
+    public Set() {
     }
 
     @Override
@@ -79,15 +71,11 @@ public class Set<CoordinateImpl extends Coordinate> extends AbstractRegion<Coord
     }
     
     public boolean remove(Object coordinate) {
-        if (getCenter().equals(coordinate)) {
-            throw new UnsupportedOperationException("Center cannot be removed");
-        }
         return set.remove(coordinate);
     }
     
     public void clear() {
         set.clear();
-        set.add(getCenter());
     }
 
     @Override

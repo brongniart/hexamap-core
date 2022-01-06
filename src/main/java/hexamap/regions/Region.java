@@ -37,13 +37,26 @@ import hexamap.coordinates.Coordinate;
  */
 public interface Region<CoordinateImpl extends Coordinate> extends Iterable<CoordinateImpl> {
 
+    public static class OutOfRegion extends Exception {
+        private static final long serialVersionUID = 197876591412781244L;
+
+        public OutOfRegion(Coordinate c, Region region) {
+            super("Coordinate " + c + " is out of the region " + region);
+        }
+
+        /**
+         * @param index
+         * @param region
+         */
+        public OutOfRegion(int index, Region region) {
+            super("Index " + index + " is out of the region " + region);
+        }
+    }
+    
     public boolean isEmpty();
     public int size();
     
     public boolean contains(CoordinateImpl coordinate);
 
     public CoordinateImpl getRandom(Random random);
-    
-    public void setCenter(CoordinateImpl center);
-    public CoordinateImpl getCenter();
 }

@@ -36,21 +36,14 @@ import java.util.stream.StreamSupport;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.Region;
+import hexamap.regions.Region.OutOfRegion;
 
 /**
  *
  * @param <Data> some stuff
  */
 public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> implements Map<CoordinateImpl, Data> {
-
-    public static class OutOfRegion extends RuntimeException {
-        private static final long serialVersionUID = 1L;
-
-        public OutOfRegion(Coordinate c, Region<Coordinate> region) {
-            super(c + " is out of the region " + region);
-        }
-    }
-
+    
     private final Region<CoordinateImpl> region;
 
     @Override
@@ -65,29 +58,41 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
     
     @Override
     public boolean containsKey(CoordinateImpl coordinate) {
-        return region.contains(coordinate) && safeGet(coordinate)!=null;
+        try {
+            return safeGet(coordinate)!=null;
+        } catch (OutOfRegion e) {
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")
-    private void checkCoordinate(CoordinateImpl coordinate) {
+    private void checkCoordinate(CoordinateImpl coordinate) throws OutOfRegion {
         if (!region.contains(coordinate)) {
             throw new OutOfRegion((Coordinate) coordinate, (Region<Coordinate>) region);
         }
     }
 
     @Override
-    public Data get(CoordinateImpl coordinate) {
+    public Data get(CoordinateImpl coordinate) throws OutOfRegion {
         checkCoordinate(coordinate);
         return safeGet(coordinate);
     }
 
-    protected abstract Data safeGet(CoordinateImpl coordinate);
+    protected abstract Data safeGet(CoordinateImpl coordinate) throws OutOfRegion;
 
     @Override
     public Data put(CoordinateImpl coordinate, Data data) {
         Objects.nonNull(data);
-        checkCoordinate(coordinate);
-        return safePut(coordinate, data);
+        try {
+            checkCoordinate(coordinate);
+        } catch (OutOfRegion e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            return safePut(coordinate, data);
+        } catch (OutOfRegion e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -97,7 +102,7 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
         });
     }
 
-    protected abstract Data safePut(CoordinateImpl coordinate, Data data);
+    protected abstract Data safePut(CoordinateImpl coordinate, Data data) throws OutOfRegion;
     
     @Override
     public Stream<Entry<CoordinateImpl, Data>> stream() {

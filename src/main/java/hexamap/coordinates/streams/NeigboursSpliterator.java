@@ -26,71 +26,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.maps;
+package hexamap.coordinates.streams;
 
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Stream;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.Region;
-import hexamap.regions.Region.OutOfRegion;
 
 /**
  *
- * @param <Data> some stuffs
  */
-public interface Map<CoordinateImpl extends Coordinate, Data>
-        extends java.util.Map<CoordinateImpl, Data>, Iterable<Entry<CoordinateImpl, Data>> {
+public class NeigboursSpliterator implements Spliterator<Coordinate> {
+
 
     @Override
-    default public boolean containsKey(Object object) {
-        throw new ClassCastException();
-    }
-    
-    public abstract boolean containsKey(CoordinateImpl coordinate);
-
-    @Override
-    default public Data get(Object object) {
-        throw new ClassCastException();
-    }
-
-    public abstract Data get(CoordinateImpl coordinate) throws OutOfRegion;
-    
-    @Override
-    default public Data remove(Object object) {
-        throw new ClassCastException();
-    }
-
-    default public Data remove(CoordinateImpl coordinate) {
-        return put(coordinate, null);
-    }
-    
-    public abstract Region<CoordinateImpl> getRegion();
-    
-    // Unsupported methods from Map:
-    @Override
-    default public Set<CoordinateImpl> keySet() {
-        throw new UnsupportedOperationException();
+    public boolean tryAdvance(Consumer<? super Coordinate> action) {
+        // TODO Auto-generated method stub
+        return false;
     }
 
     @Override
-    default public Collection<Data> values() {
-        throw new UnsupportedOperationException();
+    public Spliterator<Coordinate> trySplit() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
-    default public Set<Entry<CoordinateImpl, Data>> entrySet() {
-        throw new UnsupportedOperationException();
+    public long estimateSize() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     @Override
-    default public boolean containsValue(Object object) {
-        throw new UnsupportedOperationException();
+    public int characteristics() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
-    public Stream<Entry<CoordinateImpl, Data>> stream();
-
-    public Stream<Entry<CoordinateImpl, Data>> parallelStream();
 }

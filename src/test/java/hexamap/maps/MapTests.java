@@ -48,6 +48,7 @@ import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Cube;
 import hexamap.coordinates.Direction;
+import hexamap.regions.Region.OutOfRegion;
 import hexamap.regions.base.Hexagon;
 import hexamap.regions.base.Triangle;
 
@@ -103,7 +104,7 @@ public class MapTests {
     }
 
     @Test
-    public void test_01_FillMap() {
+    public void test_01_FillMap() throws OutOfRegion {
         assert map.isEmpty();
         for (Coordinate c : map.getRegion()) {
             assert map.getRegion().contains(c);
@@ -128,7 +129,7 @@ public class MapTests {
     }
 
     @Test
-    public void test_02_IterateMap_Full() {
+    public void test_02_IterateMap_Full() throws OutOfRegion {
 
         assert map.size() == map.getRegion().size();
         for (var entry : map) {
@@ -147,7 +148,7 @@ public class MapTests {
     }
 
     @Test
-    public void test_04_FillMap_Random() {
+    public void test_04_FillMap_Random() throws OutOfRegion {
         assert map.isEmpty();
         int NB_ITER = map.getRegion().size();
         for (int i = 0; i < NB_ITER; i++) {
@@ -162,7 +163,7 @@ public class MapTests {
     }
     
     @Test
-    public void test_05_IterateMap_Partial() {
+    public void test_05_IterateMap_Partial() throws OutOfRegion {
 
         assert map.size() >= 0;
         for (var entry : map) {

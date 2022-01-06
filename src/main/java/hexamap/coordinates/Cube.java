@@ -93,16 +93,6 @@ public class Cube extends Axial implements Region<Cube> {
     }
 
     @Override
-    public void setCenter(Cube center) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Cube getCenter() {
-        return this;
-    }
-
-    @Override
     public int size() {
         return 1;
     }

@@ -51,7 +51,11 @@ public abstract class Coordinate {
     }
     
     public boolean equals(Coordinate coordinate) {
-        return getX() == coordinate.getX() && getY() == coordinate.getY();
+        return isEquals(coordinate);
+    }
+
+    public int distance(Coordinate other) {
+        return Math.max(abs(getX() - other.getX()), Math.max(abs(getY() - other.getY()), abs(getZ() - other.getZ())));
     }
     
     public abstract int getX();
@@ -71,10 +75,6 @@ public abstract class Coordinate {
     public abstract Coordinate add(Direction direction, int range);
 
     public abstract void move(Direction direction, int range);
-
-    public int distance(Coordinate other) {
-        return Math.max(abs(getX() - other.getX()), Math.max(abs(getY() - other.getY()), abs(getZ() - other.getZ())));
-    }
 
     public class NeigboursIterator implements Iterator<Coordinate> {
 

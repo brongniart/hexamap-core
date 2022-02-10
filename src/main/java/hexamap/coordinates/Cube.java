@@ -32,9 +32,9 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Spliterator;
 
-import hexamap.regions.Region;
+import hexamap.regions.Polygon;
 
-public class Cube extends Axial implements Region<Cube> {
+public class Cube extends Axial implements Polygon<Cube> {
 
     protected int z = 0;
 
@@ -132,5 +132,21 @@ public class Cube extends Axial implements Region<Cube> {
     @Override
     public Spliterator<Cube> spliterator() {
         return null;
+    }
+
+    @Override
+    public int getIndex(Cube coordinate) throws OutOfRegion {
+        if (equals(coordinate)) {
+            return 0;
+        }
+        throw new OutOfRegion(coordinate, this);
+    }
+
+    @Override
+    public Cube getCoordinate(int index) throws OutOfRegion {
+        if (index==0) {
+            return this;
+        }
+        throw new OutOfRegion(index,this);
     }
 }

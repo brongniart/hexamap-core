@@ -43,11 +43,7 @@ public interface Region<CoordinateImpl extends Coordinate> extends Iterable<Coor
         public OutOfRegion(Coordinate c, @SuppressWarnings("rawtypes") Region region) {
             super("Coordinate " + c + " is out of the region " + region);
         }
-
-        /**
-         * @param index
-         * @param region
-         */
+        
         public OutOfRegion(int index, @SuppressWarnings("rawtypes") Region region) {
             super("Index " + index + " is out of the region " + region);
         }

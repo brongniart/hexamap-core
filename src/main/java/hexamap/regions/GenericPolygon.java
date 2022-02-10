@@ -31,7 +31,6 @@ package hexamap.regions;
 import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Segment;
 import hexamap.regions.base.BasePolygon;
 
 /**
@@ -119,11 +118,5 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
                 return current;
             }
         };
-    }
-
-    @Override
-    public Segment<CoordinateImpl>[] getSegments() {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

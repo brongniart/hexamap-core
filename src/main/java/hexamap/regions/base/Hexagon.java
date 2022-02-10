@@ -31,7 +31,6 @@ package hexamap.regions.base;
 import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Segment;
 
 /**
  *
@@ -134,12 +133,6 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BasePolygon<Coor
 
     @Override
     public CoordinateImpl getCoordinate(int index) {
-        return null;
-    }
-
-    @Override
-    public Segment<CoordinateImpl>[] getSegments() {
-        // TODO Auto-generated method stub
         return null;
     }
 }

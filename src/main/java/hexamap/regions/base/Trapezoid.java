@@ -28,7 +28,6 @@
  */
 package hexamap.regions.base;
 
-import java.util.Iterator;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
@@ -66,49 +65,7 @@ public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<Coord
     public boolean contains(CoordinateImpl coordinate) {
         return testContains.test(coordinate, length);
     }
-
-    @Override
-    public Iterator<CoordinateImpl> iterator() {
-        return new Iterator<CoordinateImpl>() {
-            CoordinateImpl next = center;
-
-            boolean hasNext = true;
-            int iterLength = 0;
-            int angle = 0;
-            Direction dir_angle = direction.next(2);
-
-            @Override
-            public boolean hasNext() {
-                return hasNext;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public CoordinateImpl next() {
-                if (hasNext) {
-                    CoordinateImpl current = next;
-
-                    if (angle == iterLength) {
-                        if (iterLength == length) {
-                            hasNext = false;
-                        } else {
-                            iterLength++;
-                            angle = 0;
-                            next = (CoordinateImpl) center.add(direction, iterLength);
-                        }
-                    } else {
-                        angle++;
-                        next = (CoordinateImpl) next.add(dir_angle, 1);
-                    }
-
-                    return current;
-                } else {
-                    throw new RuntimeException("calling next() when hasNext() is false");
-                }
-            }
-        };
-    }
-
+    
     @Override
     public int size() {
         return ((length + 2) * (length + 1)) / 2;

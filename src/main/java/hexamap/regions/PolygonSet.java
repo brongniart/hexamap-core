@@ -31,21 +31,19 @@ package hexamap.regions;
 import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Segment;
-import hexamap.regions.base.BasePolygon;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygon<CoordinateImpl> {
+public class PolygonSet<CoordinateImpl extends Coordinate> implements IndexedRegion<CoordinateImpl> {
     
-    private BasePolygon<CoordinateImpl>[] list;
+    private GenericPolygon<CoordinateImpl>[] list;
     
     @Override
     public int getIndex(CoordinateImpl coordinate) throws OutOfRegion {
         int size=0;
-        for (BasePolygon<CoordinateImpl> base: list) {
+        for (GenericPolygon<CoordinateImpl> base: list) {
             if (base.contains(coordinate)) {
                 return size+base.getIndex(coordinate);
             } else {
@@ -57,7 +55,7 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
 
     @Override
     public CoordinateImpl getCoordinate(int index) throws OutOfRegion {
-        for (BasePolygon<CoordinateImpl> base: list) {
+        for (GenericPolygon<CoordinateImpl> base: list) {
             if (index < base.size()) {
                 return base.getCoordinate(index);
             } else {
@@ -75,7 +73,7 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
     @Override
     public int size() {
         int size=0;
-        for (BasePolygon<CoordinateImpl> base: list) {
+        for (GenericPolygon<CoordinateImpl> base: list) {
             size+=base.size();
         }
         return size;
@@ -83,7 +81,7 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
 
     @Override
     public boolean contains(CoordinateImpl coordinate) {
-        for (BasePolygon<CoordinateImpl> base: list) {
+        for (GenericPolygon<CoordinateImpl> base: list) {
             if (base.contains(coordinate)) {
                 return true;
             }
@@ -119,11 +117,5 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
                 return current;
             }
         };
-    }
-
-    @Override
-    public Segment<CoordinateImpl>[] getSegments() {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

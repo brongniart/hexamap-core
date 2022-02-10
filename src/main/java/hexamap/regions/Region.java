@@ -40,7 +40,7 @@ public interface Region<CoordinateImpl extends Coordinate> extends Iterable<Coor
     public static class OutOfRegion extends Exception {
         private static final long serialVersionUID = 197876591412781244L;
 
-        public OutOfRegion(Coordinate c, Region region) {
+        public OutOfRegion(Coordinate c, @SuppressWarnings("rawtypes") Region region) {
             super("Coordinate " + c + " is out of the region " + region);
         }
 
@@ -48,12 +48,15 @@ public interface Region<CoordinateImpl extends Coordinate> extends Iterable<Coor
          * @param index
          * @param region
          */
-        public OutOfRegion(int index, Region region) {
+        public OutOfRegion(int index, @SuppressWarnings("rawtypes") Region region) {
             super("Index " + index + " is out of the region " + region);
         }
     }
     
-    public boolean isEmpty();
+    default public boolean isEmpty() {
+        return size()==0;
+    }
+    
     public int size();
     
     public boolean contains(CoordinateImpl coordinate);

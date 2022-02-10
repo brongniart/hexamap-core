@@ -28,6 +28,9 @@
  */
 package hexamap.regions;
 
+import java.util.Iterator;
+import java.util.Random;
+
 import hexamap.coordinates.Coordinate;
 
 /**
@@ -37,4 +40,62 @@ public interface IndexedRegion<CoordinateImpl extends Coordinate> extends Region
 
     public abstract int getIndex(CoordinateImpl coordinate) throws OutOfRegion;
     public abstract CoordinateImpl getCoordinate(int index) throws OutOfRegion;
+    
+    @Override
+    default CoordinateImpl getRandom(Random random) { 
+        try {
+            return getCoordinate(random.nextInt(size()));
+        } catch (OutOfRegion e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    default Iterator<CoordinateImpl> iterator() {
+        return new Iterator<CoordinateImpl>() {
+
+            private int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return index !=size();
+            }
+
+            @Override
+            public CoordinateImpl next() {
+                CoordinateImpl current;
+                try {
+                    current = getCoordinate(index);
+                } catch (OutOfRegion e) {
+                    throw new RuntimeException(e);
+                }
+                index++;
+                return current;
+            }
+        };
+    }
+    
+    default Iterator<CoordinateImpl> iterator(Random random) {
+        return new Iterator<CoordinateImpl>() {
+
+            private int index = 0;
+            private int bitmask = random.nextInt(size());
+
+            @Override
+            public boolean hasNext() {
+                return index !=size();
+            }
+
+            @Override
+            public CoordinateImpl next() {
+                CoordinateImpl current;
+                try {
+                    current = getCoordinate(index ^ bitmask);
+                } catch (OutOfRegion e) {
+                    throw new RuntimeException(e);
+                }
+                index++;
+                return current;
+            }
+        };
+    }
 }

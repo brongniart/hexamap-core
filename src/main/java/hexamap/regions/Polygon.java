@@ -28,8 +28,6 @@
  */
 package hexamap.regions;
 
-import java.util.Random;
-
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Segment;
 
@@ -37,17 +35,5 @@ import hexamap.coordinates.Segment;
  *
  */
 public interface Polygon<CoordinateImpl extends Coordinate> extends IndexedRegion<CoordinateImpl> {
-
     public abstract Segment<CoordinateImpl>[] getSegments();
-
-    @Override
-    default CoordinateImpl getRandom(Random random) { 
-        try {
-            return getCoordinate(random.nextInt(size()));
-        } catch (OutOfRegion e) {
-            assert false;
-            return null;
-        }
-    }
-
 }

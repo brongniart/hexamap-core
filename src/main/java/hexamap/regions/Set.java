@@ -39,7 +39,7 @@ import hexamap.coordinates.Coordinate;
  *
  * @param <CoordinateImpl>
  */
-public class Set<CoordinateImpl extends Coordinate> extends AbstractRegion<CoordinateImpl> {
+public class Set<CoordinateImpl extends Coordinate> implements Region<CoordinateImpl> {
 
     private LinkedHashSet<CoordinateImpl> set = new LinkedHashSet<CoordinateImpl>();
 

@@ -33,14 +33,14 @@ import java.util.Spliterator;
 import java.util.stream.BaseStream;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.AbstractRegion;
+import hexamap.regions.Region;
 
 /**
  *
  */
 public abstract class CoordinateStream<CoordinateImpl extends Coordinate> implements BaseStream<CoordinateImpl,CoordinateStream<CoordinateImpl>> {
     
-    public abstract CoordinateStream<CoordinateImpl> containedIn(AbstractRegion<Coordinate> region);
+    public abstract CoordinateStream<CoordinateImpl> containedIn(Region<Coordinate> region);
     public abstract CoordinateStream<CoordinateImpl> containedIn(CoordinateStream<Coordinate> streams[]);
     public abstract CoordinateStream<CoordinateImpl> within(CoordinateImpl min, CoordinateImpl max);
 

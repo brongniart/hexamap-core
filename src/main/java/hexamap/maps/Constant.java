@@ -31,7 +31,7 @@ package hexamap.maps;
 import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.AbstractRegion;
+import hexamap.regions.Region;
 
 /**
  *
@@ -41,12 +41,12 @@ public class Constant<CoordinateImpl extends Coordinate,Data> extends AbstractMa
 
     private Data data;
 
-    public Constant(AbstractRegion<CoordinateImpl> region,Data data) {
+    public Constant(Region<CoordinateImpl> region,Data data) {
         this(region);
         this.setData(data);
     }
 
-    public Constant(AbstractRegion<CoordinateImpl> region) {
+    public Constant(Region<CoordinateImpl> region) {
         super(region);
     }
 

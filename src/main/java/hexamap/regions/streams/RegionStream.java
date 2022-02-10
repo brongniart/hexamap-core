@@ -35,7 +35,6 @@ import java.util.stream.BaseStream;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.maps.streams.MapStream;
-import hexamap.regions.AbstractRegion;
 import hexamap.regions.Region;
 
 /**
@@ -43,7 +42,7 @@ import hexamap.regions.Region;
  */
 public abstract class RegionStream<CoordinateImpl extends Coordinate> implements BaseStream<Region<CoordinateImpl>,RegionStream<CoordinateImpl>> {
     
-    public abstract RegionStream<CoordinateImpl> including(AbstractRegion<CoordinateImpl> region);
+    public abstract RegionStream<CoordinateImpl> including(Region<CoordinateImpl> region);
     public abstract RegionStream<CoordinateImpl> including(RegionStream<CoordinateImpl> regions);
 
     public abstract RegionStream<CoordinateImpl> intersecting();

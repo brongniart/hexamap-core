@@ -29,18 +29,17 @@
 package hexamap.regions.base;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.AbstractRegion;
 import hexamap.regions.Polygon;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public abstract class BasePolygon<CoordinateImpl extends Coordinate> extends AbstractRegion<CoordinateImpl> implements Polygon<CoordinateImpl> {
+public abstract class BasePolygon<CoordinateImpl extends Coordinate> implements Polygon<CoordinateImpl> {
 
     protected CoordinateImpl center;
     
-    public BasePolygon(CoordinateImpl center) {
+    protected BasePolygon(CoordinateImpl center) {
         this.center = center;
     }
 }

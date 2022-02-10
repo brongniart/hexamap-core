@@ -31,6 +31,7 @@ package hexamap.coordinates;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Spliterator;
+import java.util.Spliterators;
 
 import hexamap.regions.Polygon;
 
@@ -131,7 +132,7 @@ public class Cube extends Axial implements Polygon<Cube> {
 
     @Override
     public Spliterator<Cube> spliterator() {
-        return null;
+        return Spliterators.spliterator(iterator(), 1, Spliterator.CONCURRENT | Spliterator.NONNULL  | Spliterator.SIZED );
     }
 
     @Override

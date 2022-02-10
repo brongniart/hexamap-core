@@ -38,7 +38,7 @@ import hexamap.coordinates.Coordinate;
 public interface Region<CoordinateImpl extends Coordinate> extends Iterable<CoordinateImpl> {
 
     public static class OutOfRegion extends Exception {
-        private static final long serialVersionUID = 197876591412781244L;
+        private static final long serialVersionUID = 1644510387L;
 
         public OutOfRegion(Coordinate c, @SuppressWarnings("rawtypes") Region region) {
             super("Coordinate " + c + " is out of the region " + region);

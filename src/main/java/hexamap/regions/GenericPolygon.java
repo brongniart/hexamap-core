@@ -43,6 +43,10 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
     
     @Override
     public int getIndex(CoordinateImpl coordinate) throws OutOfRegion {
+        if (list==null) {
+            throw new OutOfRegion(coordinate, this);
+        }
+        
         int size=0;
         for (BasePolygon<CoordinateImpl> base: list) {
             if (base.contains(coordinate)) {
@@ -56,6 +60,10 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
 
     @Override
     public CoordinateImpl getCoordinate(int index) throws OutOfRegion {
+        if (list==null) {
+            throw new OutOfRegion(index, this);
+        }
+        
         for (BasePolygon<CoordinateImpl> base: list) {
             if (index < base.size()) {
                 return base.getCoordinate(index);
@@ -68,11 +76,15 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
 
     @Override
     public boolean isEmpty() {
-        return list[0]==null;
+        return list==null;
     }
 
     @Override
     public int size() {
+        if (list==null) {
+            return 0;
+        }
+        
         int size=0;
         for (BasePolygon<CoordinateImpl> base: list) {
             size+=base.size();
@@ -82,6 +94,10 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
 
     @Override
     public boolean contains(CoordinateImpl coordinate) {
+        if (list==null) {
+            return false;
+        }
+        
         for (BasePolygon<CoordinateImpl> base: list) {
             if (base.contains(coordinate)) {
                 return true;
@@ -94,7 +110,7 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
     public Iterator<CoordinateImpl> iterator() {
         return new Iterator<CoordinateImpl>() {
 
-            Iterator<CoordinateImpl> internal= (list[0]==null)?null:list[0].iterator();
+            Iterator<CoordinateImpl> internal= (list==null)?null:list[0].iterator();
             int index=0;
             
             @Override

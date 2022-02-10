@@ -100,12 +100,6 @@ public class Rectangle<CoordinateImpl extends Coordinate> extends BasePolygon<Co
         return null;
     }
 
-    @Override
-    public Segment<CoordinateImpl>[] getSegments() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public String toString() {
         return "[" + this.getClass() + ": " + direction + "," + center + "]";
     }

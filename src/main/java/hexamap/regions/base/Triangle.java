@@ -152,10 +152,4 @@ public class Triangle<CoordinateImpl extends Coordinate> extends BasePolygon<Coo
     public String toString() {
         return "[" + this.getClass() + ": " + direction + "," + center + "]";
     }
-
-    @Override
-    public Segment<CoordinateImpl>[] getSegments() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

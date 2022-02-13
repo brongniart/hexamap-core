@@ -97,12 +97,12 @@ public class Cubic extends Axial implements Polygon {
         return 1;
     }
 
-    private class IteratorCoordinate implements Iterator<Coordinate> {
+    private class SingleCoordinateIterator implements Iterator<Coordinate> {
 
         private final Cubic c;
         private boolean nextCalled = false;
 
-        public IteratorCoordinate(Cubic c) {
+        public SingleCoordinateIterator(Cubic c) {
             this.c = c;
         }
 
@@ -119,9 +119,31 @@ public class Cubic extends Axial implements Polygon {
 
     }
 
+    private class SingleCoordinateSegmentIterator implements Iterator<Segment> {
+
+        private final Cubic c;
+        private boolean nextCalled = false;
+
+        public SingleCoordinateSegmentIterator(Cubic c) {
+            this.c = c;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !nextCalled;
+        }
+
+        @Override
+        public Segment next() {
+            nextCalled = true;
+            return new Segment(c, 0, Direction.NORD);
+        }
+
+    }
+
     @Override
     public Iterator<Coordinate> iterator() {
-        return new IteratorCoordinate(this);
+        return new SingleCoordinateIterator(this);
     }
 
     @Override
@@ -146,22 +168,50 @@ public class Cubic extends Axial implements Polygon {
     }
 
     @Override
-    public Coordinate[] vertices(boolean outside) {
-        return new Coordinate[] { this };
+    public Iterator<Coordinate> vertices() {
+        return new SingleCoordinateIterator(this);
     }
 
     @Override
-    public Coordinate[] allVertices() {
-        return new Coordinate[] { this };
+    public Iterator<Coordinate> vertices(boolean outside) {
+        if (outside) {
+            return vertices();
+        } else {
+            return new Iterator<Coordinate>() {
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+
+                @Override
+                public Coordinate next() {
+                    return null;
+                }
+            };
+        }
     }
 
     @Override
-    public Segment[] edges(boolean outside) {
-        return new Segment[] { new Segment(this,0,Direction.NORD) };
-    }
+    public Iterator<Segment> edges(boolean outside) {
+        if (outside) {
+            return edges();
+        } else {
+            return new Iterator<Segment>() {
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
 
+                @Override
+                public Segment next() {
+                    return null;
+                }
+            };
+        }
+    }
+    
     @Override
-    public Segment[] allEdges() {
-        return new Segment[] { new Segment(this,0,Direction.NORD) };
+    public Iterator<Segment> edges() {
+        return new SingleCoordinateSegmentIterator(this);
     }
 }

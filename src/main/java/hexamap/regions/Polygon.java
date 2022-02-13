@@ -28,6 +28,8 @@
  */
 package hexamap.regions;
 
+import java.util.Iterator;
+
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.base.Segment;
 
@@ -35,9 +37,44 @@ import hexamap.regions.base.Segment;
  *
  */
 public interface Polygon extends IndexedRegion {
-    public Coordinate[] vertices(boolean outside);
-    public Coordinate[] allVertices();
-    
-    public Segment[] edges(boolean outside);
-    public Segment[] allEdges();
+
+    default public Iterator<Coordinate> vertices(boolean outside) {
+        if (outside) {
+            return vertices();
+        } else {
+            return new Iterator<Coordinate>() {
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+
+                @Override
+                public Coordinate next() {
+                    return null;
+                }
+            };
+        }
+    }
+
+    public Iterator<Coordinate> vertices();
+
+    default public Iterator<Segment> edges(boolean outside) {
+        if (outside) {
+            return edges();
+        } else {
+            return new Iterator<Segment>() {
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+
+                @Override
+                public Segment next() {
+                    return null;
+                }
+            };
+        }
+    }
+
+    public Iterator<Segment> edges();
 }

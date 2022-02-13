@@ -146,13 +146,13 @@ public class Hexagon extends BasePolygon {
     }
 
     @Override
-    public Coordinate[] vertices() {
+    public Iterator<Coordinate> vertices() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Segment[] edges() {
+    public Iterator<Segment> edges() {
         // TODO Auto-generated method stub
         return null;
     }

@@ -56,36 +56,4 @@ public abstract class BasePolygon implements Polygon {
             }
         };
     }
-
-    @Override
-    public Coordinate[] vertices(boolean outside) {
-        if (outside) {
-            return vertices();
-        } else {
-            return new Coordinate[0];
-        }
-    }
-
-    @Override
-    public Coordinate[] allVertices() {
-        return vertices();
-    }
-
-    public abstract Coordinate[] vertices();
-
-    @Override
-    public Segment[] edges(boolean outside) {
-        if (outside) {
-            return edges();
-        } else {
-            return new Segment[0];
-        }
-    }
-
-    @Override
-    public Segment[] allEdges() {
-        return edges();
-    }
-
-    public abstract Segment[] edges();
 }

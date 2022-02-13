@@ -29,7 +29,6 @@
 package hexamap;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.streams.CoordinateStream;
 import hexamap.maps.Map;
 import hexamap.maps.streams.MapStream;
 import hexamap.regions.Region;
@@ -38,23 +37,21 @@ import hexamap.regions.streams.RegionStream;
 /**
  *
  */
-public interface Hexamap<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl> {
+public interface Hexamap<CoordinateImpl extends Coordinate> extends Region {
     
-    public void add(Region<CoordinateImpl> region);
-    public boolean remove(Region<CoordinateImpl> region);
-    public Region<CoordinateImpl> getCluster(Region<CoordinateImpl> region);
+    public void add(Region region);
+    public boolean remove(Region region);
+    public int getCluster(Region region);
     
-    public <Data> void add(Region<CoordinateImpl> region, Data data);
-    public <Data> boolean remove(Region<CoordinateImpl> region, Data data);
+    public <Data> void add(Region region, Data data);
+    public <Data> boolean remove(Region region, Data data);
     
-    public <Data> void add(Region<CoordinateImpl> region, Map<CoordinateImpl, Data> map);
-    public <Data> boolean remove(Region<CoordinateImpl> region, Map<CoordinateImpl, Data> map);
+    public <Data> void add(Region region, Map<Data> map);
+    public <Data> boolean remove(Region region, Map<Data> map);
 
-    public RegionStream<CoordinateImpl> regions();
-    public RegionStream<CoordinateImpl> cluster(Region<CoordinateImpl> region);
+    public RegionStream regions();
+    public RegionStream cluster(Region region);
     
-    public <Data> MapStream<Region<CoordinateImpl>,Data> maps(Class<Data> dataClass);
-    public <Data> MapStream<CoordinateImpl,Data> maps(Region<CoordinateImpl> region, Class<Data> dataClass);
-
-    public <Data> CoordinateStream<CoordinateImpl> coordinates(Class<Data> dataClass);
+    public <Data> MapStream<Data> maps(Class<Data> dataClass);
+    public <Data> MapStream<Data> maps(Region region, Class<Data> dataClass);
 }

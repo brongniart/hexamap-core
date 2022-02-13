@@ -39,7 +39,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Cube;
+import hexamap.coordinates.Cubic;
 import hexamap.coordinates.Direction;
 import hexamap.regions.base.Hexagon;
 import hexamap.regions.base.Triangle;
@@ -59,31 +59,31 @@ public class RegionTests {
         rand = new Random(seed);
         System.err.println("seed:" + seed);
 
-        Set<Axial> setAxial = new Set<Axial>();
-        Hexagon<Axial> hexaAxial = new Hexagon<Axial>(32, new Axial(rand.nextInt(), rand.nextInt()));
+        Set<Coordinate> setAxial = new Set<Coordinate>();
+        Hexagon hexaAxial = new Hexagon(32, new Axial(rand.nextInt(), rand.nextInt()));
 
-        for (Axial c : hexaAxial) {
+        for (Coordinate c : hexaAxial) {
             setAxial.add(c);
         }
 
-        Set<Cube> setCube = new Set<Cube>();
-        Hexagon<Cube> hexaCube = new Hexagon<Cube>(32, new Cube(rand.nextInt(), rand.nextInt()));
+        Set<Coordinate> setCube = new Set<Coordinate>();
+        Hexagon hexaCube = new Hexagon(32, new Cubic(rand.nextInt(), rand.nextInt()));
 
-        for (Cube c : hexaCube) {
+        for (Coordinate c : hexaCube) {
             setAxial.add(c);
         }
 
-        Hexagon<Axial> hexaMax = new Hexagon<Axial>(1024, new Axial(Integer.MIN_VALUE, Integer.MAX_VALUE));
-        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024*3,
-                new Cube(rand.nextInt(), rand.nextInt()));
+        Hexagon hexaMax = new Hexagon(1024, new Axial(Integer.MIN_VALUE, Integer.MAX_VALUE));
+        Triangle triangle = new Triangle(Direction.getRandom(rand), 1024*3,
+                new Cubic(rand.nextInt(), rand.nextInt()));
 
-        return Arrays.asList(new Object[][] { { new Cube() }, { hexaAxial }, { setAxial },
+        return Arrays.asList(new Object[][] { { new Cubic() }, { hexaAxial }, { setAxial },
                 { hexaCube }, { setCube }, { hexaMax }, { triangle } });
     }
 
-    private final Region<Coordinate> region;
+    private final Region region;
 
-    public RegionTests(Region<Coordinate> region) throws Exception {
+    public RegionTests(Region region) throws Exception {
         this.region = region;
         System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
     }

@@ -36,18 +36,18 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.regions.base.BasePolygon;
+import hexamap.regions.IndexedRegion;
 
 /**
  *
  * @param <Data> some stuff
  */
-public class ArrayMap<CoordinateImpl extends Coordinate, Data> extends IndexedMap<CoordinateImpl, Data> {
+public class ArrayMap<Data> extends IndexedMap<Data> {
 
     private Data[] array;
 
     @SuppressWarnings("unchecked")
-    public ArrayMap(BasePolygon<CoordinateImpl> region,Class<?> dataClass) {
+    public ArrayMap(IndexedRegion region,Class<?> dataClass) {
         super(region);
         array = (Data[]) Array.newInstance(dataClass, region.size());
     }
@@ -71,13 +71,13 @@ public class ArrayMap<CoordinateImpl extends Coordinate, Data> extends IndexedMa
     }
     
     @Override
-    public Stream<Entry<CoordinateImpl, Data>> stream() {
+    public Stream<Entry<Coordinate, Data>> stream() {
         return StreamSupport.stream(Spliterators.spliterator(array, 0, size(),
                 Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
     }
     
     @Override
-    public Stream<Entry<CoordinateImpl, Data>> parallelStream() {
+    public Stream<Entry<Coordinate, Data>> parallelStream() {
         return StreamSupport.stream(Spliterators.spliterator(array, 0, size(),
                 Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), true);
     }

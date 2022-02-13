@@ -29,40 +29,35 @@
 package hexamap.regions.streams;
 
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Spliterator;
 import java.util.stream.BaseStream;
 
-import hexamap.coordinates.Coordinate;
 import hexamap.maps.streams.MapStream;
 import hexamap.regions.Region;
 
 /**
  * Only callable from Hexamap
  */
-public abstract class RegionStream<CoordinateImpl extends Coordinate> implements BaseStream<Region<CoordinateImpl>,RegionStream<CoordinateImpl>> {
+public abstract class RegionStream implements BaseStream<Region,RegionStream> {
     
-    public abstract RegionStream<CoordinateImpl> including(Region<CoordinateImpl> region);
-    public abstract RegionStream<CoordinateImpl> including(RegionStream<CoordinateImpl> regions);
+    public abstract RegionStream including(Region region);
+    public abstract RegionStream including(RegionStream regions);
 
-    public abstract RegionStream<CoordinateImpl> intersecting();
-    public abstract RegionStream<CoordinateImpl> intersecting(Region<CoordinateImpl> region);
-    public abstract RegionStream<CoordinateImpl> intersectingCluster(Region<CoordinateImpl> cluster);
+    public abstract RegionStream intersecting();
+    public abstract RegionStream intersecting(Region region);
+    public abstract RegionStream intersectingCluster(Region luster);
     
-    public abstract RegionStream<CoordinateImpl> containing(Class<?> dataClass);
+    public abstract RegionStream containing(Class<?> dataClass);
     
-    public abstract <Data> MapStream<CoordinateImpl,Data> map(Class<Data> dataClass);
-    
-    public abstract Optional<CoordinateImpl> findAny();
-    public abstract Optional<CoordinateImpl> findFirst();
+    public abstract <Data> MapStream<Data> map(Class<Data> dataClass);
     
     @Override
-    public Iterator<Region<CoordinateImpl>> iterator() {
+    public Iterator<Region> iterator() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Spliterator<Region<CoordinateImpl>> spliterator() {
+    public Spliterator<Region> spliterator() {
         throw new UnsupportedOperationException();
     }
 
@@ -72,22 +67,22 @@ public abstract class RegionStream<CoordinateImpl extends Coordinate> implements
     }
 
     @Override
-    public RegionStream<CoordinateImpl> sequential() {
+    public RegionStream sequential() {
         return this;
     }
 
     @Override
-    public RegionStream<CoordinateImpl> parallel() {
+    public RegionStream parallel() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public RegionStream<CoordinateImpl> unordered() {
+    public RegionStream unordered() {
         return this;
     }
 
     @Override
-    public RegionStream<CoordinateImpl> onClose(Runnable closeHandler) {
+    public RegionStream onClose(Runnable closeHandler) {
         throw new UnsupportedOperationException();
     }
 

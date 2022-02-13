@@ -32,23 +32,24 @@ import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.regions.base.BasePolygon;
+import hexamap.regions.base.Segment;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygon<CoordinateImpl> {
+public class GenericPolygon implements Polygon {
     
-    private BasePolygon<CoordinateImpl>[] list;
+    private BasePolygon[] list;
     
     @Override
-    public int getIndex(CoordinateImpl coordinate) throws OutOfRegion {
+    public int getIndex(Coordinate coordinate) throws OutOfRegion {
         if (list==null) {
             throw new OutOfRegion(coordinate, this);
         }
         
         int size=0;
-        for (BasePolygon<CoordinateImpl> base: list) {
+        for (BasePolygon base: list) {
             if (base.contains(coordinate)) {
                 return size+base.getIndex(coordinate);
             } else {
@@ -59,12 +60,12 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
     }
 
     @Override
-    public CoordinateImpl getCoordinate(int index) throws OutOfRegion {
+    public Coordinate getCoordinate(int index) throws OutOfRegion {
         if (list==null) {
             throw new OutOfRegion(index, this);
         }
         
-        for (BasePolygon<CoordinateImpl> base: list) {
+        for (BasePolygon base: list) {
             if (index < base.size()) {
                 return base.getCoordinate(index);
             } else {
@@ -86,19 +87,19 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
         }
         
         int size=0;
-        for (BasePolygon<CoordinateImpl> base: list) {
+        for (BasePolygon base: list) {
             size+=base.size();
         }
         return size;
     }
 
     @Override
-    public boolean contains(CoordinateImpl coordinate) {
+    public boolean contains(Coordinate coordinate) {
         if (list==null) {
             return false;
         }
         
-        for (BasePolygon<CoordinateImpl> base: list) {
+        for (BasePolygon base: list) {
             if (base.contains(coordinate)) {
                 return true;
             }
@@ -107,22 +108,23 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
     }
 
     @Override
-    public Iterator<CoordinateImpl> iterator() {
-        return new Iterator<CoordinateImpl>() {
+    public Iterator<Coordinate> iterator() {
+        return new Iterator<Coordinate>() {
 
-            Iterator<CoordinateImpl> internal= (list==null)?null:list[0].iterator();
+            Iterator<Coordinate> internal= (list==null)?null:list[0].iterator();
             int index=0;
+            Coordinate current;
             
             @Override
             public boolean hasNext() {
-                return internal!=null;
+                return internal!=null && internal.hasNext();
             }
 
             @Override
-            public CoordinateImpl next() {
+            public Coordinate next() {
                 assert internal.hasNext();
                 
-                CoordinateImpl current = internal.next();
+                current = internal.next();
                 if (!internal.hasNext()) {
                     index++;
                     if (list[index]==null) {
@@ -134,5 +136,29 @@ public class GenericPolygon<CoordinateImpl extends Coordinate> implements Polygo
                 return current;
             }
         };
+    }
+
+    @Override
+    public Coordinate[] vertices(boolean outside) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Coordinate[] allVertices() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Segment[] edges(boolean outside) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Segment[] allEdges() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

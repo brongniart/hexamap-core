@@ -46,7 +46,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Cube;
+import hexamap.coordinates.Cubic;
 import hexamap.coordinates.Direction;
 import hexamap.regions.Region.OutOfRegion;
 import hexamap.regions.base.Hexagon;
@@ -61,13 +61,13 @@ import hexamap.regions.base.Triangle;
 public class MapTests {
 
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> hexaXXSmall;
+    private static Hexagon hexaXXSmall;
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> hexaSmall;
+    private static Hexagon hexaSmall;
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> hexaMedium;
+    private static Hexagon hexaMedium;
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> hexaLarge;
+    private static Hexagon hexaLarge;
 
     private static Random rand; 
             
@@ -77,28 +77,28 @@ public class MapTests {
         rand = new Random(seed);
         System.err.println("seed:"+seed);
         
-        hexaXXSmall = new Hexagon<Axial>(64, new Axial(rand.nextInt(),rand.nextInt()));  //    49'537 hex
-        hexaSmall = new Hexagon<Axial>(256, new Axial(rand.nextInt(),rand.nextInt())); // 
-        hexaMedium = new Hexagon<Axial>(1024, new Axial(rand.nextInt(),rand.nextInt())); // 3'148'801 hex
-        hexaLarge = new Hexagon<Axial>(2048*2, new Axial(rand.nextInt(),rand.nextInt()));  //12'589'057 hex
+        hexaXXSmall = new Hexagon(64, new Axial(rand.nextInt(),rand.nextInt()));  //    49'537 hex
+        hexaSmall = new Hexagon(256, new Axial(rand.nextInt(),rand.nextInt())); // 
+        hexaMedium = new Hexagon(1024, new Axial(rand.nextInt(),rand.nextInt())); // 3'148'801 hex
+        hexaLarge = new Hexagon(2048*2, new Axial(rand.nextInt(),rand.nextInt()));  //12'589'057 hex
 
-        Triangle<Axial> triangleSmall = new Triangle<Axial>(Direction.getRandom(rand),256*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
-        Triangle<Axial> triangleMedium = new Triangle<Axial>(Direction.getRandom(rand),1024*2, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
-        Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*4, new Axial()); // 75'515'905
+        Triangle triangleSmall = new Triangle(Direction.getRandom(rand),256*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
+        Triangle triangleMedium = new Triangle(Direction.getRandom(rand),1024*2, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
+        Triangle triangleLarge = new Triangle(Direction.getRandom(rand),2048*4, new Axial()); // 75'515'905
         return Arrays.asList(
                 new Object[][] { 
-                        { new HashMap<Axial, AxialExt>(hexaXXSmall)},
-                        { new HashMap<Axial, AxialExt>(triangleSmall)},
-                        { new ArrayMap<Axial, AxialExt>(hexaSmall,AxialExt.class)} ,
-                        { new ArrayMap<Axial, AxialExt>(triangleSmall,AxialExt.class)},
-                        { new ArrayMap<Axial, AxialExt>(hexaMedium,AxialExt.class)} ,
-                        { new ArrayMap<Axial, AxialExt>(triangleMedium,AxialExt.class)} 
+                        { new HashMap<AxialExt>(hexaXXSmall)},
+                        { new HashMap<AxialExt>(triangleSmall)},
+                        { new ArrayMap<AxialExt>(hexaSmall,AxialExt.class)} ,
+                        { new ArrayMap<AxialExt>(triangleSmall,AxialExt.class)},
+                        { new ArrayMap<AxialExt>(hexaMedium,AxialExt.class)} ,
+                        { new ArrayMap<AxialExt>(triangleMedium,AxialExt.class)} 
                 });
     }
 
-    private Map<Coordinate, Cube> map;
+    private Map<AxialExt> map;
     
-    public MapTests(Map<Coordinate, Cube> map) throws Exception {
+    public MapTests(Map<AxialExt> map) throws Exception {
         this.map = map;
         System.out.println(this.getClass() + ", map:" + map.getClass() + ": " + String.format(Locale.US,"%,d", map.getRegion().size()));
     }
@@ -183,7 +183,7 @@ public class MapTests {
         assert map.size() == 0;
     }
 
-    public static class AxialExt extends Cube implements Externalizable {
+    public static class AxialExt extends Cubic implements Externalizable {
 
         public AxialExt() {
             super();

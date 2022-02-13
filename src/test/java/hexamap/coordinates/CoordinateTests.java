@@ -75,7 +75,7 @@ public class CoordinateTests {
         
         assert coordinate.equals(Direction.NORD)==false;
         
-        assert coordinate.add(Direction.NORD.next(3), 2).equals(coordinate.add(Direction.NORD.previous(3), 2));
+        assert coordinate.add(Direction.NORD.flip(), 2).equals(coordinate.add(Direction.NORD.previous(3), 2));
         
         assert coordinate.add(Direction.NORD.previous(), 2).equals(coordinate.add(Direction.NORD_WEST, 2));
         assert coordinate.add(Direction.NORD_WEST.next(), 2).equals(coordinate.add(Direction.NORD, 2));

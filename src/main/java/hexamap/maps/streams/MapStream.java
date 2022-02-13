@@ -33,19 +33,21 @@ import java.util.Map.Entry;
 import java.util.Spliterator;
 import java.util.stream.BaseStream;
 
+import hexamap.coordinates.Coordinate;
+
 /**
  *
  */
-public class MapStream<CoordinateImpl,Data> implements BaseStream<Entry<CoordinateImpl,Data>,MapStream<CoordinateImpl,Data>>  {
+public class MapStream<Data> implements BaseStream<Entry<Coordinate,Data>,MapStream<Data>>  {
 
     @Override
-    public Iterator<Entry<CoordinateImpl, Data>> iterator() {
+    public Iterator<Entry<Coordinate, Data>> iterator() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Spliterator<Entry<CoordinateImpl, Data>> spliterator() {
+    public Spliterator<Entry<Coordinate, Data>> spliterator() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -57,25 +59,25 @@ public class MapStream<CoordinateImpl,Data> implements BaseStream<Entry<Coordina
     }
 
     @Override
-    public MapStream<CoordinateImpl, Data> sequential() {
+    public MapStream<Data> sequential() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public MapStream<CoordinateImpl, Data> parallel() {
+    public MapStream<Data> parallel() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public MapStream<CoordinateImpl, Data> unordered() {
+    public MapStream<Data> unordered() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public MapStream<CoordinateImpl, Data> onClose(Runnable closeHandler) {
+    public MapStream<Data> onClose(Runnable closeHandler) {
         // TODO Auto-generated method stub
         return null;
     }

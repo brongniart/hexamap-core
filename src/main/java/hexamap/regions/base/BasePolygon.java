@@ -28,18 +28,64 @@
  */
 package hexamap.regions.base;
 
+import java.util.function.BiPredicate;
+
 import hexamap.coordinates.Coordinate;
+import hexamap.coordinates.Direction;
 import hexamap.regions.Polygon;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public abstract class BasePolygon<CoordinateImpl extends Coordinate> implements Polygon<CoordinateImpl> {
+public abstract class BasePolygon implements Polygon {
 
-    protected CoordinateImpl center;
-    
-    protected BasePolygon(CoordinateImpl center) {
+    protected Coordinate center;
+
+    protected BasePolygon(Coordinate center) {
         this.center = center;
     }
+
+    static public BiPredicate<Coordinate, Integer> getContainTest(Direction direction, Coordinate center) {
+        return new BiPredicate<Coordinate, Integer>() {
+            @Override
+            public boolean test(Coordinate coordinate, Integer maxDistance) {
+                int distance = direction.constantCoordinate.apply(coordinate)
+                        - direction.constantCoordinate.apply(center);
+                return 0 <= distance && distance <= maxDistance;
+            }
+        };
+    }
+
+    @Override
+    public Coordinate[] vertices(boolean outside) {
+        if (outside) {
+            return vertices();
+        } else {
+            return new Coordinate[0];
+        }
+    }
+
+    @Override
+    public Coordinate[] allVertices() {
+        return vertices();
+    }
+
+    public abstract Coordinate[] vertices();
+
+    @Override
+    public Segment[] edges(boolean outside) {
+        if (outside) {
+            return edges();
+        } else {
+            return new Segment[0];
+        }
+    }
+
+    @Override
+    public Segment[] allEdges() {
+        return edges();
+    }
+
+    public abstract Segment[] edges();
 }

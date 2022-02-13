@@ -29,6 +29,7 @@
 package hexamap.coordinates;
 
 import java.util.Random;
+import java.util.function.Function;
 
 /**
  *
@@ -38,11 +39,81 @@ public enum Direction {
 
     public final int x;
     public final int y;
-
+    
+    public final Function<Coordinate,Integer> constantCoordinate;
+    public final Function<Coordinate,Integer> variableCoordinate;
 
     private Direction(int x, int y) {
         this.x = x;
         this.y = y;
+        
+        if (x==0) {
+            constantCoordinate = new Function<Coordinate,Integer>() {
+                @Override
+                public Integer apply(Coordinate c) {
+                    return c.getX();
+                }
+            };
+            if (y==1) {
+                variableCoordinate = new Function<Coordinate,Integer>() {
+                    @Override
+                    public Integer apply(Coordinate c) {
+                        return c.getY();
+                    }
+                };
+            } else {
+                variableCoordinate = new Function<Coordinate,Integer>() {
+                    @Override
+                    public Integer apply(Coordinate c) {
+                        return c.getZ();
+                    }
+                };
+            }
+        } else if (y==0) {
+            constantCoordinate = new Function<Coordinate,Integer>() {
+                @Override
+                public Integer apply(Coordinate c) {
+                    return c.getY();
+                }
+            };
+            if (x==1) {
+                variableCoordinate = new Function<Coordinate,Integer>() {
+                    @Override
+                    public Integer apply(Coordinate c) {
+                        return c.getX();
+                    }
+                };
+            } else {
+                variableCoordinate = new Function<Coordinate,Integer>() {
+                    @Override
+                    public Integer apply(Coordinate c) {
+                        return c.getZ();
+                    }
+                };
+            }
+        } else {
+            constantCoordinate = new Function<Coordinate,Integer>() {
+                @Override
+                public Integer apply(Coordinate c) {
+                    return c.getZ();
+                }
+            };
+            if (x==1) {
+                variableCoordinate = new Function<Coordinate,Integer>() {
+                    @Override
+                    public Integer apply(Coordinate c) {
+                        return c.getX();
+                    }
+                };
+            } else {
+                variableCoordinate = new Function<Coordinate,Integer>() {
+                    @Override
+                    public Integer apply(Coordinate c) {
+                        return c.getY();
+                    }
+                };
+            }
+        }    
     }
 
     public Direction next() {
@@ -67,5 +138,9 @@ public enum Direction {
 
     public static Direction getRandom(Random rand) {
         return values()[rand.nextInt(values().length)];
+    }
+    
+    public Direction flip() {
+        return next(3);
     }
 }

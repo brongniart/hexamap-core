@@ -42,22 +42,22 @@ import hexamap.regions.Region.OutOfRegion;
  *
  * @param <Data> some stuff
  */
-public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> implements Map<CoordinateImpl, Data> {
+public abstract class AbstractMap<Data> implements Map<Data> {
     
-    private final Region<CoordinateImpl> region;
+    private final Region region;
 
     @Override
-    public Region<CoordinateImpl> getRegion() {
+    public Region getRegion() {
         return region;
     }
 
-    public AbstractMap(Region<CoordinateImpl> region) {
+    public AbstractMap(Region region) {
         Objects.nonNull(region);
         this.region = region;
     }
     
     @Override
-    public boolean containsKey(CoordinateImpl coordinate) {
+    public boolean containsKey(Coordinate coordinate) {
         try {
             return safeGet(coordinate)!=null;
         } catch (OutOfRegion e) {
@@ -65,23 +65,22 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void checkCoordinate(CoordinateImpl coordinate) throws OutOfRegion {
+    private void checkCoordinate(Coordinate coordinate) throws OutOfRegion {
         if (!region.contains(coordinate)) {
-            throw new OutOfRegion((Coordinate) coordinate, (Region<Coordinate>) region);
+            throw new OutOfRegion((Coordinate) coordinate, (Region) region);
         }
     }
 
     @Override
-    public Data get(CoordinateImpl coordinate) throws OutOfRegion {
+    public Data get(Coordinate coordinate) throws OutOfRegion {
         checkCoordinate(coordinate);
         return safeGet(coordinate);
     }
 
-    protected abstract Data safeGet(CoordinateImpl coordinate) throws OutOfRegion;
+    protected abstract Data safeGet(Coordinate coordinate) throws OutOfRegion;
 
     @Override
-    public Data put(CoordinateImpl coordinate, Data data) {
+    public Data put(Coordinate coordinate, Data data) {
         Objects.nonNull(data);
         try {
             checkCoordinate(coordinate);
@@ -96,22 +95,22 @@ public abstract class AbstractMap<CoordinateImpl extends Coordinate, Data> imple
     }
 
     @Override
-    public void putAll(java.util.Map<? extends CoordinateImpl, ? extends Data> map) {
+    public void putAll(java.util.Map<? extends Coordinate, ? extends Data> map) {
         map.entrySet().forEach(entry -> {
             put(entry.getKey(), entry.getValue());
         });
     }
 
-    protected abstract Data safePut(CoordinateImpl coordinate, Data data) throws OutOfRegion;
+    protected abstract Data safePut(Coordinate coordinate, Data data) throws OutOfRegion;
     
     @Override
-    public Stream<Entry<CoordinateImpl, Data>> stream() {
+    public Stream<Entry<Coordinate, Data>> stream() {
         return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
                 Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), false);
     }
     
     @Override
-    public Stream<Entry<CoordinateImpl, Data>> parallelStream() {
+    public Stream<Entry<Coordinate, Data>> parallelStream() {
         return StreamSupport.stream(Spliterators.spliterator(iterator(), size(),
                 Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT| Spliterator.IMMUTABLE), true);
     }

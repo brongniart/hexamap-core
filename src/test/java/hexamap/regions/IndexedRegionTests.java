@@ -39,10 +39,9 @@ import org.junit.runners.Parameterized.Parameters;
 
 import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Cube;
+import hexamap.coordinates.Cubic;
 import hexamap.coordinates.Direction;
 import hexamap.regions.Region.OutOfRegion;
-import hexamap.regions.base.BasePolygon;
 import hexamap.regions.base.Hexagon;
 import hexamap.regions.base.Triangle;
 
@@ -59,15 +58,15 @@ public class IndexedRegionTests {
         Random rand = new Random(seed);
         System.err.println("seed:"+seed);
 
-        Hexagon<Axial> hexaAxial = new Hexagon<Axial>(1024, new Axial(rand.nextInt(),rand.nextInt()));
-        Triangle<Cube> triangle = new Triangle<Cube>(Direction.getRandom(rand), 1024, new Cube(rand.nextInt(),rand.nextInt()));
+        Hexagon hexaAxial = new Hexagon(1024, new Axial(rand.nextInt(),rand.nextInt()));
+        Triangle triangle = new Triangle(Direction.getRandom(rand), 1024, new Cubic(rand.nextInt(),rand.nextInt()));
 
         return Arrays.asList(new Object[][] { { hexaAxial }, {triangle} });
     }
 
-    private final BasePolygon<Coordinate> region;
+    private final IndexedRegion region;
 
-    public IndexedRegionTests(BasePolygon<Coordinate> region) throws Exception {
+    public IndexedRegionTests(IndexedRegion region) throws Exception {
         this.region = region;
         System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
     }

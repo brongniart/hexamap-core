@@ -31,30 +31,30 @@ package hexamap.maps;
 import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.regions.IndexedRegion;
 import hexamap.regions.Region.OutOfRegion;
-import hexamap.regions.base.BasePolygon;
 
-public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extends AbstractMap<CoordinateImpl, Data> {
+public abstract class IndexedMap<Data> extends AbstractMap<Data> {
 
     private int size = 0;
 
-    public IndexedMap(BasePolygon<CoordinateImpl> region) {
+    public IndexedMap(IndexedRegion region) {
         super(region);
     }
     
-    public BasePolygon<CoordinateImpl> getRegion() {
-        return (BasePolygon<CoordinateImpl>) super.getRegion();
+    public IndexedRegion getRegion() {
+        return (IndexedRegion) super.getRegion();
     }
 
     @Override
-    public Data safeGet(CoordinateImpl coordinate) throws OutOfRegion {
+    public Data safeGet(Coordinate coordinate) throws OutOfRegion {
         return indexGet(getRegion().getIndex(coordinate));
     }
 
     protected abstract Data indexGet(int index);
 
     @Override
-    public Data safePut(CoordinateImpl coordinate, Data data) throws OutOfRegion {
+    public Data safePut(Coordinate coordinate, Data data) throws OutOfRegion {
         return safePut(getRegion().getIndex(coordinate), data);
     }
     
@@ -84,10 +84,10 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
     }
 
     @Override
-    public Iterator<Entry<CoordinateImpl, Data>> iterator() {
-        return new Iterator<Entry<CoordinateImpl, Data>>() {
+    public Iterator<Entry<Coordinate, Data>> iterator() {
+        return new Iterator<Entry<Coordinate, Data>>() {
             boolean hasNext = false;
-            Iterator<CoordinateImpl> iterator = getRegion().iterator();
+            Iterator<Coordinate> iterator = getRegion().iterator();
             int index = 0;
             {
                 advance();
@@ -107,15 +107,14 @@ public abstract class IndexedMap<CoordinateImpl extends Coordinate, Data> extend
             }
 
             @Override
-            public Entry<CoordinateImpl, Data> next() {
-                Entry<CoordinateImpl, Data> entry = new Entry<CoordinateImpl, Data>(){
+            public Entry<Coordinate, Data> next() {
+                Entry<Coordinate, Data> entry = new Entry<Coordinate, Data>(){
                     
-                    @SuppressWarnings("unchecked")
-                    private CoordinateImpl coordinate = (CoordinateImpl) iterator.next().copy();
-                    private int index_iter = index;
+                    private final Coordinate coordinate = (Coordinate) iterator.next().copy();
+                    private final int index_iter = index;
                     
                     @Override
-                    public CoordinateImpl getKey() {
+                    public Coordinate getKey() {
                         return coordinate ;
                     }
 

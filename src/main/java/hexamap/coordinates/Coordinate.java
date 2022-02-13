@@ -49,15 +49,16 @@ public abstract class Coordinate {
             return false;
         }
     }
-    
+
     public boolean equals(Coordinate coordinate) {
         return isEquals(coordinate);
     }
 
     public int distance(Coordinate other) {
+        assert other != null;
         return Math.max(abs(getX() - other.getX()), Math.max(abs(getY() - other.getY()), abs(getZ() - other.getZ())));
     }
-    
+
     public abstract int getX();
 
     public abstract int getY();
@@ -74,7 +75,11 @@ public abstract class Coordinate {
 
     public abstract Coordinate add(Direction direction, int range);
 
-    public abstract void move(Direction direction, int range);
+    public Coordinate copy() {
+        return add(Direction.NORD, 0);
+    }
+
+    public abstract Coordinate move(Direction direction, int range);
 
     public class NeigboursIterator implements Iterator<Coordinate> {
 
@@ -86,15 +91,19 @@ public abstract class Coordinate {
         private Coordinate current;
         private Direction direction;
 
-        private final Direction INIT_DIRECTION = Direction.NORD;
+        private final Direction initDirection;
 
-        public NeigboursIterator(Coordinate center, int range, boolean all) {
+        public NeigboursIterator(Coordinate center, int range, boolean all, Direction initDirection) {
 
             this.all = all;
             this.range = Math.abs(range);
             this.center = center;
-
+            this.initDirection = initDirection;
             current = null;
+        }
+
+        public NeigboursIterator(Coordinate center, int range, boolean all) {
+            this(center, range, all, Direction.NORD);
         }
 
         @Override
@@ -109,8 +118,8 @@ public abstract class Coordinate {
         @Override
         public Coordinate next() {
             if (current == null) {
-                current = center.add(INIT_DIRECTION, range);
-                direction = INIT_DIRECTION.next(2);
+                current = center.add(initDirection, range);
+                direction = initDirection.next(2);
 
                 nbIters = 1;
                 nbDir = 1;
@@ -127,7 +136,7 @@ public abstract class Coordinate {
                 range--;
                 nbIters = 1;
                 nbDir = 1;
-                direction = INIT_DIRECTION.next(2);
+                direction = initDirection.next(2);
                 current.move(direction, 1);
             } else {
                 throw new RuntimeException("Calling next() while hasNext() is false");
@@ -152,9 +161,5 @@ public abstract class Coordinate {
     @Override
     public int hashCode() {
         return Objects.hash(getX(), getY());
-    }
-
-    public Coordinate copy() {
-        return add(Direction.NORD,0);
     }
 }

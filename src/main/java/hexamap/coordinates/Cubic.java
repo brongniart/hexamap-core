@@ -30,24 +30,23 @@ package hexamap.coordinates;
 
 import java.util.Iterator;
 import java.util.Random;
-import java.util.Spliterator;
-import java.util.Spliterators;
 
 import hexamap.regions.Polygon;
+import hexamap.regions.base.Segment;
 
-public class Cube extends Axial implements Polygon<Cube> {
+public class Cubic extends Axial implements Polygon {
 
     protected int z = 0;
 
-    public Cube() {
+    public Cubic() {
     }
 
-    public Cube(int x, int y) {
+    public Cubic(int x, int y) {
         super(x, y);
         this.z = super.getZ();
     }
 
-    public Cube(Coordinate c) {
+    public Cubic(Coordinate c) {
         super(c);
         this.z = c.getZ();
     }
@@ -57,26 +56,26 @@ public class Cube extends Axial implements Polygon<Cube> {
         return z;
     }
 
-    private static final Cube zero = new Cube();
+    private static final Cubic zero = new Cubic();
 
-    public Cube getZero() {
+    public Cubic getZero() {
         return zero;
     }
 
-    public Cube createCoordinate(int x, int y) {
-        return new Cube(super.createCoordinate(x, y));
+    public Cubic createCoordinate(int x, int y) {
+        return new Cubic(super.createCoordinate(x, y));
     }
 
     public Axial createCoordinateXZ(int x, int z) {
-        return new Cube(super.createCoordinateXZ(x, z));
+        return new Cubic(super.createCoordinateXZ(x, z));
     }
 
     public Axial createCoordinateYZ(int y, int z) {
-        return new Cube(super.createCoordinateYZ(y, z));
+        return new Cubic(super.createCoordinateYZ(y, z));
     }
 
-    public Cube add(Direction direction, int range) {
-        return new Cube(x + range * direction.x, y + range * direction.y);
+    public Cubic add(Direction direction, int range) {
+        return new Cubic(x + range * direction.x, y + range * direction.y);
     }
 
     public String toString() {
@@ -89,7 +88,7 @@ public class Cube extends Axial implements Polygon<Cube> {
     }
     
     @Override
-    public Cube getRandom(Random random) {
+    public Cubic getRandom(Random random) {
         return this;
     }
 
@@ -98,12 +97,12 @@ public class Cube extends Axial implements Polygon<Cube> {
         return 1;
     }
 
-    private class IteratorCoordinate implements Iterator<Cube> {
+    private class IteratorCoordinate implements Iterator<Coordinate> {
 
-        private final Cube c;
+        private final Cubic c;
         private boolean nextCalled = false;
 
-        public IteratorCoordinate(Cube c) {
+        public IteratorCoordinate(Cubic c) {
             this.c = c;
         }
 
@@ -113,7 +112,7 @@ public class Cube extends Axial implements Polygon<Cube> {
         }
 
         @Override
-        public Cube next() {
+        public Cubic next() {
             nextCalled = true;
             return c;
         }
@@ -121,22 +120,17 @@ public class Cube extends Axial implements Polygon<Cube> {
     }
 
     @Override
-    public Iterator<Cube> iterator() {
+    public Iterator<Coordinate> iterator() {
         return new IteratorCoordinate(this);
     }
 
     @Override
-    public boolean contains(Cube coordinate) {
+    public boolean contains(Coordinate coordinate) {
         return isEquals(coordinate);
     }
-
+    
     @Override
-    public Spliterator<Cube> spliterator() {
-        return Spliterators.spliterator(iterator(), 1, Spliterator.CONCURRENT | Spliterator.NONNULL  | Spliterator.SIZED );
-    }
-
-    @Override
-    public int getIndex(Cube coordinate) throws OutOfRegion {
+    public int getIndex(Coordinate coordinate) throws OutOfRegion {
         if (equals(coordinate)) {
             return 0;
         }
@@ -144,10 +138,30 @@ public class Cube extends Axial implements Polygon<Cube> {
     }
 
     @Override
-    public Cube getCoordinate(int index) throws OutOfRegion {
+    public Cubic getCoordinate(int index) throws OutOfRegion {
         if (index==0) {
             return this;
         }
         throw new OutOfRegion(index,this);
+    }
+
+    @Override
+    public Coordinate[] vertices(boolean outside) {
+        return new Coordinate[] { this };
+    }
+
+    @Override
+    public Coordinate[] allVertices() {
+        return new Coordinate[] { this };
+    }
+
+    @Override
+    public Segment[] edges(boolean outside) {
+        return new Segment[] { new Segment(this,0,Direction.NORD) };
+    }
+
+    @Override
+    public Segment[] allEdges() {
+        return new Segment[] { new Segment(this,0,Direction.NORD) };
     }
 }

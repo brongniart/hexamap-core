@@ -29,9 +29,15 @@
 package hexamap.regions;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.regions.base.Segment;
 
 /**
  *
  */
-public interface Polygon<CoordinateImpl extends Coordinate> extends IndexedRegion<CoordinateImpl> {
+public interface Polygon extends IndexedRegion {
+    public Coordinate[] vertices(boolean outside);
+    public Coordinate[] allVertices();
+    
+    public Segment[] edges(boolean outside);
+    public Segment[] allEdges();
 }

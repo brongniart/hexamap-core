@@ -34,47 +34,48 @@ import java.util.function.Function;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
-import hexamap.coordinates.Segment;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public class Triangle<CoordinateImpl extends Coordinate> extends BasePolygon<CoordinateImpl> {
+public class Triangle extends BasePolygon {
 
     private BiPredicate<Coordinate, Integer> testContains;
-    private Function<Coordinate, Integer> coordinateX;
-    private Function<Coordinate, Integer> coordinateY;
-    private Direction direction;
-    private int length;
+    private Function<Coordinate, Integer> coordinateStart;
+    private Function<Coordinate, Integer> coordinateEnd;
+    
+    public final Direction direction;
+    public final int length;
 
-    public Triangle(Direction direction, int length, CoordinateImpl center) {
+    public Triangle(Direction direction, int length, Coordinate center) {
         super(center);
+
         if (length < 0) {
-            this.direction = direction.next(3);
+            this.direction = direction.flip();
             this.length = -length;
         } else {
             this.direction = direction;
             this.length = length;
         }
-        //TODO: make center unique
+        // TODO: make center unique
         
-        testContains = Segment.getContainTest(direction, center)
-                .and(Segment.getContainTest(direction.previous(2), center));
+        testContains = BasePolygon.getContainTest(direction, center)
+                .and(BasePolygon.getContainTest(direction.next(), center));
         
-        coordinateX = Segment.getCoordinate(direction);
-        coordinateY = Segment.getCoordinate(direction.previous());
+        coordinateStart = direction.constantCoordinate;
+        coordinateEnd = direction.previous().constantCoordinate;
     }
 
     @Override
-    public boolean contains(CoordinateImpl coordinate) {
+    public boolean contains(Coordinate coordinate) {
         return testContains.test(coordinate, length);
     }
 
     @Override
-    public Iterator<CoordinateImpl> iterator() {
-        return new Iterator<CoordinateImpl>() {
-            CoordinateImpl current = null;
+    public Iterator<Coordinate> iterator() {
+        return new Iterator<Coordinate>() {
+            Coordinate current = null;
 
             boolean hasNext = true;
             int iterLength = 0;
@@ -87,17 +88,16 @@ public class Triangle<CoordinateImpl extends Coordinate> extends BasePolygon<Coo
             }
 
             @Override
-            @SuppressWarnings("unchecked")
-            public CoordinateImpl next() {
+            public Coordinate next() {
                 assert hasNext();
 
                 if (current == null) {
-                    current = (CoordinateImpl) center.add(Direction.NORD, 0);
+                    current = (Coordinate) center.add(Direction.NORD, 0);
                 } else if (angle == iterLength) {
 
-                    current.move(dir_angle.next(3),iterLength);
-                    current.move(direction,1);
-                    
+                    current.move(dir_angle.flip(), iterLength);
+                    current.move(direction, 1);
+
                     iterLength++;
                     angle = 0;
                 } else {
@@ -108,7 +108,7 @@ public class Triangle<CoordinateImpl extends Coordinate> extends BasePolygon<Coo
                 if (iterLength == length && angle == iterLength) {
                     hasNext = false;
                 }
-                
+
                 return current;
             }
         };
@@ -120,12 +120,10 @@ public class Triangle<CoordinateImpl extends Coordinate> extends BasePolygon<Coo
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         try {
-            return ((Triangle<CoordinateImpl>) object).direction == direction
-                    && ((Triangle<CoordinateImpl>) object).length == length
-                    && ((Triangle<CoordinateImpl>) object).center == center;
+            return ((Triangle) object).direction == direction && ((Triangle) object).length == length
+                    && ((Triangle) object).center == center;
         } catch (ClassCastException e) {
             return false;
         } catch (NullPointerException e) {
@@ -138,18 +136,30 @@ public class Triangle<CoordinateImpl extends Coordinate> extends BasePolygon<Coo
     }
 
     @Override
-    public int getIndex(CoordinateImpl coordinate) {
-        int a = coordinateY.apply(coordinate) - coordinateY.apply(center);
-        return ((a + 1) * a) / 2 + (coordinateX.apply(coordinate) - coordinateX.apply(center));
+    public int getIndex(Coordinate coordinate) {
+        int a = coordinateEnd.apply(coordinate) - coordinateEnd.apply(center);
+        return ((a + 1) * a) / 2 + (coordinateStart.apply(coordinate) - coordinateStart.apply(center));
 
     }
 
     @Override
-    public CoordinateImpl getCoordinate(int index) {
+    public Coordinate getCoordinate(int index) {
         return null;
     }
-    
+
     public String toString() {
         return "[" + this.getClass() + ": " + direction + "," + center + "]";
+    }
+
+    @Override
+    public Coordinate[] vertices() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Segment[] edges() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

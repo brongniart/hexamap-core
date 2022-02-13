@@ -41,37 +41,37 @@ import hexamap.regions.Region.OutOfRegion;
  *
  * @param <Data> some stuffs
  */
-public interface Map<CoordinateImpl extends Coordinate, Data>
-        extends java.util.Map<CoordinateImpl, Data>, Iterable<Entry<CoordinateImpl, Data>> {
+public interface Map<Data>
+        extends java.util.Map<Coordinate, Data>, Iterable<Entry<Coordinate, Data>> {
 
     @Override
     default public boolean containsKey(Object object) {
         throw new ClassCastException();
     }
     
-    public abstract boolean containsKey(CoordinateImpl coordinate);
+    public abstract boolean containsKey(Coordinate coordinate);
 
     @Override
     default public Data get(Object object) {
         throw new ClassCastException();
     }
 
-    public abstract Data get(CoordinateImpl coordinate) throws OutOfRegion;
+    public abstract Data get(Coordinate coordinate) throws OutOfRegion;
     
     @Override
     default public Data remove(Object object) {
         throw new ClassCastException();
     }
 
-    default public Data remove(CoordinateImpl coordinate) {
+    default public Data remove(Coordinate coordinate) {
         return put(coordinate, null);
     }
     
-    public abstract Region<CoordinateImpl> getRegion();
+    public abstract Region getRegion();
     
     // Unsupported methods from Map:
     @Override
-    default public Set<CoordinateImpl> keySet() {
+    default public Set<Coordinate> keySet() {
         throw new UnsupportedOperationException();
     }
 
@@ -81,7 +81,7 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
     }
 
     @Override
-    default public Set<Entry<CoordinateImpl, Data>> entrySet() {
+    default public Set<Entry<Coordinate, Data>> entrySet() {
         throw new UnsupportedOperationException();
     }
 
@@ -90,7 +90,7 @@ public interface Map<CoordinateImpl extends Coordinate, Data>
         throw new UnsupportedOperationException();
     }
 
-    public Stream<Entry<CoordinateImpl, Data>> stream();
+    public Stream<Entry<Coordinate, Data>> stream();
 
-    public Stream<Entry<CoordinateImpl, Data>> parallelStream();
+    public Stream<Entry<Coordinate, Data>> parallelStream();
 }

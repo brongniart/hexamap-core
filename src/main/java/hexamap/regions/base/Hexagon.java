@@ -31,33 +31,30 @@ package hexamap.regions.base;
 import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
+import hexamap.coordinates.Direction;
 
-/**
- *
- * @param <CoordinateImpl>
- */
-public class Hexagon<CoordinateImpl extends Coordinate> extends BasePolygon<CoordinateImpl> {
+public class Hexagon extends BasePolygon {
 
-    private int range;
+    public final int range;
 
-    public Hexagon(int range, CoordinateImpl center) {
+    public Hexagon(int range, Coordinate center) {
         super(center);
         this.range = Math.abs(range);
     }
 
     @Override
-    public boolean contains(CoordinateImpl coordinate) {
+    public boolean contains(Coordinate coordinate) {
+        assert coordinate != null;
         return center.distance((Coordinate) coordinate) <= range;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Iterator<CoordinateImpl> iterator() {
-        return new Iterator<CoordinateImpl>() {
-            Iterator<CoordinateImpl> internal;
+    public Iterator<Coordinate> iterator() {
+        return new Iterator<Coordinate>() {
+            Iterator<Coordinate> internal;
             boolean last = false;
             {
-                internal = (Iterator<CoordinateImpl>) center.getAllNeigbours(range).iterator();
+                internal = (Iterator<Coordinate>) center.getAllNeigbours(range).iterator();
             }
 
             @Override
@@ -66,9 +63,9 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BasePolygon<Coor
             }
 
             @Override
-            public CoordinateImpl next() {
+            public Coordinate next() {
                 assert hasNext();
-                
+
                 if (internal.hasNext()) {
                     return internal.next();
                 } else {
@@ -76,7 +73,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BasePolygon<Coor
                         last = true;
                         return center;
                     } else {
-                        throw new RuntimeException("calling next() when hasNext() is false");
+                        throw new RuntimeException();
                     }
                 }
             }
@@ -89,11 +86,9 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BasePolygon<Coor
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         try {
-            return ((Hexagon<CoordinateImpl>) object).range == range
-                    && ((Hexagon<CoordinateImpl>) object).center.isEquals(center);
+            return ((Hexagon) object).range == range && ((Hexagon) object).center.isEquals(center);
         } catch (ClassCastException e) {
             return false;
         } catch (NullPointerException e) {
@@ -101,15 +96,14 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BasePolygon<Coor
         }
     }
 
-    public int getRange() {
-        return range;
-    }
-
     @Override
-    public int getIndex(CoordinateImpl coordinate) {
+    public int getIndex(Coordinate coordinate) throws OutOfRegion {
         int dist = center.distance(coordinate);
-        int result = 1 + 6 * (dist * (dist - 1)) / 2;
-        
+        if (dist > range) {
+            throw new OutOfRegion(coordinate, this);
+        }
+        int result = 1 + 3 * (dist * (dist - 1));
+
         int x = coordinate.getX() - center.getX();
         int y = coordinate.getY() - center.getY();
         int z = coordinate.getZ() - center.getZ();
@@ -121,7 +115,7 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BasePolygon<Coor
             result = result + 4 * dist - z;
         } else if (z == dist) {
             result = result + 3 * dist + x;
-        } else if (x ==  -dist) {
+        } else if (x == -dist) {
             result = result + 2 * dist - y;
         } else if (y == dist) {
             result = result + 1 * dist + z;
@@ -132,7 +126,34 @@ public class Hexagon<CoordinateImpl extends Coordinate> extends BasePolygon<Coor
     }
 
     @Override
-    public CoordinateImpl getCoordinate(int index) {
+    public Coordinate getCoordinate(int index) throws OutOfRegion {
+        if (index < 0 || index > size()) {
+            throw new OutOfRegion(index, this);
+        }
+        int distance = size();
+        while (index>1 + 3 * (distance * (distance + 1))) {
+            distance--;
+            index-=distance*6;
+        }
+        Coordinate result = center.add(Direction.NORD,distance);
+        Direction direction = Direction.NORD.next(2);
+        while (index>6) {
+            result.move(direction, distance);
+            direction = direction.next();
+            index-=distance;
+        }
+        return result.move(direction.next(), index);
+    }
+
+    @Override
+    public Coordinate[] vertices() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Segment[] edges() {
+        // TODO Auto-generated method stub
         return null;
     }
 }

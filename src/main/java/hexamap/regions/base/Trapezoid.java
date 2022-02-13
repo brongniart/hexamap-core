@@ -33,13 +33,12 @@ import java.util.function.Function;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
-import hexamap.coordinates.Segment;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<CoordinateImpl> {
+public class Trapezoid extends Triangle {
 
     private BiPredicate<Coordinate, Integer> testContains;
     private Function<Coordinate, Integer> coordinateX;
@@ -47,22 +46,22 @@ public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<Coord
     private Direction direction;
     private int length;
 
-    public Trapezoid(Direction direction, int length, CoordinateImpl center) {
+    public Trapezoid(Direction direction, int length, Coordinate center) {
         super(direction,length,center);
         
         if (length < 0) {
-            this.direction = direction.next(3);
+            this.direction = direction.flip();
             this.length = -length;
         } else {
             this.direction = direction;
             this.length = length;
         }
-        testContains = Segment.getContainTest(direction, center)
-                .and(Segment.getContainTest(direction.previous(), center));
+        testContains = BasePolygon.getContainTest(direction, center)
+                .and(BasePolygon.getContainTest(direction.previous(), center));
     }
     
     @Override
-    public boolean contains(CoordinateImpl coordinate) {
+    public boolean contains(Coordinate coordinate) {
         return testContains.test(coordinate, length);
     }
     
@@ -72,12 +71,11 @@ public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<Coord
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         try {
-            return ((Trapezoid<CoordinateImpl>) object).direction == direction
-                    && ((Trapezoid<CoordinateImpl>) object).length == length
-                    && ((Trapezoid<CoordinateImpl>) object).center == center;
+            return ((Trapezoid) object).direction == direction
+                    && ((Trapezoid) object).length == length
+                    && ((Trapezoid) object).center == center;
         } catch (ClassCastException e) {
             return false;
         } catch (NullPointerException e) {
@@ -90,14 +88,14 @@ public class Trapezoid<CoordinateImpl extends Coordinate> extends Triangle<Coord
     }
 
     @Override
-    public int getIndex(CoordinateImpl coordinate) {
+    public int getIndex(Coordinate coordinate) {
         int a = coordinateY.apply(coordinate) - coordinateY.apply(center);
         return ((a + 1) * a) / 2 + (coordinateX.apply(coordinate) - coordinateX.apply(center));
 
     }
 
     @Override
-    public CoordinateImpl getCoordinate(int index) {
+    public Coordinate getCoordinate(int index) {
         return null;
     }
 

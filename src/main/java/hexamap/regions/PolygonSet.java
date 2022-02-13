@@ -36,18 +36,18 @@ import hexamap.coordinates.Coordinate;
  *
  * @param <CoordinateImpl>
  */
-public class PolygonSet<CoordinateImpl extends Coordinate> implements IndexedRegion<CoordinateImpl> {
+public class PolygonSet implements IndexedRegion {
     
-    private GenericPolygon<CoordinateImpl>[] list;
+    private GenericPolygon[] list;
     
     @Override
-    public int getIndex(CoordinateImpl coordinate) throws OutOfRegion {
+    public int getIndex(Coordinate coordinate) throws OutOfRegion {
         if (list==null) {
             throw new OutOfRegion(coordinate, this);
         }
         
         int size=0;
-        for (GenericPolygon<CoordinateImpl> base: list) {
+        for (GenericPolygon base: list) {
             if (base.contains(coordinate)) {
                 return size+base.getIndex(coordinate);
             } else {
@@ -58,12 +58,12 @@ public class PolygonSet<CoordinateImpl extends Coordinate> implements IndexedReg
     }
 
     @Override
-    public CoordinateImpl getCoordinate(int index) throws OutOfRegion {
+    public Coordinate getCoordinate(int index) throws OutOfRegion {
         if (list==null) {
             throw new OutOfRegion(index, this);
         }
         
-        for (GenericPolygon<CoordinateImpl> base: list) {
+        for (GenericPolygon base: list) {
             if (index < base.size()) {
                 return base.getCoordinate(index);
             } else {
@@ -85,19 +85,19 @@ public class PolygonSet<CoordinateImpl extends Coordinate> implements IndexedReg
         }
         
         int size=0;
-        for (GenericPolygon<CoordinateImpl> base: list) {
+        for (GenericPolygon base: list) {
             size+=base.size();
         }
         return size;
     }
 
     @Override
-    public boolean contains(CoordinateImpl coordinate) {
+    public boolean contains(Coordinate coordinate) {
         if (list==null) {
             return false;
         }
         
-        for (GenericPolygon<CoordinateImpl> base: list) {
+        for (GenericPolygon base: list) {
             if (base.contains(coordinate)) {
                 return true;
             }
@@ -106,22 +106,23 @@ public class PolygonSet<CoordinateImpl extends Coordinate> implements IndexedReg
     }
 
     @Override
-    public Iterator<CoordinateImpl> iterator() {
-        return new Iterator<CoordinateImpl>() {
+    public Iterator<Coordinate> iterator() {
+        return new Iterator<Coordinate>() {
 
-            Iterator<CoordinateImpl> internal= (list==null)?null:list[0].iterator();
+            Iterator<Coordinate> internal= (list==null)?null:list[0].iterator();
             int index=0;
+            Coordinate current;
             
             @Override
             public boolean hasNext() {
-                return internal!=null;
+                return internal!=null && internal.hasNext();
             }
 
             @Override
-            public CoordinateImpl next() {
+            public Coordinate next() {
                 assert internal.hasNext();
                 
-                CoordinateImpl current = internal.next();
+                current = internal.next();
                 if (!internal.hasNext()) {
                     index++;
                     if (list[index]==null) {

@@ -45,7 +45,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Cube;
+import hexamap.coordinates.Cubic;
 import hexamap.coordinates.Direction;
 import hexamap.regions.Region.OutOfRegion;
 import hexamap.regions.base.Hexagon;
@@ -60,13 +60,13 @@ import hexamap.regions.base.Triangle;
 public class ConstTests {
 
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> hexaXXSmall;
+    private static Hexagon hexaXXSmall;
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> hexaSmall;
+    private static Hexagon hexaSmall;
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> hexaMedium;
+    private static Hexagon hexaMedium;
     @SuppressWarnings("unused")
-    private static Hexagon<Axial> hexaLarge;
+    private static Hexagon hexaLarge;
 
     private static Random rand; 
             
@@ -76,22 +76,22 @@ public class ConstTests {
         rand = new Random(seed);
         System.err.println("seed:"+seed);
         
-        hexaXXSmall = new Hexagon<Axial>(64, new Axial(rand.nextInt(),rand.nextInt()));  //    49'537 hex
-        hexaSmall = new Hexagon<Axial>(256, new Axial(rand.nextInt(),rand.nextInt())); // 
-        hexaMedium = new Hexagon<Axial>(1024, new Axial(rand.nextInt(),rand.nextInt())); // 3'148'801 hex
-        hexaLarge = new Hexagon<Axial>(2048, new Axial(rand.nextInt(),rand.nextInt()));  //12'589'057 hex
+        hexaXXSmall = new Hexagon(64, new Axial(rand.nextInt(),rand.nextInt()));  //    49'537 hex
+        hexaSmall = new Hexagon(256, new Axial(rand.nextInt(),rand.nextInt())); // 
+        hexaMedium = new Hexagon(1024, new Axial(rand.nextInt(),rand.nextInt())); // 3'148'801 hex
+        hexaLarge = new Hexagon(2048, new Axial(rand.nextInt(),rand.nextInt()));  //12'589'057 hex
         
       //  Triangle<Axial> triangleLarge = new Triangle<Axial>(Direction.getRandom(rand),2048*3, new Axial());
-        Triangle<Axial> triangleSmall = new Triangle<Axial>(Direction.getRandom(rand),256*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
+        Triangle triangleSmall = new Triangle(Direction.getRandom(rand),256*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
         return Arrays.asList(
-                new Object[][] { { new Constant<Axial, AxialExt>(hexaSmall)},
-                        { new Constant<Axial, AxialExt>(triangleSmall)} 
+                new Object[][] { { new ConstantMap<AxialExt>(hexaSmall)},
+                        { new ConstantMap<AxialExt>(triangleSmall)} 
                 });
     }
 
-    private Constant<Coordinate, Cube> map;
+    private ConstantMap<AxialExt> map;
     
-    public ConstTests(Constant<Coordinate, Cube> map) throws Exception {
+    public ConstTests(ConstantMap<AxialExt> map) throws Exception {
         this.map = map;
     }
 
@@ -130,7 +130,7 @@ public class ConstTests {
         assert map.size() == 0;
     }
     
-    public static class AxialExt extends Cube implements Externalizable {
+    public static class AxialExt extends Cubic implements Externalizable {
 
         public AxialExt() {
             super();

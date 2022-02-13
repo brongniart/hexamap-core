@@ -39,24 +39,23 @@ import hexamap.regions.Region;
  *
  * @param <Data> some stuff
  */
-public class HashMap<CoordinateImpl extends Coordinate,Data> extends AbstractMap<CoordinateImpl,Data> {
+public class HashMap<Data> extends AbstractMap<Data> {
 
-    private final java.util.HashMap<CoordinateImpl, Data> map;
+    private final java.util.HashMap<Coordinate, Data> map;
 
-    public HashMap(Region<CoordinateImpl> region) {
+    public HashMap(Region region) {
         super(region);
-        map = new java.util.HashMap<CoordinateImpl, Data>();
+        map = new java.util.HashMap<Coordinate, Data>();
     }
 
     @Override
-    protected Data safeGet(CoordinateImpl coordinate) {
+    protected Data safeGet(Coordinate coordinate) {
         return map.get(coordinate);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected Data safePut(CoordinateImpl coordinate, Data data) {
-        return map.put((CoordinateImpl) coordinate.copy(), data);
+    protected Data safePut(Coordinate coordinate, Data data) {
+        return map.put(coordinate.copy(), data);
     }
 
     @Override
@@ -79,17 +78,17 @@ public class HashMap<CoordinateImpl extends Coordinate,Data> extends AbstractMap
     }
 
     @Override
-    public Iterator<java.util.Map.Entry<CoordinateImpl, Data>> iterator() {
+    public Iterator<java.util.Map.Entry<Coordinate, Data>> iterator() {
         return map.entrySet().iterator();
     }
     
     @Override
-    public Stream<Entry<CoordinateImpl, Data>> stream() {
+    public Stream<Entry<Coordinate, Data>> stream() {
         return map.entrySet().stream();
     }
     
     @Override
-    public Stream<Entry<CoordinateImpl, Data>> parallelStream() {
+    public Stream<Entry<Coordinate, Data>> parallelStream() {
         return map.entrySet().parallelStream();
     }
 }

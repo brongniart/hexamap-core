@@ -36,46 +36,22 @@ import hexamap.coordinates.Coordinate;
 /**
  *
  */
-public interface IndexedRegion<CoordinateImpl extends Coordinate> extends Region<CoordinateImpl>  {
+public interface IndexedRegion extends Region  {
 
-    public abstract int getIndex(CoordinateImpl coordinate) throws OutOfRegion;
-    public abstract CoordinateImpl getCoordinate(int index) throws OutOfRegion;
+    public abstract int getIndex(Coordinate coordinate) throws OutOfRegion;
+    public abstract Coordinate getCoordinate(int index) throws OutOfRegion;
     
     @Override
-    default CoordinateImpl getRandom(Random random) { 
+    default Coordinate getRandom(Random random) { 
         try {
             return getCoordinate(random.nextInt(size()));
         } catch (OutOfRegion e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Unexpected OutOfRegion",e);
         }
     }
     
-    default Iterator<CoordinateImpl> iterator() {
-        return new Iterator<CoordinateImpl>() {
-
-            private int index = 0;
-
-            @Override
-            public boolean hasNext() {
-                return index !=size();
-            }
-
-            @Override
-            public CoordinateImpl next() {
-                CoordinateImpl current;
-                try {
-                    current = getCoordinate(index);
-                } catch (OutOfRegion e) {
-                    throw new RuntimeException(e);
-                }
-                index++;
-                return current;
-            }
-        };
-    }
-    
-    default Iterator<CoordinateImpl> iterator(Random random) {
-        return new Iterator<CoordinateImpl>() {
+    default Iterator<Coordinate> iterator(Random random) {
+        return new Iterator<Coordinate>() {
 
             private int index = 0;
             private int bitmask = random.nextInt(size());
@@ -86,12 +62,14 @@ public interface IndexedRegion<CoordinateImpl extends Coordinate> extends Region
             }
 
             @Override
-            public CoordinateImpl next() {
-                CoordinateImpl current;
+            public Coordinate next() {
+                assert hasNext();
+                
+                Coordinate current;
                 try {
                     current = getCoordinate(index ^ bitmask);
                 } catch (OutOfRegion e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("Unexpected OutOfRegion",e);
                 }
                 index++;
                 return current;

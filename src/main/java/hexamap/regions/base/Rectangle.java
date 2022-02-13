@@ -28,18 +28,18 @@
  */
 package hexamap.regions.base;
 
+import java.util.Iterator;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
-import hexamap.coordinates.Segment;
 
 /**
  *
  * @param <CoordinateImpl>
  */
-public class Rectangle<CoordinateImpl extends Coordinate> extends BasePolygon<CoordinateImpl> {
+public class Rectangle extends BasePolygon {
 
     private BiPredicate<Coordinate, Integer> testContains;
     private Function<Coordinate, Integer> coordinateX;
@@ -47,21 +47,21 @@ public class Rectangle<CoordinateImpl extends Coordinate> extends BasePolygon<Co
     private Direction direction;
     private int length;
 
-    public Rectangle(Direction direction, int length, CoordinateImpl center) {
+    public Rectangle(Direction direction, int length, Coordinate center) {
         super(center);
         if (length < 0) {
-            this.direction = direction.next(3);
+            this.direction = direction.flip();
             this.length = -length;
         } else {
             this.direction = direction;
             this.length = length;
         }
-        testContains = Segment.getContainTest(direction, center)
-                .and(Segment.getContainTest(direction.previous(), center));
+        testContains = BasePolygon.getContainTest(direction, center)
+                .and(BasePolygon.getContainTest(direction.previous(), center));
     }
     
     @Override
-    public boolean contains(CoordinateImpl coordinate) {
+    public boolean contains(Coordinate coordinate) {
         return testContains.test(coordinate, length);
     }
 
@@ -71,12 +71,11 @@ public class Rectangle<CoordinateImpl extends Coordinate> extends BasePolygon<Co
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         try {
-            return ((Rectangle<CoordinateImpl>) object).direction == direction
-                    && ((Rectangle<CoordinateImpl>) object).length == length
-                    && ((Rectangle<CoordinateImpl>) object).center == center;
+            return ((Rectangle) object).direction == direction
+                    && ((Rectangle) object).length == length
+                    && ((Rectangle) object).center == center;
         } catch (ClassCastException e) {
             return false;
         } catch (NullPointerException e) {
@@ -89,18 +88,36 @@ public class Rectangle<CoordinateImpl extends Coordinate> extends BasePolygon<Co
     }
     
     @Override
-    public int getIndex(CoordinateImpl coordinate) {
+    public int getIndex(Coordinate coordinate) {
         int a = coordinateY.apply(coordinate) - coordinateY.apply(center);
         return ((a + 1) * a) / 2 + (coordinateX.apply(coordinate) - coordinateX.apply(center));
 
     }
 
     @Override
-    public CoordinateImpl getCoordinate(int index) {
+    public Coordinate getCoordinate(int index) {
         return null;
     }
 
     public String toString() {
         return "[" + this.getClass() + ": " + direction + "," + center + "]";
+    }
+
+    @Override
+    public Iterator<Coordinate> iterator() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Coordinate[] vertices() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Segment[] edges() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

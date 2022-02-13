@@ -35,16 +35,16 @@ import hexamap.coordinates.Coordinate;
 /**
  *
  */
-public interface Region<CoordinateImpl extends Coordinate> extends Iterable<CoordinateImpl> {
+public interface Region extends Iterable<Coordinate> {
 
     public static class OutOfRegion extends Exception {
         private static final long serialVersionUID = 1644510387L;
 
-        public OutOfRegion(Coordinate c, @SuppressWarnings("rawtypes") Region region) {
+        public OutOfRegion(Coordinate c, Region region) {
             super("Coordinate " + c + " is out of the region " + region);
         }
         
-        public OutOfRegion(int index, @SuppressWarnings("rawtypes") Region region) {
+        public OutOfRegion(int index, Region region) {
             super("Index " + index + " is out of the region " + region);
         }
     }
@@ -55,7 +55,7 @@ public interface Region<CoordinateImpl extends Coordinate> extends Iterable<Coor
     
     public int size();
     
-    public boolean contains(CoordinateImpl coordinate);
+    public boolean contains(Coordinate coordinate);
 
-    public CoordinateImpl getRandom(Random random);
+    public Coordinate getRandom(Random random);
 }

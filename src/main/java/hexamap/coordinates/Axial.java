@@ -79,9 +79,10 @@ public class Axial extends Coordinate {
         return new Axial(-y-z,y);
     }
     
-    public void move(Direction direction, int range) {
+    public Coordinate move(Direction direction, int range) {
         x = x + range * direction.x;
         y = y + range * direction.y;
+        return this;
     }
     
     public Axial add(Direction direction, int range) {

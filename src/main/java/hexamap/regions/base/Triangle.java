@@ -63,8 +63,8 @@ public class Triangle extends BasePolygon {
         testContains = BasePolygon.getContainTest(direction, center)
                 .and(BasePolygon.getContainTest(direction.next(), center));
         
-        coordinateStart = direction.constantCoordinate;
-        coordinateEnd = direction.previous().constantCoordinate;
+        coordinateStart = direction.constantCoordinateValue;
+        coordinateEnd = direction.previous().constantCoordinateValue;
     }
 
     @Override

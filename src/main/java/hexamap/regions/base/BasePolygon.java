@@ -50,8 +50,8 @@ public abstract class BasePolygon implements Polygon {
         return new BiPredicate<Coordinate, Integer>() {
             @Override
             public boolean test(Coordinate coordinate, Integer maxDistance) {
-                int distance = direction.constantCoordinate.apply(coordinate)
-                        - direction.constantCoordinate.apply(center);
+                int distance = direction.constantCoordinateValue.apply(coordinate)
+                        - direction.constantCoordinateValue.apply(center);
                 return 0 <= distance && distance <= maxDistance;
             }
         };

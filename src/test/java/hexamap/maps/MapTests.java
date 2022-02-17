@@ -60,11 +60,8 @@ import hexamap.regions.base.Triangle;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MapTests {
 
-    @SuppressWarnings("unused")
     private static Hexagon hexaXXSmall;
-    @SuppressWarnings("unused")
     private static Hexagon hexaSmall;
-    @SuppressWarnings("unused")
     private static Hexagon hexaMedium;
     @SuppressWarnings("unused")
     private static Hexagon hexaLarge;
@@ -84,7 +81,7 @@ public class MapTests {
 
         Triangle triangleSmall = new Triangle(Direction.getRandom(rand),256*3, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
         Triangle triangleMedium = new Triangle(Direction.getRandom(rand),1024*2, new Axial(rand.nextInt(),rand.nextInt()));// 18'883'585
-        Triangle triangleLarge = new Triangle(Direction.getRandom(rand),2048*4, new Axial()); // 75'515'905
+        //Triangle triangleLarge = new Triangle(Direction.getRandom(rand),2048*4, new Axial()); // 75'515'905
         return Arrays.asList(
                 new Object[][] { 
                         { new HashMap<AxialExt>(hexaXXSmall)},

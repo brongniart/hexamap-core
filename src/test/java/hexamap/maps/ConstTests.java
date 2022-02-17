@@ -61,7 +61,6 @@ public class ConstTests {
 
     @SuppressWarnings("unused")
     private static Hexagon hexaXXSmall;
-    @SuppressWarnings("unused")
     private static Hexagon hexaSmall;
     @SuppressWarnings("unused")
     private static Hexagon hexaMedium;

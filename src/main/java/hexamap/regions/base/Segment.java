@@ -33,12 +33,12 @@ import java.util.Random;
 
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
-import hexamap.regions.Region;
+import hexamap.regions.Polygon;
 
 /**
  *
  */
-public class Segment implements Region {
+public class Segment implements Polygon {
 
     private Direction direction;
     private Coordinate start;
@@ -54,6 +54,10 @@ public class Segment implements Region {
             this.length = length;
             this.direction = direction;
         }
+    }
+
+    public Coordinate crossing(Segment segment) {
+        return null;
     }
 
     @Override
@@ -93,13 +97,81 @@ public class Segment implements Region {
 
     @Override
     public boolean contains(Coordinate coordinate) {
-        return direction.constantCoordinate.apply(coordinate) == direction.constantCoordinate.apply(start)
-                && direction.variableCoordinate.apply(coordinate) >= direction.variableCoordinate.apply(start)
-                && direction.variableCoordinate.apply(coordinate) <= direction.variableCoordinate.apply(start)+length;
+        return direction.constantCoordinateValue.apply(coordinate) == direction.constantCoordinateValue.apply(start)
+                && direction.variableCoordinateValue.apply(coordinate) >= direction.variableCoordinateValue.apply(start)
+                && direction.variableCoordinateValue.apply(coordinate) <= direction.variableCoordinateValue.apply(start)
+                        + length;
     }
 
     @Override
     public Coordinate getRandom(Random random) {
         return start.add(direction, random.nextInt(length));
+    }
+
+    @Override
+    public int getIndex(Coordinate coordinate) throws OutOfRegion {
+        if (!contains(coordinate)) {
+            throw new OutOfRegion(coordinate, this);
+        }
+        return direction.constantCoordinateValue.apply(coordinate) - direction.constantCoordinateValue.apply(start);
+    }
+
+    @Override
+    public Coordinate getCoordinate(int index) throws OutOfRegion {
+        if (index < 0 || index >= length) {
+            throw new OutOfRegion(index, this);
+        }
+        return start.add(direction, index);
+    }
+
+    @Override
+    public Iterator<Coordinate> vertices() {
+        return new Iterator<Coordinate>() {
+
+            private boolean hasNext = true;
+            private Coordinate current = null;
+
+            @Override
+            public boolean hasNext() {
+                return hasNext;
+            }
+
+            @Override
+            public Coordinate next() {
+                if (current == null) {
+                    current = start;
+                } else {
+                    current = start.add(direction, length);
+                    hasNext = false;
+                }
+                return current;
+            }
+        };
+    }
+
+    private class SingleSegmentIterator implements Iterator<Segment> {
+
+        private final Segment s;
+        private boolean nextCalled = false;
+
+        public SingleSegmentIterator(Segment s) {
+            this.s = s;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !nextCalled;
+        }
+
+        @Override
+        public Segment next() {
+            nextCalled = true;
+            return s;
+        }
+    }
+
+    @Override
+    public Iterator<Segment> edges() {
+        return new SingleSegmentIterator(this);
     }
 }

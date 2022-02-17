@@ -40,76 +40,133 @@ public enum Direction {
     public final int x;
     public final int y;
     
-    public final Function<Coordinate,Integer> constantCoordinate;
-    public final Function<Coordinate,Integer> variableCoordinate;
+    public final Function<Coordinate,Integer> constantCoordinateValue;
+    public final Function<Coordinate,Integer> variableCoordinateValue;
+    
+    public final Function<Coordinate,String>  constantCoordinateName;
+    public final Function<Coordinate,String>  variableCoordinateName;
 
     private Direction(int x, int y) {
         this.x = x;
         this.y = y;
         
         if (x==0) {
-            constantCoordinate = new Function<Coordinate,Integer>() {
+            constantCoordinateValue = new Function<Coordinate,Integer>() {
                 @Override
                 public Integer apply(Coordinate c) {
                     return c.getX();
                 }
             };
+            constantCoordinateName = new Function<Coordinate,String>() {
+                @Override
+                public String apply(Coordinate c) {
+                    return "X";
+                }
+            };
             if (y==1) {
-                variableCoordinate = new Function<Coordinate,Integer>() {
+                variableCoordinateValue = new Function<Coordinate,Integer>() {
                     @Override
                     public Integer apply(Coordinate c) {
                         return c.getY();
                     }
                 };
+                variableCoordinateName = new Function<Coordinate,String>() {
+                    @Override
+                    public String apply(Coordinate c) {
+                        return "Y";
+                    }
+                };
             } else {
-                variableCoordinate = new Function<Coordinate,Integer>() {
+                variableCoordinateValue = new Function<Coordinate,Integer>() {
                     @Override
                     public Integer apply(Coordinate c) {
                         return c.getZ();
                     }
                 };
+                variableCoordinateName = new Function<Coordinate,String>() {
+                    @Override
+                    public String apply(Coordinate c) {
+                        return "Z";
+                    }
+                };
             }
         } else if (y==0) {
-            constantCoordinate = new Function<Coordinate,Integer>() {
+            constantCoordinateValue = new Function<Coordinate,Integer>() {
                 @Override
                 public Integer apply(Coordinate c) {
                     return c.getY();
                 }
             };
+            constantCoordinateName = new Function<Coordinate,String>() {
+                @Override
+                public String apply(Coordinate c) {
+                    return "Y";
+                }
+            };
             if (x==1) {
-                variableCoordinate = new Function<Coordinate,Integer>() {
+                variableCoordinateValue = new Function<Coordinate,Integer>() {
                     @Override
                     public Integer apply(Coordinate c) {
                         return c.getX();
                     }
                 };
+                variableCoordinateName = new Function<Coordinate,String>() {
+                    @Override
+                    public String apply(Coordinate c) {
+                        return "X";
+                    }
+                };
             } else {
-                variableCoordinate = new Function<Coordinate,Integer>() {
+                variableCoordinateValue = new Function<Coordinate,Integer>() {
                     @Override
                     public Integer apply(Coordinate c) {
                         return c.getZ();
                     }
                 };
+                variableCoordinateName = new Function<Coordinate,String>() {
+                    @Override
+                    public String apply(Coordinate c) {
+                        return "Z";
+                    }
+                };
             }
         } else {
-            constantCoordinate = new Function<Coordinate,Integer>() {
+            constantCoordinateValue = new Function<Coordinate,Integer>() {
                 @Override
                 public Integer apply(Coordinate c) {
                     return c.getZ();
                 }
             };
+            constantCoordinateName = new Function<Coordinate,String>() {
+                @Override
+                public String apply(Coordinate c) {
+                    return "Z";
+                }
+            };
             if (x==1) {
-                variableCoordinate = new Function<Coordinate,Integer>() {
+                variableCoordinateValue = new Function<Coordinate,Integer>() {
                     @Override
                     public Integer apply(Coordinate c) {
                         return c.getX();
                     }
                 };
+                variableCoordinateName = new Function<Coordinate,String>() {
+                    @Override
+                    public String apply(Coordinate c) {
+                        return "X";
+                    }
+                };
             } else {
-                variableCoordinate = new Function<Coordinate,Integer>() {
+                variableCoordinateValue = new Function<Coordinate,Integer>() {
                     @Override
                     public Integer apply(Coordinate c) {
                         return c.getY();
+                    }
+                };
+                variableCoordinateName = new Function<Coordinate,String>() {
+                    @Override
+                    public String apply(Coordinate c) {
+                        return "Y";
                     }
                 };
             }

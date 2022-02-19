@@ -139,25 +139,25 @@ public class GenericPolygon implements Polygon {
     }
 
     @Override
-    public Iterator<Coordinate> vertices(boolean outside) {
+    public Iterable<Coordinate> vertices(boolean outside) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Iterator<Coordinate> vertices() {
+    public Iterable<Coordinate> vertices() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Iterator<Segment> edges(boolean outside) {
+    public Iterable<Segment> edges(boolean outside) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Iterator<Segment> edges() {
+    public Iterable<Segment> edges() {
         // TODO Auto-generated method stub
         return null;
     }

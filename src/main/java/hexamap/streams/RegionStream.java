@@ -26,66 +26,66 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap.maps.streams;
+package hexamap.streams;
 
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Spliterator;
 import java.util.stream.BaseStream;
 
-import hexamap.coordinates.Coordinate;
+import hexamap.regions.Region;
 
 /**
- *
+ * Only callable from Hexamap
  */
-public class MapStream<Data> implements BaseStream<Entry<Coordinate,Data>,MapStream<Data>>  {
+public abstract class RegionStream implements BaseStream<Region,RegionStream> {
+    
+    public abstract RegionStream including(Region region);
+    public abstract RegionStream including(RegionStream regions);
 
+    public abstract RegionStream intersecting();
+    public abstract RegionStream intersecting(Region region);
+    public abstract RegionStream intersectingCluster(Region luster);
+    
+    public abstract RegionStream containing(Class<?> dataClass);
+    
+    public abstract <Data> MapStream<Data> map(Class<Data> dataClass);
+    
     @Override
-    public Iterator<Entry<Coordinate, Data>> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+    public Iterator<Region> iterator() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public Spliterator<Entry<Coordinate, Data>> spliterator() {
-        // TODO Auto-generated method stub
-        return null;
+    public Spliterator<Region> spliterator() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isParallel() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public MapStream<Data> sequential() {
-        // TODO Auto-generated method stub
-        return null;
+    public RegionStream sequential() {
+        return this;
     }
 
     @Override
-    public MapStream<Data> parallel() {
-        // TODO Auto-generated method stub
-        return null;
+    public RegionStream parallel() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public MapStream<Data> unordered() {
-        // TODO Auto-generated method stub
-        return null;
+    public RegionStream unordered() {
+        return this;
     }
 
     @Override
-    public MapStream<Data> onClose(Runnable closeHandler) {
-        // TODO Auto-generated method stub
-        return null;
+    public RegionStream onClose(Runnable closeHandler) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void close() {
-        // TODO Auto-generated method stub
-        
     }
-    
 }

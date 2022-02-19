@@ -45,12 +45,11 @@ public class Segment implements Polygon {
     private int length;
 
     public Segment(Coordinate start, int length, Direction direction) {
+        this.start = start;
         if (length < 0) {
-            this.start = start;
             this.length = -length;
             this.direction = direction.flip();
         } else {
-            this.start = start;
             this.length = length;
             this.direction = direction;
         }
@@ -65,11 +64,11 @@ public class Segment implements Polygon {
         return new Iterator<Coordinate>() {
 
             private Coordinate current = null;
-            private Coordinate last = start.add(direction, length);
+            private int iter = 0;
 
             @Override
             public boolean hasNext() {
-                return current == null || current != last;
+                return iter < length;
             }
 
             @Override
@@ -80,6 +79,7 @@ public class Segment implements Polygon {
                 } else {
                     current.move(direction, 1);
                 }
+                iter++;
                 return current;
             }
         };
@@ -125,8 +125,8 @@ public class Segment implements Polygon {
     }
 
     @Override
-    public Iterator<Coordinate> vertices() {
-        return new Iterator<Coordinate>() {
+    public Iterable<Coordinate> vertices() {
+        return () -> new Iterator<Coordinate>() {
 
             private boolean hasNext = true;
             private Coordinate current = null;
@@ -171,7 +171,7 @@ public class Segment implements Polygon {
     }
 
     @Override
-    public Iterator<Segment> edges() {
-        return new SingleSegmentIterator(this);
+    public Iterable<Segment> edges() {
+        return () -> new SingleSegmentIterator(this);
     }
 }

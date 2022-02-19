@@ -131,29 +131,27 @@ public class Hexagon extends BasePolygon {
             throw new OutOfRegion(index, this);
         }
         int distance = size();
-        while (index>1 + 3 * (distance * (distance + 1))) {
+        while (index > 1 + 3 * (distance * (distance + 1))) {
             distance--;
-            index-=distance*6;
+            index -= distance * 6;
         }
-        Coordinate result = center.add(Direction.NORD,distance);
+        Coordinate result = center.add(Direction.NORD, distance);
         Direction direction = Direction.NORD.next(2);
-        while (index>6) {
+        while (index > 6) {
             result.move(direction, distance);
             direction = direction.next();
-            index-=distance;
+            index -= distance;
         }
         return result.move(direction.next(), index);
     }
 
     @Override
-    public Iterator<Coordinate> vertices() {
-        // TODO Auto-generated method stub
+    public Iterable<Coordinate> vertices() {
         return null;
     }
 
     @Override
-    public Iterator<Segment> edges() {
-        // TODO Auto-generated method stub
+    public Iterable<Segment> edges() {
         return null;
     }
 }

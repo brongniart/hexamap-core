@@ -26,24 +26,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package hexamap;
+package hexamap.iterators;
+
+import java.util.Iterator;
 
 import hexamap.coordinates.Coordinate;
-import hexamap.maps.Map;
-import hexamap.regions.Region;
 
 /**
  *
  */
-public interface Hexamap<CoordinateImpl extends Coordinate> extends Region {
-    
-    public void add(Region region);
-    public boolean remove(Region region);
-    public int getCluster(Region region);
-    
-    public <Data> void add(Region region, Data data);
-    public <Data> boolean remove(Region region, Data data);
-    
-    public <Data> void add(Region region, Map<Data> map);
-    public <Data> boolean remove(Region region, Map<Data> map);
+public class CoordinateIterators {
+
+    public static Iterator<Coordinate> empty() {
+        return new Iterator<Coordinate>() {
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public Coordinate next() {
+                throw new RuntimeException("next() called on an empty iterator");
+            }
+        };
+    }
+
+    public static Iterator<Coordinate> single(Coordinate c) {
+        return new Iterator<Coordinate>() {
+            private boolean nextCalled = false;
+
+            @Override
+            public boolean hasNext() {
+                return !nextCalled;
+            }
+
+            @Override
+            public Coordinate next() {
+                nextCalled = true;
+                return c;
+            }
+        };
+    }
 }

@@ -44,7 +44,7 @@ public class Triangle extends BasePolygon {
     private BiPredicate<Coordinate, Integer> testContains;
     private Function<Coordinate, Integer> coordinateStart;
     private Function<Coordinate, Integer> coordinateEnd;
-    
+
     public final Direction direction;
     public final int length;
 
@@ -52,19 +52,42 @@ public class Triangle extends BasePolygon {
         super(center);
 
         if (length < 0) {
-            this.direction = direction.flip();
-            this.length = -length;
-        } else {
-            this.direction = direction;
-            this.length = length;
+            direction = direction.flip();
+            length = -length;
         }
-        // TODO: make center unique
-        
+        this.length = length;
+
+        switch (direction) {
+        case NORD_EAST:
+            this.direction = Direction.SOUTH;
+            center.move(Direction.NORD_EAST, length);
+            break;
+        case NORD_WEST:
+            this.direction = Direction.SOUTH;
+            center.move(Direction.NORD, length);
+            break;
+        case SOUTH_EAST:
+            this.direction = Direction.NORD;
+            center.move(Direction.SOUTH, length);
+            break;
+        case SOUTH_WEST:
+            this.direction = Direction.NORD;
+            center.move(Direction.NORD_EAST, length);
+            break;
+        default:
+            this.direction = direction;
+            break;
+        }
+
         testContains = BasePolygon.getContainTest(direction, center)
                 .and(BasePolygon.getContainTest(direction.next(), center));
-        
+
         coordinateStart = direction.constantCoordinateValue;
         coordinateEnd = direction.previous().constantCoordinateValue;
+    }
+
+    public String toString() {
+        return "[" + this.getClass() + ", direction: " + direction + ", center:" + center + "]";
     }
 
     @Override
@@ -144,22 +167,62 @@ public class Triangle extends BasePolygon {
 
     @Override
     public Coordinate getCoordinate(int index) {
-        return null;
-    }
-
-    public String toString() {
-        return "[" + this.getClass() + ": " + direction + "," + center + "]";
+        return center;
     }
 
     @Override
-    public Iterator<Coordinate> vertices() {
-        // TODO Auto-generated method stub
-        return null;
+    public Iterable<Coordinate> vertices() {
+        return () -> new Iterator<Coordinate>() {
+
+            private int iter = 0;
+            private Coordinate current = null;
+
+            @Override
+            public boolean hasNext() {
+                return iter < 3;
+            }
+
+            @Override
+            public Coordinate next() {
+                if (current == null) {
+                    current = center.copy();
+                } else if (iter == 1) {
+                    current = current.move(direction, length);
+                } else {
+                    current = current.move(direction.next(2), length);
+                }
+
+                iter++;
+                return current;
+            }
+        };
     }
 
     @Override
-    public Iterator<Segment> edges() {
-        // TODO Auto-generated method stub
-        return null;
+    public Iterable<Segment> edges() {
+        return () -> new Iterator<Segment>() {
+
+            private int iter = 0;
+            private Segment current = null;
+
+            @Override
+            public boolean hasNext() {
+                return iter < 3;
+            }
+
+            @Override
+            public Segment next() {
+                if (current == null) {
+                    current = new Segment(center, length, direction);
+                } else if (iter == 1) {
+                    current = new Segment(center.add(direction, length), length, direction.next(2));
+                } else {
+                    current = new Segment(center.add(direction.next(), length), length, direction.next(4));
+                }
+
+                iter++;
+                return current;
+            }
+        };
     }
 }

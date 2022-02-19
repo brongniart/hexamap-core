@@ -31,6 +31,8 @@ package hexamap.coordinates;
 import java.util.Iterator;
 import java.util.Random;
 
+import hexamap.iterators.CoordinateIterators;
+import hexamap.iterators.SegmentIterators;
 import hexamap.regions.Polygon;
 import hexamap.regions.base.Segment;
 
@@ -86,7 +88,7 @@ public class Cubic extends Axial implements Polygon {
     public boolean isEmpty() {
         return false;
     }
-    
+
     @Override
     public Cubic getRandom(Random random) {
         return this;
@@ -97,60 +99,16 @@ public class Cubic extends Axial implements Polygon {
         return 1;
     }
 
-    private class SingleCoordinateIterator implements Iterator<Coordinate> {
-
-        private final Cubic c;
-        private boolean nextCalled = false;
-
-        public SingleCoordinateIterator(Cubic c) {
-            this.c = c;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return !nextCalled;
-        }
-
-        @Override
-        public Cubic next() {
-            nextCalled = true;
-            return c;
-        }
-
-    }
-
-    private class SingleCoordinateSegmentIterator implements Iterator<Segment> {
-
-        private final Cubic c;
-        private boolean nextCalled = false;
-
-        public SingleCoordinateSegmentIterator(Cubic c) {
-            this.c = c;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return !nextCalled;
-        }
-
-        @Override
-        public Segment next() {
-            nextCalled = true;
-            return new Segment(c, 0, Direction.NORD);
-        }
-
-    }
-
     @Override
     public Iterator<Coordinate> iterator() {
-        return new SingleCoordinateIterator(this);
+        return CoordinateIterators.single(this);
     }
 
     @Override
     public boolean contains(Coordinate coordinate) {
         return isEquals(coordinate);
     }
-    
+
     @Override
     public int getIndex(Coordinate coordinate) throws OutOfRegion {
         if (equals(coordinate)) {
@@ -161,57 +119,37 @@ public class Cubic extends Axial implements Polygon {
 
     @Override
     public Cubic getCoordinate(int index) throws OutOfRegion {
-        if (index==0) {
+        if (index == 0) {
             return this;
         }
-        throw new OutOfRegion(index,this);
+        throw new OutOfRegion(index, this);
     }
 
     @Override
-    public Iterator<Coordinate> vertices() {
-        return new SingleCoordinateIterator(this);
+    public Iterable<Coordinate> vertices() {
+        return () -> CoordinateIterators.single(this);
     }
 
     @Override
-    public Iterator<Coordinate> vertices(boolean outside) {
+    public Iterable<Coordinate> vertices(boolean outside) {
         if (outside) {
             return vertices();
         } else {
-            return new Iterator<Coordinate>() {
-                @Override
-                public boolean hasNext() {
-                    return false;
-                }
-
-                @Override
-                public Coordinate next() {
-                    return null;
-                }
-            };
+            return () -> CoordinateIterators.empty();
         }
     }
 
     @Override
-    public Iterator<Segment> edges(boolean outside) {
+    public Iterable<Segment> edges(boolean outside) {
         if (outside) {
             return edges();
         } else {
-            return new Iterator<Segment>() {
-                @Override
-                public boolean hasNext() {
-                    return false;
-                }
-
-                @Override
-                public Segment next() {
-                    return null;
-                }
-            };
+            return () -> SegmentIterators.empty();
         }
     }
-    
+
     @Override
-    public Iterator<Segment> edges() {
-        return new SingleCoordinateSegmentIterator(this);
+    public Iterable<Segment> edges() {
+        return () -> SegmentIterators.single(this);
     }
 }

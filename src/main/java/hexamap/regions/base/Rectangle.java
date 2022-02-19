@@ -110,13 +110,13 @@ public class Rectangle extends BasePolygon {
     }
 
     @Override
-    public Iterator<Coordinate> vertices() {
+    public Iterable<Coordinate> vertices() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Iterator<Segment> edges() {
+    public Iterable<Segment> edges() {
         // TODO Auto-generated method stub
         return null;
     }

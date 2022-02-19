@@ -50,8 +50,8 @@ public interface IndexedRegion extends Region  {
         }
     }
     
-    default Iterator<Coordinate> iterator(Random random) {
-        return new Iterator<Coordinate>() {
+    default Iterable<Coordinate> iterator(Random random) {
+        return () -> new Iterator<Coordinate>() {
 
             private int index = 0;
             private int bitmask = random.nextInt(size());

@@ -30,8 +30,9 @@ package hexamap.coordinates;
 
 import static java.lang.Math.abs;
 
-import java.util.Iterator;
 import java.util.Objects;
+
+import hexamap.iterators.NeigboursIterator;
 
 public abstract class Coordinate {
 
@@ -80,71 +81,6 @@ public abstract class Coordinate {
     }
 
     public abstract Coordinate move(Direction direction, int range);
-
-    public class NeigboursIterator implements Iterator<Coordinate> {
-
-        private final boolean all;
-        private final Coordinate center;
-        private int range;
-        private int nbIters;
-        private int nbDir;
-        private Coordinate current;
-        private Direction direction;
-
-        private final Direction initDirection;
-
-        public NeigboursIterator(Coordinate center, int range, boolean all, Direction initDirection) {
-
-            this.all = all;
-            this.range = Math.abs(range);
-            this.center = center;
-            this.initDirection = initDirection;
-            current = null;
-        }
-
-        public NeigboursIterator(Coordinate center, int range, boolean all) {
-            this(center, range, all, Direction.NORD);
-        }
-
-        @Override
-        public boolean hasNext() {
-            if (all) {
-                return range > 1 || nbDir < 6 || nbIters < range;
-            } else {
-                return nbDir < 6 || nbIters < range;
-            }
-        }
-
-        @Override
-        public Coordinate next() {
-            if (current == null) {
-                current = center.add(initDirection, range);
-                direction = initDirection.next(2);
-
-                nbIters = 1;
-                nbDir = 1;
-            } else if (nbIters < range) {
-                current.move(direction, 1);
-                nbIters++;
-            } else if (nbDir < 6) {
-                current.move(direction, 1);
-                direction = direction.next();
-
-                nbIters = 1;
-                nbDir++;
-            } else if (all) {
-                range--;
-                nbIters = 1;
-                nbDir = 1;
-                direction = initDirection.next(2);
-                current.move(direction, 1);
-            } else {
-                throw new RuntimeException("Calling next() while hasNext() is false");
-            }
-
-            return current;
-        }
-    }
 
     public Iterable<Coordinate> getNeigbours(int range) {
         return () -> new NeigboursIterator(this, range, false);

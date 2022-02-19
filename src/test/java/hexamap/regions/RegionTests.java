@@ -59,14 +59,14 @@ public class RegionTests {
         rand = new Random(seed);
         System.err.println("seed:" + seed);
 
-        Set<Coordinate> setAxial = new Set<Coordinate>();
+        LinkedHashSet setAxial = new LinkedHashSet();
         Hexagon hexaAxial = new Hexagon(32, new Axial(rand.nextInt(), rand.nextInt()));
 
         for (Coordinate c : hexaAxial) {
             setAxial.add(c);
         }
 
-        Set<Coordinate> setCube = new Set<Coordinate>();
+        LinkedHashSet setCube = new LinkedHashSet();
         Hexagon hexaCube = new Hexagon(32, new Cubic(rand.nextInt(), rand.nextInt()));
 
         for (Coordinate c : hexaCube) {

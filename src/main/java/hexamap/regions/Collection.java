@@ -28,10 +28,7 @@
  */
 package hexamap.regions;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Random;
-import java.util.Spliterator;
 
 import hexamap.coordinates.Coordinate;
 
@@ -39,60 +36,16 @@ import hexamap.coordinates.Coordinate;
  *
  * @param <CoordinateImpl>
  */
-public class Set<CoordinateImpl extends Coordinate> implements Region {
-
-    private LinkedHashSet<CoordinateImpl> set = new LinkedHashSet<CoordinateImpl>();
-
-    public Set() {
-    }
+public interface Collection extends java.util.Collection<Coordinate>, Region {
 
     @Override
-    public boolean contains(Coordinate obj) {
-        return set.contains(obj);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Iterator<Coordinate> iterator() {
-        return (Iterator<Coordinate>) set.iterator();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Spliterator<Coordinate> spliterator() {
-        return (Spliterator<Coordinate>) set.spliterator();
+    default boolean isEmpty() {
+        return size()==0;
     }
     
     @Override
-    public int size() {
-        return set.size();
-    }
-    
-    public boolean add(CoordinateImpl coordinate) {
-        return set.add(coordinate);
-    }
-    
-    public boolean remove(Object coordinate) {
-        return set.remove(coordinate);
-    }
-    
-    public void clear() {
-        set.clear();
+    default Coordinate getRandom(Random random) {
+        return (Coordinate) toArray()[random.nextInt(size())];
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean equals(Object object) {
-        try {
-            return set.equals(((Set<CoordinateImpl>) object).set);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public CoordinateImpl getRandom(Random random) {
-        return (CoordinateImpl) set.toArray()[random.nextInt(set.size())];
-    }
 }

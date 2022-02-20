@@ -28,13 +28,20 @@
  */
 package hexamap.regions;
 
+import java.util.Random;
+
 import hexamap.coordinates.Coordinate;
 
-public class ArrayList extends java.util.ArrayList<Coordinate> implements Collection {
+public class CoordinateArrayList extends java.util.ArrayList<Coordinate> implements CoordinateCollection {
     private static final long serialVersionUID = -4573491037198844360L;
     
     @Override
     public boolean contains(Coordinate coordinate) {
         return super.contains(coordinate);
+    }
+    
+    @Override
+    public Coordinate getRandom(Random random) {
+        return get(random.nextInt(size()));
     }
 }

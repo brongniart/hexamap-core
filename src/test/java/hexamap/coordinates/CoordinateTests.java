@@ -102,10 +102,6 @@ public class CoordinateTests {
         assert tmp.add(Direction.NORD,1).equals(coordinate.add(Direction.NORD, 2));
         tmp.move(Direction.NORD, 1);
         assert tmp.equals(coordinate.add(Direction.NORD, 2));
-        
-        assert coordinate.createCoordinate(0, 0).getClass().equals(coordinate.getClass());
-        assert coordinate.createCoordinateXZ(0, 0).getClass().equals(coordinate.getClass());
-        assert coordinate.createCoordinateYZ(0, 0).getClass().equals(coordinate.getClass());
     }
 
     @Test

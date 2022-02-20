@@ -56,26 +56,30 @@ public class IndexedRegionTests {
     public static Collection<Object[]> getParameters() throws Exception {
         long seed = System.currentTimeMillis();
         Random rand = new Random(seed);
-        System.err.println("seed:"+seed);
+        System.err.println("seed:" + seed);
+        return Arrays.asList(getParameters(rand));
+    }
 
-        Hexagon hexaAxial = new Hexagon(1024, new Axial(rand.nextInt(),rand.nextInt()));
-        Triangle triangle = new Triangle(Direction.getRandom(rand), 1024, new Cubic(rand.nextInt(),rand.nextInt()));
+    public static Object[][] getParameters(Random rand) {
+        Hexagon hexaAxial = new Hexagon(2048, new Axial());
+        Triangle triangle = new Triangle(Direction.getRandom(rand), 3*2048, new Cubic());
 
-        return Arrays.asList(new Object[][] { { hexaAxial }, {triangle} });
+        return new Object[][] { { hexaAxial }, { triangle } };
     }
 
     private final IndexedRegion region;
 
     public IndexedRegionTests(IndexedRegion region) throws Exception {
         this.region = region;
-        System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
+        System.out.println(
+                this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
     }
 
     @Test
     public void testIndex() throws OutOfRegion {
-        int count=0;
+        int count = 0;
         for (Coordinate c : region) {
-            assert region.getIndex(new Axial(c))==count;
+            assert region.getIndex(new Axial(c)) == count;
             count++;
         }
 

@@ -29,9 +29,9 @@
 package hexamap.regions.base;
 
 import java.util.Iterator;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
+import java.util.Random;
 
+import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
 
@@ -40,10 +40,6 @@ import hexamap.coordinates.Direction;
  * @param <CoordinateImpl>
  */
 public class Triangle extends BasePolygon {
-
-    private BiPredicate<Coordinate, Integer> testContains;
-    private Function<Coordinate, Integer> coordinateStart;
-    private Function<Coordinate, Integer> coordinateEnd;
 
     public final Direction direction;
     public final int length;
@@ -78,12 +74,6 @@ public class Triangle extends BasePolygon {
             this.direction = direction;
             break;
         }
-
-        testContains = BasePolygon.getContainTest(direction, center)
-                .and(BasePolygon.getContainTest(direction.next(), center));
-
-        coordinateStart = direction.constantCoordinateValue;
-        coordinateEnd = direction.previous().constantCoordinateValue;
     }
 
     public String toString() {
@@ -92,7 +82,16 @@ public class Triangle extends BasePolygon {
 
     @Override
     public boolean contains(Coordinate coordinate) {
-        return testContains.test(coordinate, length);
+        Coordinate c = new Axial(coordinate.getX() - center.getX(), coordinate.getY() - center.getY());
+
+        switch (direction) {
+        case NORD:
+            return c.getX() <= length && c.getY() <= length;
+        case SOUTH:
+            return c.getX() >= -length && c.getY() >= -length;
+        default:
+            throw new RuntimeException("Unexpected direction");
+        }
     }
 
     @Override
@@ -159,15 +158,75 @@ public class Triangle extends BasePolygon {
     }
 
     @Override
-    public int getIndex(Coordinate coordinate) {
-        int a = coordinateEnd.apply(coordinate) - coordinateEnd.apply(center);
-        return ((a + 1) * a) / 2 + (coordinateStart.apply(coordinate) - coordinateStart.apply(center));
+    public int getIndex(Coordinate coordinate) throws OutOfRegion {
+        Coordinate c = new Axial(coordinate.getX() - center.getX(), coordinate.getY() - center.getY());
 
+        int c_length;
+        switch (direction) {
+        case NORD:
+            if (c.getZ() < length || c.getZ() > 0) {
+                throw new OutOfRegion(coordinate, this);
+            }
+            c_length = -c.getZ();
+            break;
+        case SOUTH:
+            if (c.getZ() < 0 || c.getZ() > length) {
+                throw new OutOfRegion(coordinate, this);
+            }
+            c_length = c.getZ();
+            break;
+        default:
+            throw new RuntimeException("Unexpected direction");
+        }
+        return ((c_length + 1) * c_length) / 2 + (c.getX());
+    }
+    
+    @Override
+    public Coordinate getRandom(Random rand) {
+        int y = rand.nextInt(length);
+        int z = -rand.nextInt(length);
+
+        switch (direction) {
+        case NORD:
+            return new Axial(center.getX()+-y-z,center.getY()+y);
+        case SOUTH:
+            return new Axial(center.getX()+y+z,center.getY()-y);
+        default:
+            throw new RuntimeException("Unexpected direction");
+        }
     }
 
+
     @Override
-    public Coordinate getCoordinate(int index) {
-        return center;
+    public Coordinate getCoordinate(int index) throws OutOfRegion {
+        if (index < 0 || index > size()) {
+            throw new OutOfRegion(index, this);
+        }
+        
+        int distance;
+        if (index < size() / 2) {
+            distance = length;
+            int sum = distance;
+            while (index >= sum && distance > 0) {
+                distance--;
+                sum += distance;
+            }
+            index -= (sum - distance);
+        } else {
+            distance = 0;
+            int sum = size();
+            while (index < sum && distance < size() / 2) {
+                distance++;
+                sum -= distance;
+            }
+            index -= sum;
+        }
+
+        Coordinate result = center.add(direction, distance);
+        assert index <= distance;
+        
+        result.move(direction.next(2), index);
+        return result;
     }
 
     @Override

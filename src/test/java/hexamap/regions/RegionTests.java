@@ -28,6 +28,7 @@
  */
 package hexamap.regions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
@@ -39,15 +40,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
-import hexamap.coordinates.Cubic;
-import hexamap.coordinates.Direction;
 import hexamap.regions.base.Hexagon;
-import hexamap.regions.base.Triangle;
 
-/**
- *
- * 
- */
 @RunWith(Parameterized.class)
 public class RegionTests {
 
@@ -55,50 +49,39 @@ public class RegionTests {
 
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
+
         long seed = System.currentTimeMillis();
         rand = new Random(seed);
         System.err.println("seed:" + seed);
 
-        LinkedHashSet setAxial = new LinkedHashSet();
-        Hexagon hexaAxial = new Hexagon(32, new Axial(rand.nextInt(), rand.nextInt()));
+        ArrayList<Object[]> result = new ArrayList<Object[]>(Arrays.asList(IndexedRegionTests.getParameters(rand)));
+
+        CoordinateArrayList list = new CoordinateArrayList();
+        Hexagon hexaAxial = new Hexagon(2048, new Axial(rand.nextInt(), rand.nextInt()));
 
         for (Coordinate c : hexaAxial) {
-            setAxial.add(c);
+            list.add(c);
         }
+        result.add(new Object[] { list });
 
-        LinkedHashSet setCube = new LinkedHashSet();
-        Hexagon hexaCube = new Hexagon(32, new Cubic(rand.nextInt(), rand.nextInt()));
-
-        for (Coordinate c : hexaCube) {
-            setAxial.add(c);
-        }
-
-        Hexagon hexaMax = new Hexagon(1024, new Axial(Integer.MIN_VALUE, Integer.MAX_VALUE));
-        Triangle triangle = new Triangle(Direction.getRandom(rand), 1024*3,
-                new Cubic(rand.nextInt(), rand.nextInt()));
-
-        return Arrays.asList(new Object[][] { { new Cubic() }, { hexaAxial }, { setAxial },
-                { hexaCube }, { setCube }, { hexaMax }, { triangle } });
+        return result;
     }
 
-    private final Region region;
+    private Region region = null;
 
     public RegionTests(Region region) throws Exception {
-        this.region = region;
-        System.out.println(this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
-    }
-
-    @Test
-    public void testSpliterators() {
-        // System.out.println(region.parallelStream().isParallel());
-        // System.out.println(region.stream().isParallel());
+        if (this.region != region) {
+            System.out.println(
+                    this.getClass() + ", region:" + region.getClass() + ": " + String.format("%,d", region.size()));
+            this.region = region;
+        }
     }
 
     @Test
     public void testContains() {
         int count = 0;
         for (Coordinate c : region) {
-            assert region.contains(c);
+            assert region.contains(new Axial(c));
             count++;
         }
 
@@ -106,10 +89,14 @@ public class RegionTests {
     }
 
     @Test
+    @SuppressWarnings("unused")
     public void testGetRandom() {
-        for (@SuppressWarnings("unused")
-        Coordinate c : region) {
-            assert region.contains(region.getRandom(rand));
+        for (Coordinate unused : region) {
+            Coordinate c = region.getRandom(rand);
+            if (!region.contains(c)) {
+                System.err.println(c);
+            }
+            assert region.contains(new Axial(c));
         }
     }
 }

@@ -37,21 +37,22 @@ import hexamap.coordinates.Coordinate;
  * @param <CoordinateImpl>
  */
 public class PolygonSet implements IndexedRegion {
-    
+
     private GenericPolygon[] list;
-    
+    private int size = -1;
+
     @Override
     public int getIndex(Coordinate coordinate) throws OutOfRegion {
-        if (list==null) {
+        if (list == null) {
             throw new OutOfRegion(coordinate, this);
         }
-        
-        int size=0;
-        for (GenericPolygon base: list) {
+
+        int size = 0;
+        for (GenericPolygon base : list) {
             if (base.contains(coordinate)) {
-                return size+base.getIndex(coordinate);
+                return size + base.getIndex(coordinate);
             } else {
-                size+=base.size();        
+                size += base.size();
             }
         }
         throw new OutOfRegion(coordinate, this);
@@ -59,15 +60,15 @@ public class PolygonSet implements IndexedRegion {
 
     @Override
     public Coordinate getCoordinate(int index) throws OutOfRegion {
-        if (list==null) {
+        if (list == null) {
             throw new OutOfRegion(index, this);
         }
-        
-        for (GenericPolygon base: list) {
+
+        for (GenericPolygon base : list) {
             if (index < base.size()) {
                 return base.getCoordinate(index);
             } else {
-                index-=base.size();  
+                index -= base.size();
             }
         }
         throw new OutOfRegion(index, this);
@@ -75,29 +76,30 @@ public class PolygonSet implements IndexedRegion {
 
     @Override
     public boolean isEmpty() {
-        return list==null;
+        return list == null;
     }
 
     @Override
     public int size() {
-        if (list==null) {
+        if (list == null) {
             return 0;
         }
-        
-        int size=0;
-        for (GenericPolygon base: list) {
-            size+=base.size();
+        if (size == -1) {
+            size = 0;
+            for (GenericPolygon base : list) {
+                size += base.size();
+            }
         }
         return size;
     }
 
     @Override
     public boolean contains(Coordinate coordinate) {
-        if (list==null) {
+        if (list == null) {
             return false;
         }
-        
-        for (GenericPolygon base: list) {
+
+        for (GenericPolygon base : list) {
             if (base.contains(coordinate)) {
                 return true;
             }
@@ -109,28 +111,28 @@ public class PolygonSet implements IndexedRegion {
     public Iterator<Coordinate> iterator() {
         return new Iterator<Coordinate>() {
 
-            Iterator<Coordinate> internal= (list==null)?null:list[0].iterator();
-            int index=0;
+            Iterator<Coordinate> internal = (list == null) ? null : list[0].iterator();
+            int index = 0;
             Coordinate current;
-            
+
             @Override
             public boolean hasNext() {
-                return internal!=null && internal.hasNext();
+                return internal != null && internal.hasNext();
             }
 
             @Override
             public Coordinate next() {
                 assert internal.hasNext();
-                
+
                 current = internal.next();
                 if (!internal.hasNext()) {
                     index++;
-                    if (list[index]==null) {
-                        internal=null;
+                    if (list[index] == null) {
+                        internal = null;
                     } else {
                         internal = list[index].iterator();
                     }
-                }                
+                }
                 return current;
             }
         };

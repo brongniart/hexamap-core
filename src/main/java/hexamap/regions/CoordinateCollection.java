@@ -36,7 +36,7 @@ import hexamap.coordinates.Coordinate;
  *
  * @param <CoordinateImpl>
  */
-public interface Collection extends java.util.Collection<Coordinate>, Region {
+public interface CoordinateCollection extends java.util.Collection<Coordinate>, Region {
 
     @Override
     default boolean isEmpty() {

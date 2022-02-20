@@ -67,13 +67,7 @@ public abstract class Coordinate {
     public abstract int getZ();
 
     public abstract Coordinate getZero();
-
-    public abstract Coordinate createCoordinate(int x, int y);
-
-    public abstract Coordinate createCoordinateXZ(int x, int z);
-
-    public abstract Coordinate createCoordinateYZ(int y, int z);
-
+    
     public abstract Coordinate add(Direction direction, int range);
 
     public Coordinate copy() {

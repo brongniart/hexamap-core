@@ -29,7 +29,9 @@
 package hexamap.regions.base;
 
 import java.util.Iterator;
+import java.util.Random;
 
+import hexamap.coordinates.Axial;
 import hexamap.coordinates.Coordinate;
 import hexamap.coordinates.Direction;
 
@@ -126,23 +128,54 @@ public class Hexagon extends BasePolygon {
     }
 
     @Override
+    public Coordinate getRandom(Random rand) {
+        int x = rand.nextInt(range * 2 + 1) - range;
+
+        int bound = range - Math.abs(x) - 1;
+        int y = (x > 0) ? rand.nextInt(range + bound) - range : rand.nextInt(range + bound) - bound;
+        return new Axial(center.getX() + x, center.getY() + y);
+    }
+
+    @Override
     public Coordinate getCoordinate(int index) throws OutOfRegion {
         if (index < 0 || index > size()) {
             throw new OutOfRegion(index, this);
         }
-        int distance = size();
-        while (index > 1 + 3 * (distance * (distance + 1))) {
-            distance--;
-            index -= distance * 6;
+        
+        int distance;
+        if (index < size() / 2) {
+            distance = range;
+            int sum = 6 * distance;
+            while (index >= sum && distance > 0) {
+                distance--;
+                sum += 6 * distance;
+            }
+            index -= (sum - 6 * distance);
+        } else {
+            distance = 0;
+            int sum = size();
+            while (index < sum && distance < size() / 2) {
+                distance++;
+                sum -= 6 * distance;
+            }
+            index -= sum;
         }
+
         Coordinate result = center.add(Direction.NORD, distance);
         Direction direction = Direction.NORD.next(2);
-        while (index > 6) {
+        if (index > distance) {
             result.move(direction, distance);
             direction = direction.next();
             index -= distance;
+
+            while (index > distance && distance > 0) {
+                result.move(direction, distance);
+                direction = direction.next();
+                index -= distance;
+            }
         }
-        return result.move(direction.next(), index);
+        result.move(direction, index);
+        return result;
     }
 
     @Override
